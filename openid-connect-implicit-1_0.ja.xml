@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="US-ASCII"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
 "http://xml.resource.org/authoring/rfc2629.dtd">
@@ -64,7 +64,7 @@
       <t>OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0
       protocol. It enables Clients to verify the identity of the End-User based
       on the authentication performed by an Authorization Server, as well as to
-      obtain basic profile information about the End-User in an interoperable and 
+      obtain basic profile information about the End-User in an interoperable and
       REST-like manner.</t>
 
       <t>
@@ -189,7 +189,7 @@
 	</t>
       </section>
 
-      <section anchor="Terminology" title="Terminology"> 
+      <section anchor="Terminology" title="Terminology">
         <t>
           This specification uses the terms "Access Token", "Authorization Code",
 	  "Authorization Endpoint", "Authorization Grant", "Authorization Server",
@@ -246,7 +246,7 @@
 
             <t hangText="Issuer">
 	      <vspace/>
-              Entity that issues a set of Claims. 
+              Entity that issues a set of Claims.
             </t>
 
             <t hangText="Issuer Identifier">
@@ -263,11 +263,11 @@
               OAuth 2.0 Authorization Server that is capable of
 	      Authenticating the End-User and
               providing Claims to a Relying Party
-              about the Authentication event and the End-User. 
+              about the Authentication event and the End-User.
             </t>
             <t hangText="Pairwise Pseudonymous Identifier (PPID)">
-	      <vspace/> 
-              Identifier that identifies the Entity to a Relying Party that cannot be correlated 
+	      <vspace/>
+              Identifier that identifies the Entity to a Relying Party that cannot be correlated
               with the Entity's PPID at another Relying Party.
             </t>
             <t hangText="Personally Identifiable Information (PII)">
@@ -289,13 +289,13 @@
 	    <t hangText="Subject Identifier">
 	      <vspace/>
 	      Locally unique and never
-	      reassigned identifier within the Issuer for the End-User, 
+	      reassigned identifier within the Issuer for the End-User,
 	      which is intended to be consumed by the Client.
 	    </t>
             <t hangText="UserInfo Endpoint">
 	      <vspace/>
               Protected Resource that, when presented with an Access Token by the Client,
-	      returns authorized information about the End-User represented by the corresponding 
+	      returns authorized information about the End-User represented by the corresponding
               Authorization Grant.
             </t>
             <t hangText="Validation">
@@ -337,21 +337,21 @@
 	    <t>The OP authenticates the End-User and obtains authorization.</t>
 
 	    <t>The OP responds with an ID Token and usually an Access Token.</t>
-	    
+
 	    <t>The RP can send a request with the Access Token to the UserInfo Endpoint.</t>
 
 	    <t>The UserInfo Endpoint returns Claims about the End-User.</t>
 
 	  </list>
 	</t>
-	
+
 	<figure>
 	  <preamble>
 	    These steps are illustrated in the following diagram:
 	  </preamble>
 
 	  <artwork><![CDATA[
-+--------+                                   +--------+ 
++--------+                                   +--------+
 |        |                                   |        |
 |        |---------(1) AuthN Request-------->|        |
 |        |                                   |        |
@@ -435,16 +435,16 @@
 	  </t>
 
           <t>Clients MAY construct the request using the HTTP
-          <spanx style="verb">GET</spanx> or the HTTP 
-          <spanx style="verb">POST</spanx> method as defined in 
+          <spanx style="verb">GET</spanx> or the HTTP
+          <spanx style="verb">POST</spanx> method as defined in
           <xref target="RFC2616">RFC 2616</xref>.</t>
 
           <t>If using the HTTP <spanx style="verb">GET</spanx> method, the
           parameters are serialized using
 	  the Query String Serialization, per <xref target="QuerySerialization"/>.
 	  If using the HTTP
-          <spanx style="verb">POST</spanx> method, the request parameters are 
-          added to the HTTP request entity-body using the 
+          <spanx style="verb">POST</spanx> method, the request parameters are
+          added to the HTTP request entity-body using the
           <spanx style="verb">application/x-www-form-urlencoded</spanx> format
           as defined by <xref target="W3C.REC-html401-19991224"/>.</t>
 
@@ -541,8 +541,8 @@
 		<t hangText="nonce">
 		  <vspace/>
 		  REQUIRED.
-		  String value used to associate a Client session 
-		  with an ID Token, and to mitigate replay attacks. 
+		  String value used to associate a Client session
+		  with an ID Token, and to mitigate replay attacks.
 		  The value is passed through unmodified from the Authentication Request to the ID Token.
 		  Sufficient entropy MUST be present in the
 		  <spanx style="verb">nonce</spanx> values used to prevent
@@ -617,7 +617,7 @@
 		      user interface pages.
 		      An error is returned
 		      if an End-User
-		      is not already authenticated or the Client does not have 
+		      is not already authenticated or the Client does not have
 		      pre-configured consent for the requested
 		      Claims or does not fulfill other conditions for processing the request.
 		      The error code will typically be
@@ -646,9 +646,9 @@
                     <t hangText="select_account">
 		      <vspace/>
 		      The Authorization Server SHOULD
-		      prompt the End-User to select a user account.  This enables 
+		      prompt the End-User to select a user account.  This enables
 		      an End-User who has multiple accounts at the Authorization Server
-		      to select amongst the multiple accounts that they might have 
+		      to select amongst the multiple accounts that they might have
 		      current sessions for.
 		      If it cannot obtain an account selection choice made by the End-User,
 		      it MUST return an error,
@@ -687,7 +687,7 @@
                   For instance, the value "fr-CA fr en" represents a preference
                   for French as spoken in Canada,
 		  then French (without a region designation),
-                  followed by English (without a region designation). 
+                  followed by English (without a region designation).
 		  An error SHOULD NOT result if some or all of the requested locales
 		  are not supported by the OpenID Provider.
 		</t>
@@ -695,7 +695,7 @@
 		<t hangText="claims_locales">
 		  <vspace/>
 		  OPTIONAL.
-		  End-User's preferred languages and scripts for Claims being returned, 
+		  End-User's preferred languages and scripts for Claims being returned,
 		  represented as a space-separated list of
 		  <xref target="RFC5646">BCP47</xref> language tag values,
 		  ordered by preference.
@@ -729,10 +729,10 @@
 		  OPTIONAL.
 		  Hint to the Authorization Server
 		  about the login identifier the End-User might use to log in (if necessary).
-		  This hint can be used by an RP if it first asks the End-User for their e-mail 
+		  This hint can be used by an RP if it first asks the End-User for their e-mail
 		  address (or other identifier) and then wants to pass that value as a hint
 		  to the discovered authorization service.
-		  It is RECOMMENDED that the hint value match the value used for discovery. 
+		  It is RECOMMENDED that the hint value match the value used for discovery.
 		  This value MAY also be a phone number in the format specified for the
 		  <spanx style="verb">phone_number</spanx> Claim.
 		  The use of this parameter is left to the OP's discretion.
@@ -741,9 +741,9 @@
 		<t hangText="acr_values">
 		  <vspace/>
                   OPTIONAL.
-                  Requested Authentication Context Class Reference values. 
+                  Requested Authentication Context Class Reference values.
 		  Space-separated string that specifies the <spanx style="verb">acr</spanx>
-		  values that the Authorization Server is being requested to use 
+		  values that the Authorization Server is being requested to use
 		  for processing this authentication request,
 		  with the values appearing in order of preference.
 		  The Authentication Context Class satisfied by the authentication
@@ -752,7 +752,7 @@
 		  The <spanx style="verb">acr</spanx> Claim is requested as
 		  a Voluntary Claim by this parameter.
 		</t>
-		
+
 		<t hangText="registration">
 		  <vspace/>
                   OPTIONAL.
@@ -850,10 +850,10 @@
             <t>If the End-User grants the access request, the
             Authorization Server issues an Access Token and delivers it to the
             Client by adding the following parameters to the fragment component
-	    of the Redirection URI using the 
+	    of the Redirection URI using the
             <spanx style="verb">application/x-www-form-urlencoded</spanx>
             format as defined in Section 4.2.2 of
-            <xref target="RFC6749">OAuth 2.0</xref> and 
+            <xref target="RFC6749">OAuth 2.0</xref> and
             <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.</t>
 
             <t>In the Implicit Flow, the entire response is returned in the
@@ -887,11 +887,11 @@
                 <t hangText="state">
 		  <vspace/>
 		  OAuth 2.0 state value.
-		  REQUIRED if the 
+		  REQUIRED if the
 		  <spanx style="verb">state</spanx> parameter is present in the
-		  Authorization Request. Clients MUST verify that the 
-		  <spanx style="verb">state</spanx> value is equal to the 
-		  value of <spanx style="verb">state</spanx> parameter in the 
+		  Authorization Request. Clients MUST verify that the
+		  <spanx style="verb">state</spanx> value is equal to the
+		  value of <spanx style="verb">state</spanx> parameter in the
 		  Authorization Request.
 		</t>
 
@@ -929,14 +929,14 @@
             <t>
 	      If the End-User denies the authorization or the End-User authentication
 	      fails, the Authorization Server MUST return the error
-	      Authorization Response as defined in 4.2.2.1 of 
+	      Authorization Response as defined in 4.2.2.1 of
 	      <xref target="RFC6749">OAuth 2.0</xref>.
 	      (HTTP errors unrelated to RFC 6749 are returned to the User Agent using the
 	      appropriate HTTP status code.)
 	    </t>
           </section>
-          
-          <section anchor="ImplicitCallback" 
+
+          <section anchor="ImplicitCallback"
                    title="Redirect URI Fragment Handling">
 	    <t>
 	      Since response parameters are returned in the Redirection URI fragment value,
@@ -953,7 +953,7 @@
 
 	    <t>The following is an example of a JavaScript file that a Client might host at its
 	    <spanx style="verb">redirect_uri</spanx>.  This is loaded by the redirect from
-	    the Authorization Server.  The fragment component is parsed and then sent by <spanx style="verb">POST</spanx> to a URI 
+	    the Authorization Server.  The fragment component is parsed and then sent by <spanx style="verb">POST</spanx> to a URI
 	    that will validate and use the information received.</t>
 
 	    <figure>
@@ -962,7 +962,7 @@
 	      <artwork><![CDATA[
   GET /cb HTTP/1.1
   Host: client.example.org
-          
+
   HTTP/1.1 200 OK
   Content-Type: text/html
 
@@ -1001,10 +1001,10 @@
   req.send(postBody);
 ]]></artwork>
 	    </figure>
-	    
+
 	  </section>
         </section>
-        
+
       </section>
 
       <section anchor="IDToken" title="ID Token">
@@ -1035,7 +1035,7 @@
 	      <vspace/>
 	      REQUIRED.
 	      Subject Identifier. Locally unique and never
-	      reassigned identifier within the Issuer for the End-User, 
+	      reassigned identifier within the Issuer for the End-User,
 	      which is intended to be consumed by the Client,
 	      e.g., <spanx style="verb">24400320</spanx>
 	      or <spanx style="verb">AItOawmwtWwcT0k51BayewNvutrJUqsvl6qs7A4</spanx>.
@@ -1094,8 +1094,8 @@
 	    <t hangText="nonce">
 	      <vspace/>
 	      REQUIRED.
-	      String value used to associate a Client session 
-	      with an ID Token, and to mitigate replay attacks. 
+	      String value used to associate a Client session
+	      with an ID Token, and to mitigate replay attacks.
 	      The value is passed through unmodified from the Authentication Request to the ID Token.
 	      Clients MUST verify that
 	      the <spanx style="verb">nonce</spanx> Claim Value is equal to
@@ -1138,10 +1138,10 @@
 	      The value "0" indicates the End-User authentication
 	      did not meet the requirements of
 	      <xref target="ISO29115">ISO/IEC 29115</xref> level 1.
-	      Authentication using a long-lived browser cookie, for instance, is one 
-	      example where the use of "level 0" is appropriate. Authentications with 
-	      level 0 SHOULD NOT be used to authorize access to any resource of any 
-	      monetary value.  
+	      Authentication using a long-lived browser cookie, for instance, is one
+	      example where the use of "level 0" is appropriate. Authentications with
+	      level 0 SHOULD NOT be used to authorize access to any resource of any
+	      monetary value.
 	      An absolute URI or an <xref target="RFC6711">RFC 6711</xref>
 	      registered name
 	      SHOULD be used as the <spanx style="verb">acr</spanx> value;
@@ -1207,8 +1207,8 @@
 
 	<t>ID Tokens MUST be signed using <xref
 	target="JWS">JWS</xref>.
-	Clients MUST validate the ID Token per 
-	<xref target="IDTokenValidation"/>. 
+	Clients MUST validate the ID Token per
+	<xref target="IDTokenValidation"/>.
 	</t>
 	<t>
 	  ID Tokens SHOULD NOT use the JWS or JWE
@@ -1222,7 +1222,7 @@
 	</t>
 
 	<figure>
-	  <preamble>The following is a non-normative example of a base64url decoded 
+	  <preamble>The following is a non-normative example of a base64url decoded
 	  ID Token:</preamble>
 
 	  <artwork><![CDATA[
@@ -1237,7 +1237,7 @@
   }
 ]]></artwork>
 	</figure>
-        
+
 	<section anchor="IDTokenValidation" title="ID Token Validation">
 
 	  <t>
@@ -1245,7 +1245,7 @@
 	    the information that failed to correctly validate MUST be aborted and
 	    the information that failed to validate MUST NOT be used.
 	  </t>
-	  
+
 	  <t>To validate the ID Token in the Authorization Response,
 	  the Client MUST do the following:</t>
 
@@ -1255,7 +1255,7 @@
 	      <t>
 		The Issuer Identifier for the OpenID Provider
 		(which is typically obtained during Discovery)
-		MUST exactly match the value of the 
+		MUST exactly match the value of the
 		<spanx style="verb">iss</spanx> (issuer) Claim.
 	      </t>
 	      <t>
@@ -1280,37 +1280,37 @@
 
 	      <t>
 		The Client MUST validate the signature of the ID Token according to
-		<xref target="JWS">JWS</xref> using the algorithm specified in the 
+		<xref target="JWS">JWS</xref> using the algorithm specified in the
 		<spanx style="verb">alg</spanx> parameter of the JWT header.
 		The Client MUST use the keys provided by the Issuer.
 	      </t>
-	      
+
 	      <t>The <spanx style="verb">alg</spanx> value SHOULD be <spanx style="verb">RS256</spanx>.
 	      Validation of tokens using other signing algorithms is described in the
 	      <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>
 	      specification.</t>
 
 	      <t>
-		The current time MUST be before the time represented by the 
+		The current time MUST be before the time represented by the
 		<spanx style="verb">exp</spanx> Claim
 		(possibly allowing for some small leeway to account for clock skew).
 	      </t>
 
 	      <t>The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
 	      were issued too far away from the current time, limiting the amount of
-	      time that nonces need to be stored to prevent attacks. 
+	      time that nonces need to be stored to prevent attacks.
 	      The acceptable range is Client specific.</t>
-	      
+
 	      <t>The value of the <spanx style="verb">nonce</spanx>
 	      Claim MUST be checked to verify that
 	      it is the same value as the one that was sent in the Authentication Request.
 	      The Client SHOULD check the <spanx style="verb">nonce</spanx> value
 	      for replay attacks.
 	      The precise method for detecting replay attacks is Client specific.</t>
-	      
-	      <t>If the <spanx style="verb">acr</spanx> Claim was requested, the 
+
+	      <t>If the <spanx style="verb">acr</spanx> Claim was requested, the
 	      Client SHOULD check that the asserted Claim Value is appropriate.
-	      The meaning and processing of  
+	      The meaning and processing of
 	      <spanx style="verb">acr</spanx> Claim Values is out of scope for this specification.</t>
 
 	      <t>
@@ -1325,13 +1325,13 @@
 	</section>
 
 	<section anchor="AccessTokenValidation" title="Access Token Validation">
-	  <t>To validate an Access Token issued with an ID Token in 
+	  <t>To validate an Access Token issued with an ID Token in
 	  the Implicit Flow, the Client SHOULD do the following:</t>
 
 	  <t>
 	    <list style="numbers">
 	      <t>Hash the octets of the ASCII representation of
-	      the <spanx style="verb">access_token</spanx> 
+	      the <spanx style="verb">access_token</spanx>
 	      with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
 	      <spanx style="verb">alg</spanx>
 	      parameter in the ID Token's <xref target="JWS">JWS</xref> header.
@@ -1339,7 +1339,7 @@
 	      <spanx style="verb">RS256</spanx>,
 	      the hash algorithm used is SHA-256.
 	      </t>
-	      
+
 	      <t>Take the left-most half of the hash and base64url encode it.</t>
 
 	      <t>The value of <spanx style="verb">at_hash</spanx> in the ID Token MUST
@@ -1378,7 +1378,7 @@
 	    The UserInfo Endpoint is an <xref target="RFC6749">OAuth 2.0</xref>
 	    Protected Resource that complies with the <xref
 	    target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> specification.
-	    The request SHOULD use the 
+	    The request SHOULD use the
 	    HTTP <spanx style="verb">GET</spanx> method and
 	    the Access Token SHOULD be sent using the
 	    <spanx style="verb">Authorization</spanx> header field.
@@ -1440,10 +1440,10 @@
       </section>
 
       <section anchor="Scopes" title="Scope Values">
-        <t>OpenID Connect Clients use <spanx style="verb">scope</spanx> values as defined in 3.3 of 
+        <t>OpenID Connect Clients use <spanx style="verb">scope</spanx> values as defined in 3.3 of
         <xref target="RFC6749">OAuth 2.0</xref> to specify what
         access privileges are being requested for Access Tokens. The scopes associated
-        with Access Tokens determine what resources will be available when they are 
+        with Access Tokens determine what resources will be available when they are
         used to access OAuth 2.0 protected endpoints. For OpenID Connect, scopes
 	can be used to request that specific sets of information
 	be made available as Claim Values.
@@ -1470,7 +1470,7 @@
 
             <t hangText="profile">
 	      <vspace/>
-	      OPTIONAL. This scope value 
+	      OPTIONAL. This scope value
 	      requests access to the End-User's default profile Claims,
 	      which are:
 
@@ -1615,14 +1615,14 @@
 	  <c>preferred_username</c>
 	  <c>string</c>
 	  <c>Shorthand name by which the End-User wishes to be referred to at the RP, such as
-	  <spanx style="verb">janedoe</spanx> or <spanx style="verb">j.doe</spanx>. 
-	  This value MAY be any valid JSON string including 
-	  special characters such as <spanx style="verb">@</spanx>, 
+	  <spanx style="verb">janedoe</spanx> or <spanx style="verb">j.doe</spanx>.
+	  This value MAY be any valid JSON string including
+	  special characters such as <spanx style="verb">@</spanx>,
 	  <spanx style="verb">/</spanx>, or whitespace.
 	  The RP MUST NOT rely upon this value being unique,
 	  as discussed in <xref target="ClaimStability"></xref>.
 	  </c>
-	  
+
 	  <c>profile</c>
 	  <c>string</c>
 	  <c>
@@ -1683,12 +1683,12 @@
 
 	  <c>birthdate</c>
 	  <c>string</c>
-	  <c>End-User's birthday, represented as an 
-	  <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx> 
-	  format. The year MAY be <spanx style="verb">0000</spanx>, indicating that it is omitted. 
-	  To represent only the year, <spanx style="verb">YYYY</spanx> format is allowed. Note that 
+	  <c>End-User's birthday, represented as an
+	  <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx>
+	  format. The year MAY be <spanx style="verb">0000</spanx>, indicating that it is omitted.
+	  To represent only the year, <spanx style="verb">YYYY</spanx> format is allowed. Note that
 	  depending on the underlying platform's date related function, providing just year can
-	  result in varying month and day, so the implementers need to take this factor into account 
+	  result in varying month and day, so the implementers need to take this factor into account
 	  to correctly process the dates. </c>
 
 	  <c>zoneinfo</c>
@@ -1796,32 +1796,32 @@
 
 	<section anchor="AddressClaim" title="Address Claim">
 	  <t>
-	    The Address Claim represents a physical mailing address. 
+	    The Address Claim represents a physical mailing address.
 	    Implementations MAY return only a subset of the
 	    fields of an <spanx style="verb">address</spanx>, depending upon
-	    the information available and the End-User's privacy 
+	    the information available and the End-User's privacy
 	    preferences. For
-	    example, the <spanx style="verb">country</spanx> and <spanx 
+	    example, the <spanx style="verb">country</spanx> and <spanx
 	    style="verb">region</spanx> might be returned without returning
 	    more fine-grained address information.
 	  </t>
 	  <t>
-	    Implementations MAY return just the full address 
-	    as a single string in the formatted sub-field, 
-	    or they MAY return just the individual component 
-	    fields using the other sub-fields, 
-	    or they MAY return both. 
-	    If both variants are returned, 
-	    they SHOULD be describing the same address, 
-	    with the formatted address indicating how the 
+	    Implementations MAY return just the full address
+	    as a single string in the formatted sub-field,
+	    or they MAY return just the individual component
+	    fields using the other sub-fields,
+	    or they MAY return both.
+	    If both variants are returned,
+	    they SHOULD be describing the same address,
+	    with the formatted address indicating how the
 	    component fields are combined.
 	  </t>
 	  <t>
 	    <list style="hanging">
 	      <t hangText="formatted">
 		<vspace/>
-		Full mailing address, 
-		formatted for display or use on a mailing label. 
+		Full mailing address,
+		formatted for display or use on a mailing label.
 		This field MAY contain multiple lines, separated by newlines.
 		Newlines can be represented either as
 		a carriage return/line feed pair ("\r\n") or as
@@ -1830,9 +1830,9 @@
 
 	      <t hangText="street_address">
 		<vspace/>
-		Full street address component, 
-		which MAY include house number, street name, 
-		Post Office Box, and multi-line extended street 
+		Full street address component,
+		which MAY include house number, street name,
+		Post Office Box, and multi-line extended street
 		address information.
 		This field MAY contain multiple lines, separated by newlines.
 		Newlines can be represented either as
@@ -1847,13 +1847,13 @@
 
 	      <t hangText="region">
 		<vspace/>
-		State, province, 
+		State, province,
 		prefecture, or region component.
 	      </t>
 
 	      <t hangText="postal_code">
 		<vspace/>
-		Zip code or 
+		Zip code or
 	      postal code component.</t>
 
 	      <t hangText="country">
@@ -1942,8 +1942,8 @@
 	    stability over time or uniqueness across users, and Issuers are permitted to
 	    apply local restrictions and policies. For instance, an Issuer MAY re-use an
 	    <spanx style="verb">email</spanx> Claim Value across different
-	    End-Users at different points in time, and the claimed 
-	    <spanx style="verb">email</spanx> address for a given End-User MAY change 
+	    End-Users at different points in time, and the claimed
+	    <spanx style="verb">email</spanx> address for a given End-User MAY change
 	    over time.
 	    Therefore, other Claims such as <spanx style="verb">email</spanx>,
 	    <spanx style="verb">phone_number</spanx>, and
@@ -1968,7 +1968,7 @@
       <section anchor="SelfIssuedDiscovery" title="Self-Issued OpenID Provider Discovery">
         <t>
           If the input identifier for the discovery process
-	  contains the domain self-issued.me, dynamic discovery is not performed. 
+	  contains the domain self-issued.me, dynamic discovery is not performed.
           Instead, then the following static configuration values are used:
         </t>
         <t>
@@ -2017,7 +2017,7 @@
 	  <list style="hanging">
 	    <t hangText="client_id">
 	      <vspace/>
-	      <spanx style="verb">redirect_uri</spanx> value of the Client. 
+	      <spanx style="verb">redirect_uri</spanx> value of the Client.
 	    </t>
 	    <t hangText="client_secret_expires_at">
 	      <vspace/>
@@ -2027,7 +2027,7 @@
 	</t>
         <t>
 	  NOTE:  The OpenID Foundation plans to host the (stateless) endpoint
-	  <spanx style="verb">https://self-issued.me/registration/1.0/</spanx> 
+	  <spanx style="verb">https://self-issued.me/registration/1.0/</spanx>
 	  that returns the response above, enabling RPs to not need
 	  any special processing for registration with the Self-Issued OP.
 	  This site will be hosted on an experimental basis.
@@ -2053,7 +2053,7 @@
 		to a Self-Issued OP that would normally be provided to an OP during
 		Dynamic Client Registration.
 		The value is a JSON object containing Client metadata values,
-		as defined in Section 2.1 of the 
+		as defined in Section 2.1 of the
 		<xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>
 		specification.
 		The <spanx style="verb">registration</spanx> parameter SHOULD NOT be used
@@ -2125,7 +2125,7 @@
 	</list>
 	</t>
         <t>
-          Other parameters MAY be sent. 
+          Other parameters MAY be sent.
           Note that all Claims are returned in the ID Token.
         </t>
         <t>The entire URL MUST NOT exceed 2048 ASCII characters.</t>
@@ -2148,17 +2148,17 @@
     &registration=%7B%22logo_uri%22%3A%22https%3A%2F%2F
       client.example.org%2Flogo.png%22%7D
 ]]></artwork>
-        </figure> 
+        </figure>
       </section>
 
       <section anchor="SelfIssuedResponse" title="Self-Issued OpenID Provider Response">
-        <t>The self-issued OpenID Provider response is the same as the normal Implicit Flow 
+        <t>The self-issued OpenID Provider response is the same as the normal Implicit Flow
 	response with the following refinements.  Since it is an Implicit Flow
 	response, the response parameters will be returned in the URL fragment component.
         </t>
         <t><list style="numbers">
           <t>
-	    The <spanx style="verb">iss</spanx> (issuer) Claim Value is 
+	    The <spanx style="verb">iss</spanx> (issuer) Claim Value is
             <spanx style="verb">https://self-issued.me</spanx>.
 	  </t>
 	  <t>
@@ -2167,18 +2167,18 @@
 	  </t>
 	  <t>
 	    The <spanx style="verb">sub</spanx> (subject) Claim
-	    value is the base64url encoded SHA-256 hash of 
+	    value is the base64url encoded SHA-256 hash of
             the concatenation of the octets of the UTF-8 representations of
 	    the base64url encoded key values in the
 	    <spanx style="verb">sub_jwk</spanx> Claim.
 	    When the <spanx style="verb">kty</spanx> value is
 	    <spanx style="verb">RSA</spanx>, the key values
-	    <spanx style="verb">n</spanx> and 
+	    <spanx style="verb">n</spanx> and
             <spanx style="verb">e</spanx> are concatenated in that order.
 	    When the <spanx style="verb">kty</spanx> value is
 	    <spanx style="verb">EC</spanx>, the key values
 	    <spanx style="verb">crv</spanx>,
-	    <spanx style="verb">x</spanx>, and 
+	    <spanx style="verb">x</spanx>, and
             <spanx style="verb">y</spanx> are concatenated in that order.
 	  </t>
 	  <t>
@@ -2196,61 +2196,61 @@
         <t>
 	  <list style="numbers">
 	    <t>
-	      The Client MUST validate that the value of the <spanx style="verb">iss</spanx> (issuer) Claim is <spanx style="verb">https://self-isued.me</spanx>.  
-	      If <spanx style="verb">iss</spanx> contains a different value, 
+	      The Client MUST validate that the value of the <spanx style="verb">iss</spanx> (issuer) Claim is <spanx style="verb">https://self-isued.me</spanx>.
+	      If <spanx style="verb">iss</spanx> contains a different value,
 	      the ID Token is not Self-Issued, and instead
 	      it MUST be validated according to
 	      <xref target="IDTokenValidation"/>.
 	    </t>
 	    <t>
-	      The Client MUST validate that the 
+	      The Client MUST validate that the
 	      <spanx style="verb">aud</spanx> (audience) Claim
 	      contains the value of the <spanx style="verb">redirect_uri</spanx>
-	      that the Client sent in the authentication request as an audience. 
+	      that the Client sent in the authentication request as an audience.
 	    </t>
 	    <t>
 	      The Client MUST validate the signature of the ID Token according to
-	      <xref target="JWS">JWS</xref> using the algorithm specified in the 
-	      <spanx style="verb">alg</spanx> parameter of the JWT header <xref target="JWT"/>,  
+	      <xref target="JWS">JWS</xref> using the algorithm specified in the
+	      <spanx style="verb">alg</spanx> parameter of the JWT header <xref target="JWT"/>,
 	      using the key in the <spanx style="verb">sub_jwk</spanx> Claim;
 	      the key is a bare key in JWK <xref target="JWK"/> format
 	      (not an X.509 certificate value).
 	    </t>
 	    <t>
-	      The <spanx style="verb">alg</spanx> value SHOULD be the default of 
+	      The <spanx style="verb">alg</spanx> value SHOULD be the default of
 	      <spanx style="verb">RS256</spanx>.
 	      It MAY also be <spanx style="verb">ES256</spanx>.
 	    </t>
 	    <t>
 	      The Client MUST validate that the <spanx style="verb">sub</spanx> (subject) Claim
-	      value is the base64url encoded SHA-256 hash of 
+	      value is the base64url encoded SHA-256 hash of
 	      the concatenation of the octets of the UTF-8 representations of
 	      the base64url encoded key values in the
 	      <spanx style="verb">sub_jwk</spanx> Claim.
 	      When the <spanx style="verb">kty</spanx> value is
 	      <spanx style="verb">RSA</spanx>, the key values
-	      <spanx style="verb">n</spanx> and 
+	      <spanx style="verb">n</spanx> and
 	      <spanx style="verb">e</spanx> are concatenated in that order.
 	      When the <spanx style="verb">kty</spanx> value is
 	      <spanx style="verb">EC</spanx>, the key values
 	      <spanx style="verb">crv</spanx>,
-	      <spanx style="verb">x</spanx>, and 
+	      <spanx style="verb">x</spanx>, and
 	      <spanx style="verb">y</spanx> are concatenated in that order.
 	    </t>
 	    <t>
-	      The current time MUST be before the time represented by the 
+	      The current time MUST be before the time represented by the
 	      <spanx style="verb">exp</spanx> Claim
 	      (possibly allowing for some small leeway to account for clock skew).
 	    </t>
 	    <t>
-	      The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that 
+	      The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
 	      were issued too far away from the current time, limiting the amount of
-	      time that nonces need to be stored to prevent attacks. 
+	      time that nonces need to be stored to prevent attacks.
 	      The acceptable range is Client specific.
 	    </t>
 	    <t>
-	      If a nonce value was sent in the Authentication Request, 
-	      a <spanx style="verb">nonce</spanx> Claim MUST be present 
+	      If a nonce value was sent in the Authentication Request,
+	      a <spanx style="verb">nonce</spanx> Claim MUST be present
 	      and its value of the checked to verify that
 	      it is the same value as the one that was sent in the Authentication Request.
 	      The Client SHOULD check the <spanx style="verb">nonce</spanx> value
@@ -2261,7 +2261,7 @@
 	  </list>
 	</t>
         <figure>
-	  <preamble>The following is a non-normative example of a base64url decoded 
+	  <preamble>The following is a non-normative example of a base64url decoded
 	  Self-Issued ID Token
 	  (with line wraps within values for display purposes only):</preamble>
 
@@ -2281,7 +2281,7 @@
      QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
      SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
      w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
-     "e":"AQAB" 
+     "e":"AQAB"
     }
   }
 ]]></artwork>
@@ -2331,7 +2331,7 @@
 
       <section anchor="FormSerialization" title="Form Serialization">
 
-	<t>Parameters and their values are Form Serialized by adding the 
+	<t>Parameters and their values are Form Serialized by adding the
 	parameter names and values to the entity body of the HTTP request using
 	the <spanx style="verb">application/x-www-form-urlencoded</spanx> format
 	as defined by <xref target="W3C.REC-html401-19991224"/>.
@@ -2670,7 +2670,7 @@
 	<format target="http://openid.net/specs/openid-connect-core-1_0.html"
                 type="HTML" />
       </reference>
-      
+
       <reference anchor="OpenID.Discovery">
         <front>
           <title>OpenID Connect Discovery 1.0</title>
@@ -2912,41 +2912,41 @@
     <section anchor="Notices" title="Notices">
       <t>Copyright (c) 2014 The OpenID Foundation.</t>
       <t>
-	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
-	implementer, or other interested party a non-exclusive, royalty free, 
-	worldwide copyright license to reproduce, prepare derivative works from, 
-	distribute, perform and display, this Implementers Draft or 
-	Final Specification solely for the purposes of (i) developing 
-	specifications, and (ii) implementing Implementers Drafts and 
-	Final Specifications based on such documents, provided that attribution 
-	be made to the OIDF as the source of the material, but that such attribution 
+	The OpenID Foundation (OIDF) grants to any Contributor, developer,
+	implementer, or other interested party a non-exclusive, royalty free,
+	worldwide copyright license to reproduce, prepare derivative works from,
+	distribute, perform and display, this Implementers Draft or
+	Final Specification solely for the purposes of (i) developing
+	specifications, and (ii) implementing Implementers Drafts and
+	Final Specifications based on such documents, provided that attribution
+	be made to the OIDF as the source of the material, but that such attribution
 	does not indicate an endorsement by the OIDF.
       </t>
       <t>
-	The technology described in this specification was 
-	made available from contributions from various sources, 
-	including members of the OpenID Foundation and others.  
-	Although the OpenID Foundation has taken steps to help ensure 
-	that the technology is available for distribution, it takes 
-	no position regarding the validity or scope of any intellectual 
-	property or other rights that might be claimed to pertain to 
-	the implementation or use of the technology described in 
-	this specification or the extent to which any license under 
-	such rights might or might not be available; neither does it 
-	represent that it has made any independent effort to identify 
-	any such rights.  The OpenID Foundation and the contributors 
-	to this specification make no (and hereby expressly disclaim any) 
-	warranties (express, implied, or otherwise), including implied 
-	warranties of merchantability, non-infringement, fitness for 
-	a particular purpose, or title, related to this specification, 
-	and the entire risk as to implementing this specification is 
-	assumed by the implementer.  The OpenID Intellectual 
-	Property Rights policy requires contributors to offer 
-	a patent promise not to assert certain patent claims against 
-	other contributors and against implementers.  The OpenID Foundation invites 
-	any interested party to bring to its attention any copyrights, 
-	patents, patent applications, or other proprietary rights 
-	that may cover technology that may be required to practice 
+	The technology described in this specification was
+	made available from contributions from various sources,
+	including members of the OpenID Foundation and others.
+	Although the OpenID Foundation has taken steps to help ensure
+	that the technology is available for distribution, it takes
+	no position regarding the validity or scope of any intellectual
+	property or other rights that might be claimed to pertain to
+	the implementation or use of the technology described in
+	this specification or the extent to which any license under
+	such rights might or might not be available; neither does it
+	represent that it has made any independent effort to identify
+	any such rights.  The OpenID Foundation and the contributors
+	to this specification make no (and hereby expressly disclaim any)
+	warranties (express, implied, or otherwise), including implied
+	warranties of merchantability, non-infringement, fitness for
+	a particular purpose, or title, related to this specification,
+	and the entire risk as to implementing this specification is
+	assumed by the implementer.  The OpenID Intellectual
+	Property Rights policy requires contributors to offer
+	a patent promise not to assert certain patent claims against
+	other contributors and against implementers.  The OpenID Foundation invites
+	any interested party to bring to its attention any copyrights,
+	patents, patent applications, or other proprietary rights
+	that may cover technology that may be required to practice
 	this specification.
       </t>
     </section>
