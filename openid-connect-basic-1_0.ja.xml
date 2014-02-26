@@ -2023,6 +2023,12 @@
       <section anchor="UserInfo" title="UserInfo Endpoint">
 
         <t>
+          UserInfo Endpoint は, 認証された End-User に関する Claim を返す OAuth 2.0 Protected Resource である.
+          UserInfo Endpoint は <spanx style="verb">https</spanx> スキーマの URL であり, ポート番号, パス, クエリーを含むことができる (MAY).
+          Claim は JSON オブジェクトとして返される.
+        </t>
+        <!--
+        <t>
           The UserInfo Endpoint is an OAuth 2.0 Protected Resource that
           returns Claims about the authenticated End-User.
           The location of the UserInfo Endpoint MUST be
@@ -2032,14 +2038,27 @@
           represented by a JSON object that contains a collection of
           name and value pairs for the Claims.
         </t>
+        -->
 
+        <t>
+          UserInfo Endpoint にアクセスする際には TLS は必須である (MUST).
+          TLS 利用についての詳細は <xref target="TLSRequirements"/> 参照.
+        </t>
+        <!--
         <t>
           Communication with the UserInfo Endpoint MUST utilize TLS.
           See <xref target="TLSRequirements"/> for more information on using TLS.
         </t>
+        -->
 
         <section anchor="UserInfoRequest" title="UserInfo Request">
 
+          <t>
+            Client は, OpenID Connect Authentication で得られた Access Token を使って, UserInfo Endpoint に End-User の Claim をリクエストする.
+            UserInfo Endpoint は <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> に従った <xref target="RFC6749">OAuth 2.0</xref> Protected Resource である.
+            このリクエストは HTTP <spanx style="verb">GET</spanx> で行われるべきであり (SHOULD), Access Token は <spanx style="verb">Authorization</spanx> ヘッダー経由で渡されるべきである (SHOULD).
+          </t>
+          <!--
           <t>
             Clients send requests to the
             UserInfo Endpoint to obtain Claims about the End-User
@@ -2052,10 +2071,14 @@
             the Access Token SHOULD be sent using the
             <spanx style="verb">Authorization</spanx> header field.
           </t>
+          -->
 
           <figure>
             <preamble>
+              以下に UserInfo Request の例を示す.
+              <!--
               The following is a non-normative example of a UserInfo Request:
+              -->
             </preamble>
 
             <artwork><![CDATA[
@@ -2068,20 +2091,43 @@
 
         <section anchor="UserInfoResponse" title="Successful UserInfo Response">
           <t>
+            UserInfo Claim は JSON オブジェクトのメンバーとして返される (MUST).
+            レスポンスボディは UTF-8 エンコードされる (SHOULD).
+            <xref target="StandardClaims"/> に定義されている Claim に加え, そこに明記されていない Claim も返却可能である.
+          </t>
+          <!--
+          <t>
             The UserInfo Claims MUST be returned as the members of a JSON object.
             The response body SHOULD be encoded using UTF-8.
             The Claims defined in <xref target="StandardClaims"/> can be returned,
             as can additional Claims not specified there.
           </t>
+          -->
+          <t>
+            Claim が返されない場合, Claim Name は JSON オブジェクトから除かれるべきであり (SHOULD), 値を null や空文字列にした状態で該当 Claim を含めるべきではない (SHOULD NOT).
+          </t>
+          <!--
           <t>
             If a Claim is not returned, that Claim Name SHOULD be
             omitted from the JSON object representing the Claims; it
             SHOULD NOT be present with a null or empty string value.
           </t>
+          -->
+          <t>
+            UserInfo Response には, 必ず <spanx style="verb">sub</spanx> Claim を含むこと (MUST).
+          </t>
+          <!--
           <t>
             The <spanx style="verb">sub</spanx> (subject) Claim
             MUST always be returned in the UserInfo Response.
           </t>
+          -->
+          <t>
+            注) トークン置換攻撃を考慮すると, UserInfo Response が必ずしも ID Token の <spanx style="verb">sub</spanx> Claim が示す End-User のものであるとは保証できない.
+            そのため UserInfo Response に含まれる <spanx style="verb">sub</spanx> Claim が ID Token のそれと一致することを検証しなければならない (MUST).
+            もし2つが一致しない場合, UserInfo Response を利用してはならない (MUST NOT).
+          </t>
+          <!--
           <t>
             NOTE:  Due to the possibility of token substitution attacks,
             the UserInfo Response is not guaranteed to be about the
@@ -2092,19 +2138,30 @@
             <spanx style="verb">sub</spanx> Claim in the ID Token;
             if they do not match, the UserInfo Response values MUST NOT be used.
           </t>
+          -->
+          <t>
+            Client はレスポンスを返した OP が意図した通りの OP であることを, <xref target="RFC6125">RFC 6125</xref> に従い TLS サーバー証明書チェックを通じて検証しなければならない (MUST).
+          </t>
+          <!--
           <t>
             The Client MUST verify that the OP that responded was
             the intended OP through a TLS server certificate check,
             per <xref target="RFC6125">RFC 6125</xref>.
           </t>
+          -->
         </section>
 
         <section anchor="UserInfoErrorResponse" title="UserInfo Error Response">
 
+          <t>
+            もし何らかのエラーが起こった場合, UserInfo Endpoint は  <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> SEction 3 に示す Error Response を返す.
+          </t>
+          <!--
           <t>When an error condition occurs, the UserInfo Endpoint returns
           an Error Response as defined in Section 3 of
           <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>.
           </t>
+          -->
         </section>
       </section>
 
