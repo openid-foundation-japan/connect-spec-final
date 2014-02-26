@@ -3306,18 +3306,31 @@
 
     <section anchor="SelfIssued" title="Self-Issued OpenID Provider">
       <t>
+        OpenID Connect は Self-Issued OpenID プロバイダー (私有の self-hosted な OpenID Provider であり, 自己署名つきの ID Token を発行するもの) をサポートしている.
+        Self-Issued OP は
+        <spanx style="verb">https://self-issued.me</spanx> という特別な Issuer 識別子を使用する.
+      </t>
+      <!--
+      <t>
         OpenID Connect supports Self-Issued OpenID Providers -
         personal, self-hosted OPs that issue self-signed ID Tokens.
         Self-Issued OPs use the special Issuer Identifier
         <spanx style="verb">https://self-issued.me</spanx>.
       </t>
+      -->
 
       <section anchor="SelfIssuedDiscovery" title="Self-Issued OpenID Provider Discovery">
+        <t>
+          ディスカバリプロセスで入力された識別子が self-issued.me ドメインを含んでいた場合, ダイナミックディスカバリは実行されない.
+          その代わりに以下の静的な設定値が使用される.
+        </t>
+        <!--
         <t>
           If the input identifier for the discovery process
           contains the domain self-issued.me, dynamic discovery is not performed.
           Instead, then the following static configuration values are used:
         </t>
+        -->
         <t>
           <figure>
             <artwork><![CDATA[
@@ -3341,6 +3354,15 @@
           </figure>
         </t>
         <t>
+          注記: OpenID ファウンデーションは
+          <spanx style="verb">https://self-issued.me/</spanx>
+          という OpenID プロバイダーサイトを提供することを計画している.
+          その場合は WebFinger サービスも提供され, ディスカバリを実行すると上記の静的なディスカバリ情報を返すため, RP は Self-Issued OP のディスカバリのために特別な処理を行う必要はない.
+          このサイトは実験的に提供される予定である.
+          プロダクション環境を実装する際は, OpenID ファウンデーションが当該サイトをプロダクション用途を想定して提供するまでその環境に依存すべきではない.
+        </t>
+        <!--
+        <t>
           NOTE:  The OpenID Foundation plans to host the OpenID Provider site
           <spanx style="verb">https://self-issued.me/</spanx>,
           including its WebFinger service, so that performing discovery on it
@@ -3351,27 +3373,48 @@
           without a subsequent commitment by the OpenID Foundation
           to host the site in a manner intended for production use.
         </t>
+        -->
       </section>
 
       <section anchor="SelfIssuedRegistration" title="Self-Issued OpenID Provider Registration">
+        <t>
+          Self-Issued OP を使う際は登録は必要ない.
+          Client は登録しなくても OP に登録したかのように振る舞い, 以下の Client Registration Response を得る.
+        </t>
+        <!--
         <t>
           When using a Self-Issued OP, registration is not required.
           The Client can proceed without registration as if it had
           registered with the OP and obtained the following
           Client Registration Response:
        </t>
+        -->
         <t>
           <list style="hanging">
             <t hangText="client_id">
               <vspace/>
+              Client の <spanx style="verb">redirect_uri</spanx> 値.
+            </t>
+            <!--
+            <t hangText="client_id">
+              <vspace/>
               <spanx style="verb">redirect_uri</spanx> value of the Client.
             </t>
+            -->
             <t hangText="client_secret_expires_at">
               <vspace/>
               0
             </t>
           </list>
         </t>
+        <t>
+          注記: OpenID ファウンデーションは
+          <spanx style="verb">https://self-issued.me/registration/1.0/</spanx>
+          という (ステートレスな) エンドポイントを提供することを計画しており, そのエンドポイントは上記レスポンスを返すため, RP は Self-Issued OP の登録のために特別な処理を行う必要はない.
+          このサイトは実験的に提供される予定である.
+          プロダクション環境を実装する際は, OpenID ファウンデーションが当該サイトをプロダクション用途を想定して提供するまでその環境に依存すべきではない.
+        </t>
+        <!--
         <t>
           NOTE:  The OpenID Foundation plans to host the (stateless) endpoint
           <spanx style="verb">https://self-issued.me/registration/1.0/</spanx>
@@ -3382,17 +3425,31 @@
           without a subsequent commitment by the OpenID Foundation
           to host the site in a manner intended for production use.
         </t>
+        -->
 
         <section anchor="RegistrationParameter"
                  title='Providing Information with the "registration" Request Parameter'>
 
           <t>
+            OpenID Connect は Client が Self-Issued OpenID プロバイダーに追加の登録情報を提供することが出来るようにするために以下の認可リクエストパラメータを定義している.
+            <!--
             OpenID Connect defines the following Authorization Request parameter
             to enable Clients to provide additional registration information to
             Self-Issued OpenID Providers:
+            -->
 
             <list style="hanging">
 
+              <t hangText="registration">
+                <vspace/>
+                任意 (OPTIONAL).
+                このパラメータは通常, Dynamic Client Registration の間に Client が自身の情報を Self-Issued OP に提供する際に利用される.
+                この値は
+                <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>
+                仕様の Section 2.1 で定義されている Client メタデータの値を含む JSON オブジェクトである.
+                <spanx style="verb">registration</spanx> パラメータは OP が Self-Issued OP ではないときは利用すべきではない (SHOULD NOT).
+              </t>
+              <!--
               <t hangText="registration">
                 <vspace/>
                 OPTIONAL.
@@ -3406,17 +3463,39 @@
                 The <spanx style="verb">registration</spanx> parameter SHOULD NOT be used
                 when the OP is not a Self-Issued OP.
               </t>
+              -->
             </list>
           </t>
+          <t>
+            この情報の中で Self-Issued OP により必須 (REQUIRED) なものはなく, このパラメータの利用は任意 (OPTIONAL) である.
+          </t>
+          <!--
           <t>
             None of this information is REQUIRED by Self-Issued OPs,
             so the use of this parameter is OPTIONAL.
           </t>
+          -->
+          <t>
+            <spanx style="verb">registration</spanx> パラメータの値は OAuth 2.0 リクエストの中で UTF-8 エンコードされた JSON として表わされる.
+            (OAuth パラメータとして渡される際, form-urlencoded される).
+          </t>
+          <!--
           <t>
             The <spanx style="verb">registration</spanx> parameter value is represented
             in an OAuth 2.0 request as UTF-8 encoded JSON
             (which ends up being form-urlencoded when passed as an OAuth parameter).
           </t>
+          -->
+          <t>
+            Self-Issued OP へのリクエストの中で典型的に利用する登録パラメータは以下である.
+            <spanx style="verb">policy_uri</spanx>,
+            <spanx style="verb">tos_uri</spanx>, and
+            <spanx style="verb">logo_uri</spanx>.
+            Client が一つ以上の Redirection URI を使用する際, それらを登録するために
+            <spanx style="verb">redirect_uris</spanx>
+            パラメータを利用する.
+          </t>
+          <!--
           <t>
             The Registration parameters that would typically be used in requests
             to Self-Issued OPs are
@@ -3427,17 +3506,37 @@
             <spanx style="verb">redirect_uris</spanx>
             parameter would be used to register them.
           </t>
+          -->
         </section>
       </section>
 
       <section anchor="SelfIssuedRequest" title="Self-Issued OpenID Provider Request">
+        <t>Client は Authorization Endpoint へ以下のパラメータを付けて Authentication Request を送信する.</t>
+        <!--
         <t>The Client sends the Authentication Request to the Authorization Endpoint
         with the following parameters:</t>
+        -->
         <t><list style="hanging">
+          <t hangText="response_type">
+            <vspace/>
+            必須 (REQUIRED). 固定の文字列 <spanx style="verb">id_token</spanx>.
+          </t>
+          <!--
           <t hangText="response_type">
             <vspace/>
             REQUIRED. Constant string value <spanx style="verb">id_token</spanx>.
           </t>
+          -->
+          <t hangText="client_id">
+            <vspace/>
+            必須 (REQUIRED).
+            Client の Client ID, この場合は Client の
+            <spanx style="verb">redirect_uri</spanx> の値を含む.
+            Client の
+            <spanx style="verb">redirect_uri</spanx> URI の値は Client ID として送信されるので,
+            <spanx style="verb">redirect_uri</spanx> パラメータをリクエストの中に含む必要はない (NOT REQUIRED).
+          </t>
+          <!--
           <t hangText="client_id">
             <vspace/>
             REQUIRED.
@@ -3449,18 +3548,39 @@
             a <spanx style="verb">redirect_uri</spanx> parameter
             is NOT REQUIRED to also be included in the request.
           </t>
+          -->
+          <t hangText="scope">
+            <vspace/>
+            必須 (REQUIRED).
+            <xref target="RequestParameters"/> で定義されている <spanx style="verb">scope</spanx> パラメータの値.
+          </t>
+          <!--
           <t hangText="scope">
             <vspace/>
             REQUIRED.
             <spanx style="verb">scope</spanx> parameter value,
             as defined in <xref target="RequestParameters"/>.
           </t>
+          -->
+          <t hangText="id_token_hint">
+            <vspace/>
+            任意 (OPTIONAL).
+            <xref target="RequestParameters"/> で定義されている <spanx style="verb">id_token_hint</spanx> パラメータの値.
+          </t>
+          <!--
           <t hangText="id_token_hint">
             <vspace/>
             OPTIONAL.
             <spanx style="verb">id_token_hint</spanx> parameter value,
             as specified in <xref target="RequestParameters"/>.
           </t>
+          -->
+          <t hangText="registration">
+            <vspace/>
+            任意 (OPTIONAL).
+            このパラメータは通常 <xref target="RegistrationParameter"/> で定義されているように, Dynamic Client Registration の間に Client が自身の情報を Self-Issued OP に提供する際に利用される.
+          </t>
+          <!--
           <t hangText="registration">
             <vspace/>
             OPTIONAL.
@@ -3469,20 +3589,34 @@
             Dynamic Client Registration,
             as specified in <xref target="RegistrationParameter"/>.
           </t>
+          -->
         </list>
         </t>
+        <t>
+          他のパラメータも送ってもよい (MAY).
+          すべての Claim は ID Token の中で返されることに留意すること.
+        </t>
+        <!--
         <t>
           Other parameters MAY be sent.
           Note that all Claims are returned in the ID Token.
         </t>
+        -->
+        <t>全体 URL 長は ASCII で 2048 文字を超えてはならない (MUST NOT).</t>
+        <!--
         <t>The entire URL MUST NOT exceed 2048 ASCII characters.</t>
+        -->
         <figure>
           <preamble>
+            以下は, User Agent が Self-Issued OpenID プロバイダーに対して Authentication Request を生成するためのトリガーとなる, Client による HTTP 302 リダイレクトレスポンスの参考例である.
+            (改行は掲載上の都合による)
+            <!--
             The following is a non-normative example
             HTTP 302 redirect response by the Client, which triggers
             the User Agent to make an Authentication Request
             to the Self-Issued OpenID Provider
             (with line wraps within values for display purposes only):
+            -->
           </preamble>
           <artwork><![CDATA[
   HTTP/1.1 302 Found
@@ -3499,19 +3633,48 @@
       </section>
 
       <section anchor="SelfIssuedResponse" title="Self-Issued OpenID Provider Response">
+        <t>Self-Issued OpenID プロバイダーのレスポンスは, 通常の Implicit フローのレスポンスに以下の改変をしたものと同じである. Implicit フローのレスポンスなので, レスポンスパラメータは URL フラグメントコンポーネントの中で返される.
+        </t>
+        <!--
         <t>The self-issued OpenID Provider response is the same as the normal Implicit Flow
         response with the following refinements.  Since it is an Implicit Flow
         response, the response parameters will be returned in the URL fragment component.
         </t>
+        -->
         <t><list style="numbers">
+          <t>
+            <spanx style="verb">iss</spanx> (issuer) Claim の値が
+            <spanx style="verb">https://self-issued.me</spanx> である.
+          </t>
+          <!--
           <t>
             The <spanx style="verb">iss</spanx> (issuer) Claim Value is
             <spanx style="verb">https://self-issued.me</spanx>.
           </t>
+          -->
+          <t>
+            <spanx style="verb">sub_jwk</spanx> Claim が存在し, その値が ID Token の署名を検証するための公開鍵となっている.
+          </t>
+          <!--
           <t>
             A <spanx style="verb">sub_jwk</spanx> Claim is present, with its value being
             the public key used to check the signature of the ID Token.
           </t>
+          -->
+          <t>
+            <spanx style="verb">sub</spanx> (subject) Claim の値は
+            <spanx style="verb">sub_jwk</spanx> Claim の中の Base64URL エンコードされたキー値の UTF-8 表現のオクテットを結合したものの SHA-256 ハッシュを Base64URL エンコードしたものである.
+            <spanx style="verb">kty</spanx> の値が
+            <spanx style="verb">RSA</spanx> である時, キーの値は
+            <spanx style="verb">n</spanx> と,
+            <spanx style="verb">e</spanx> が順に結合されたものである.
+            <spanx style="verb">kty</spanx> の値が
+            <spanx style="verb">EC</spanx> である時, キーの値は
+            <spanx style="verb">crv</spanx> と,
+            <spanx style="verb">x</spanx> と,
+            <spanx style="verb">y</spanx> が順に結合されたものである.
+          </t>
+          <!--
           <t>
             The <spanx style="verb">sub</spanx> (subject) Claim
             value is the base64url encoded SHA-256 hash of
@@ -3528,20 +3691,40 @@
             <spanx style="verb">x</spanx>, and
             <spanx style="verb">y</spanx> are concatenated in that order.
           </t>
+          -->
+          <t>
+            UserInfo エンドポイントへアクセスするための Access Token は返されないため,
+            すべての Claim は ID Token の中で返されなければならない (MUST).
+          </t>
+          <!--
           <t>
             No Access Token is returned for accessing a UserInfo Endpoint,
             so all Claims returned MUST be in the ID Token.
           </t>
+          -->
         </list></t>
       </section>
 
       <section anchor="SelfIssuedValidation" title="Self-Issued ID Token Validation">
 
         <t>
+          返された ID Token の検証を行うため, Client は以下のことを実施しなくてはならない (MUST).
+        </t>
+        <!--
+        <t>
           To validate the ID Token received, the Client MUST do the following:
         </t>
+        -->
         <t>
           <list style="numbers">
+            <t>
+              Client は, <spanx style="verb">iss</spanx> (issuer) Claim の値が <spanx style="verb">https://self-isued.me</spanx> であることを検証しなければならない (MUST).
+              もし <spanx style="verb">iss</spanx> が別の値を含んでいた場合,
+              その ID Token は Self-Issued ではないので,
+              <xref target="IDTokenValidation"/>
+              に沿って検証されなければならない (MUST).
+            </t>
+            <!--
             <t>
               The Client MUST validate that the value of the <spanx style="verb">iss</spanx> (issuer) Claim is <spanx style="verb">https://self-isued.me</spanx>.
               If <spanx style="verb">iss</spanx> contains a different value,
@@ -3549,12 +3732,24 @@
               it MUST be validated according to
               <xref target="IDTokenValidation"/>.
             </t>
+            -->
+            <t>
+              Client は, Client が認証リクエストで送信した <spanx style="verb">redirect_uri</spanx> の値が, <spanx style="verb">aud</spanx> Claim にオーディエンスとして含まれていることを検証しなければならない (MUST).
+            </t>
+            <!--
             <t>
               The Client MUST validate that the
               <spanx style="verb">aud</spanx> (audience) Claim
               contains the value of the <spanx style="verb">redirect_uri</spanx>
               that the Client sent in the authentication request as an audience.
             </t>
+            -->
+            <t>
+              Client は, JWT ヘッダ <xref target="JWT"/> の <spanx style="verb">alg</spanx> パラメータに指定されたアルゴリズムを使い <xref target="JWS">JWS</xref> に沿って ID Token の署名を検証しなければならない (MUST).
+              その際, <spanx style="verb">sub_jwk</spanx> Claim の中の鍵を使用する;
+              鍵は <xref target="JWK"/> フォーマットの鍵である (X.509 証明書ではない).
+            </t>
+            <!--
             <t>
               The Client MUST validate the signature of the ID Token according to
               <xref target="JWS">JWS</xref> using the algorithm specified in the
@@ -3563,11 +3758,32 @@
               the key is a bare key in JWK <xref target="JWK"/> format
               (not an X.509 certificate value).
             </t>
+            -->
+            <t>
+              <spanx style="verb">alg</spanx> の値はデフォルトとしては <spanx style="verb">RS256</spanx> であるべきである (SHOULD).
+              この値は <spanx style="verb">ES256</spanx> であってもよい (MAY).
+            </t>
+            <!--
             <t>
               The <spanx style="verb">alg</spanx> value SHOULD be the default of
               <spanx style="verb">RS256</spanx>.
               It MAY also be <spanx style="verb">ES256</spanx>.
             </t>
+            -->
+            <t>
+              Client は <spanx style="verb">sub</spanx> (subject) Claim の値が
+              Base64URL エンコードされた <spanx style="verb">sub_jwk</spanx> Claim の中のキーの値が Base64URL エンコードされた UTF-8 表現のオクテットを結合したものの SHA-256 ハッシュであることを検証しなくてはならない (MUST).
+              <spanx style="verb">kty</spanx> の値が
+              <spanx style="verb">RSA</spanx> である時, キーの値は
+              <spanx style="verb">n</spanx> と
+              <spanx style="verb">e</spanx> が順に結合されたものである.
+              <spanx style="verb">kty</spanx> の値が
+              <spanx style="verb">EC</spanx> である時, キーの値は
+              <spanx style="verb">crv</spanx> と,
+              <spanx style="verb">x</spanx> と,
+              <spanx style="verb">y</spanx> が順に結合されたものである.
+            </t>
+            <!--
             <t>
               The Client MUST validate that the <spanx style="verb">sub</spanx> (subject) Claim
               value is the base64url encoded SHA-256 hash of
@@ -3584,17 +3800,39 @@
               <spanx style="verb">x</spanx>, and
               <spanx style="verb">y</spanx> are concatenated in that order.
             </t>
+            -->
+            <t>
+              現在時刻が <spanx style="verb">exp</spanx> Claim より前でなければならない (MUST).
+              (時計のズレを考慮した多少の猶予は許容される)
+            </t>
+            <!--
             <t>
               The current time MUST be before the time represented by the
               <spanx style="verb">exp</spanx> Claim
               (possibly allowing for some small leeway to account for clock skew).
             </t>
+            -->
+            <t>
+              <spanx style="verb">iat</spanx> Claim が現在時刻からあまりにかけ離れている場合は, そのトークンを拒絶してもよい.
+              これにより nonce の保存期間を制限することができる.
+              適切な閾値は, Client ごとにことなる.
+            </t>
+            <!--
             <t>
               The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
               were issued too far away from the current time, limiting the amount of
               time that nonces need to be stored to prevent attacks.
               The acceptable range is Client specific.
             </t>
+            -->
+            <t>
+              nonce が Authentication Request で送られた場合,
+              <spanx style="verb">nonce</spanx> Claim が存在し,
+              その値は Authentication Request で送られたものと同じ値であることを検証されなくてはならない (MUST).
+              Client はリプレイアタックを防ぐため <spanx style="verb">nonce</spanx> の値を検証すべきである (SHOULD).
+              リプレイアタックを検知するための詳細は方法は Client ごとに固有である.
+            </t>
+            <!--
             <t>
               If a nonce value was sent in the Authentication Request,
               a <spanx style="verb">nonce</spanx> Claim MUST be present
@@ -3604,13 +3842,18 @@
               for replay attacks.
               The precise method for detecting replay attacks is Client specific.
             </t>
+            -->
 
           </list>
         </t>
         <figure>
+          <preamble>以下は Self-Issued ID Token を Base64URL デコードした参考例である.
+          (改行は掲載上の都合による)</preamble>
+          <!--
           <preamble>The following is a non-normative example of a base64url decoded
           Self-Issued ID Token
           (with line wraps within values for display purposes only):</preamble>
+          -->
 
           <artwork><![CDATA[
   {
