@@ -584,6 +584,14 @@
 
     <section anchor="ProtocolElements" title="Protocol Elements">
       <t>
+        Authentication Requests は Authorization Code Flow, Implicit Flow および Hybrid Flow のいずれかのフローに従う.
+        Authorization Code Flow は, Authorization Server と Client 自身との間でセキュアに Client Secret を管理できる Client 向けのフローである.
+        それが不可能な Client は Implicit Flow を用いる.
+        しかしながら, Client Secret をセキュアに保持できないにも関わらず, Refresh Token 取得のためにしばしば Native アプリケーションやその他の Client が Authorization Code flow を利用することもある.
+        Hybrid Flow は Authorization Code Flow と Implicit Flow をあわせたものであり, Client が Authorization Server から直接 ID Token およびオプションで Access Token を受け取ることでレイテンシ低下を防ぎつつも, 後から Client が Token Endpoint にアクセスして各種トークン (特に Refresh Token) を取得できるようにするものである.
+      </t>
+      <!--
+      <t>
         Authentication Requests can follow one of three paths:
         the Authorization Code Flow,
         the Implicit Flow, or
@@ -600,55 +608,122 @@
         It enables Clients to obtain an ID Token and optionally an Access Token with only
         one round trip to the Authorization Server, possibly minimizing latency,
         while still enabling Clients to later get tokens from the Token Endpoint
-        -- especially a Refresh Token.
+        - especially a Refresh Token.
       </t>
+      -->
 
+      <t>
+        このドキュメントは Code Flow を利用する Client に対して必要十分な情報のみを提供する.
+      </t>
+      <!--
       <t>
         This specification only provides information that is sufficient for
         basic Clients using the Code Flow.
       </t>
+      -->
 
       <section anchor="CodeFlow" title="Code Flow">
+        <t>
+          Code Flow は以下のステップからなる.
+        </t>
+        <!--
         <t>The Code Flow consists of the following steps:</t>
+        -->
         <t>
           <list style="numbers">
+            <t>
+              Client は必要なリクエストパラメータを含んだ Authentication Request を構築する.
+            </t>
+            <!--
             <t>Client prepares an Authentication Request containing the desired
             request parameters.</t>
+            -->
 
+            <t>
+              Client は Authorization Server にリクエストを送信する.
+            </t>
+            <!--
             <t>Client sends the request to the Authorization Server.</t>
+            -->
 
+            <t>
+              Authorization Server は End-User を認証する.
+            </t>
+            <!--
             <t>Authorization Server authenticates the End-User.</t>
+            -->
 
+            <t>
+              Authorization Server は End-User の Consent/Authorization を取得する.
+            </t>
+            <!--
             <t>Authorization Server obtains End-User Consent/Authorization.</t>
+            -->
 
+            <t>
+              Authorization Server は End-User を <spanx style="verb">code</spanx> とともに Client に戻す.
+            </t>
+            <!--
             <t>Authorization Server sends the End-User back to the Client with
             <spanx style="verb">code</spanx>.</t>
+            -->
 
+            <t>
+              Client は <spanx style="verb">code</spanx> を Token Endpoint に送信し, Access Token と ID Token を受け取る.
+            </t>
+            <!--
             <t>Client sends the <spanx style="verb">code</spanx> to the
             Token Endpoint to receive an Access Token and ID Token in the response.</t>
+            -->
 
+            <t>
+              Client はそれらのトークンを検証し, End-User の Subject Identifier を取得する.
+            </t>
+            <!--
             <t>Client validates the tokens and retrieves the End-User's
             Subject Identifier.</t>
+            -->
           </list>
         </t>
 
         <section anchor="AuthenticationRequest" title="Client Prepares Authentication Request">
+          <t>
+            RP が End-User を Authenticate したい, もしくは End-User が既に Authenticated であるかどうか知りたい場合, Client は Authorization Endpoint に Authorization Request を送る.
+          </t>
+          <!--
           <t>
             When the RP wishes to Authenticate the End-User
             or determine whether the End-User is already Authenticated,
             the Client prepares an Authentication Request
             to be sent to the Authorization Endpoint.
           </t>
+          -->
+          <t>
+            Authorization Endpoint との間の通信は TLS を利用しなければならない (MUST).
+            TLS の詳細については <xref target="TLSRequirements"/> を参照のこと.
+          </t>
+          <!--
           <t>
             Communication with the Authorization Endpoint MUST utilize TLS.
             See <xref target="TLSRequirements"/> for more information on using TLS.
           </t>
+          -->
 
+          <t>
+            Client は <xref target="RFC2616">RFC 2616</xref> に定義される HTTP <spanx style="verb">GET</spanx> もしくは HTTP <spanx style="verb">POST</spanx> を利用できる (MAY).
+          </t>
+          <!--
           <t>Clients MAY construct the request using the HTTP
           <spanx style="verb">GET</spanx> or the HTTP
           <spanx style="verb">POST</spanx> method as defined in
           <xref target="RFC2616">RFC 2616</xref>.</t>
+          -->
 
+          <t>
+            HTTP <spanx style="verb">GET</spanx> を利用する場合, パラメータは <xref target="QuerySerialization"/> にある Query String Serialization を用いてシリアライズされる.
+            HTTP <spanx style="verb">POST</spanx> を利用する場合, パラメータは <xref target="W3C.REC-html401-19991224"/> にある <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットを用いてエンティティボディ中に含まれる.
+          </t>
+          <!--
           <t>If using the HTTP <spanx style="verb">GET</spanx> method, the
           parameters are serialized using
           the Query String Serialization, per <xref target="QuerySerialization"/>.
@@ -657,11 +732,18 @@
           added to the HTTP request entity-body using the
           <spanx style="verb">application/x-www-form-urlencoded</spanx> format
           as defined by <xref target="W3C.REC-html401-19991224"/>.</t>
+          -->
 
           <figure>
+            <preamble>
+              以下は Authorization Request URL の一例である.
+              (改行は掲載上の都合による)
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example of an
             Authentication Request URL
             (with line wraps within values for display purposes only):</preamble>
+            -->
 
             <artwork><![CDATA[
   https://server.example.com/authorize?
@@ -676,30 +758,54 @@
           <section anchor="RequestParameters" title="Request Parameters">
 
             <t>
+              OpenID Connect は以下の OAuth 2.0 リクエストパラメータを利用する.
+            </t>
+            <!--
+            <t>
               This subset of
               OpenID Connect uses the following OAuth 2.0 request parameters:
             </t>
+            -->
             <t>
               <list style="hanging">
                 <t hangText="response_type">
                   <vspace/>
+                  REQUIRED.
+                  値は <spanx style="verb">code</spanx> とすること (MUST).
+                  これにより Authorization Endpoint から返される <spanx style="verb">code</spanx> と交換で, Access Token および ID Token が Token Endpoint から返されることになる.
+                  <!--
                   REQUIRED.
                   This value MUST be <spanx style="verb">code</spanx>.
                   This requests that both an Access Token and an ID Token be returned
                   from the Token Endpoint in exchange for
                   the <spanx style="verb">code</spanx> value returned from the
                   Authorization Endpoint.
+                  -->
                 </t>
 
                 <t hangText="client_id">
                   <vspace/>
                   REQUIRED.
+                  Authorization Server における OAuth 2.0 Client Identifier の値.
+                  <!--
+                  REQUIRED.
                   OAuth 2.0 Client Identifier
                   valid at the Authorization Server.
+                  -->
                 </t>
 
                 <t hangText="scope">
                   <vspace/>
+                  REQUIRED.
+                  OpenID Connect リクエストは scope に <spanx style="verb">openid</spanx> を含まねばならない (MUST).
+                  OPTIONAL な scope としては,
+                  <spanx style="verb">profile</spanx>,
+                  <spanx style="verb">email</spanx>,
+                  <spanx style="verb">address</spanx>,
+                  <spanx style="verb">phone</spanx>,
+                  および <spanx style="verb">offline_access</spanx> が定義されている.
+                  それぞれの scope 値についての詳細は <xref target="Scopes"/> を参照のこと.
+                  <!--
                   REQUIRED.
                   OpenID Connect requests MUST contain the <spanx style="verb">openid</spanx> scope value.
                   OPTIONAL scope values of
@@ -710,10 +816,19 @@
                   and <spanx style="verb">offline_access</spanx>
                   are also defined.
                   See <xref target="Scopes"/> for more about the scope values defined by this specification.
+                  -->
                 </t>
 
                 <t hangText="redirect_uri">
                   <vspace/>
+                  REQUIRED.
+                  レスポンスが返される Redirection URI.
+                  この URI は, Client が OpenID Provider に対して事前に登録済みの Redirection URI のいずれかと完全一致しなければならない (MUST).
+                  マッチングルールは <xref target="RFC3986"/> (Simple String Comparison) の Section 6.2.1 に従うこと.
+                  Redirection URI は <spanx style="verb">https</spanx> スキーマを利用することが望まれる (SHOULD) が, Client Type が <spanx style="verb">confidential</spanx> であり, かつ OP が <spanx style="verb">http</spanx> の利用を容認する場合に限り, <spanx style="verb">http</spanx> スキーマを利用してもよい (MAY).
+                  Client Type 等の定義については OAuth 2.0 の Section 2.1 を参照のこと.
+                  Redirection URI には, ネイティブアプリケーションにコールバックを送る目的などで, 上記以外のスキーマを利用することもできる.
+                  <!--
                   REQUIRED.
                   Redirection URI to which the response will be sent.
                   This URI MUST exactly match one of the Redirection URI values
@@ -730,30 +845,49 @@
                   <spanx style="verb">http</spanx> Redirection URIs in this case.
                   The Redirection URI MAY use an alternate scheme,
                   such as one that is intended to identify a callback into a native application.
+                  -->
                 </t>
 
                 <t hangText="state">
                   <vspace/>
+                  RECOMMENDED.
+                  リクエストとコールバックの間で維持されるランダムな値.
+                  一般的に Cross-Site Request Forgery (CSRF, XSRF) 対策の目的で利用される, ブラウザ Cookie と紐づく暗号論的にセキュアな値を取る.
+                  <!--
                   RECOMMENDED.
                   Opaque value used
                   to maintain state between the request and the callback.
                   Typically, Cross-Site Request Forgery (CSRF, XSRF)
                   mitigation is done by cryptographically binding the value of
                   this parameter with a browser cookie.
+                  -->
                 </t>
 
               </list>
             </t>
 
             <t>
+              本仕様は上記に加えて以下のリクエストパラメータを定義する.
+            </t>
+            <!--
+            <t>
               This specification also defines the following request parameters:
             </t>
+            -->
 
             <t>
               <list style="hanging">
 
                 <t hangText="nonce">
                   <vspace/>
+                  OPTIONAL.
+                  Client セッションと ID Token を紐づける文字列であり, リプレイアタック対策に用いられる.
+                  この値は Authentication Request で指定され, そのままの値で ID Token に含まれる.
+                  <spanx style="verb">nonce</spanx> 値には, 推測不可能なように十分なエントロピーを持たせること (MUST).
+                  この条件を満たすには, 暗号論的にセキュアな乱数を HttpOnly なセッションクッキーとして用い, その暗号論的ハッシュ値を <spanx style="verb">nonce</spanx> として利用するといった方法が考えられる.
+                  この場合, ID Token に含まれて返される <spanx style="verb">nonce</spanx> 値をセッションクッキーのハッシュ値と比較することで, 第三者によるリプレイアタックを検知することができる.
+                  Code Flow を利用する場合, nonce の利用は OPTIONAL である.
+                  <!--
                   OPTIONAL.
                   String value used to associate a Client session
                   with an ID Token, and to mitigate replay attacks.
@@ -768,65 +902,98 @@
                   ID Token is compared to the hash of the session cookie
                   to detect ID Token replay by third parties.
                   Use of the nonce is OPTIONAL when using the code flow.
+                  -->
                 </t>
 
                 <t hangText="display">
                   <vspace/>
                   OPTIONAL.
+                  Authorization Server が認証および同意のためのユーザーインタフェースを End-User にどのように表示するかを指定するための ASCII 値.
+                  以下の値が定義されている.
+                  <!--
+                  OPTIONAL.
                   ASCII string value that specifies
                   how the Authorization Server displays the authentication and
                   consent user interface pages to the End-User.
                   The defined values are:
+                  -->
 
                   <list style="hanging">
                     <t hangText="page">
                       <vspace/>
+                      Authorization Server は認証および同意 UI を User Agent の全画面に表示すべきである (SHOULD).
+                      display パラメータが指定されていない場合, この値がデフォルトとなる.
+                      <!--
                       The Authorization Server SHOULD display the
                       authentication and consent UI consistent with a full User Agent page
                       view. If the display parameter is not specified, this is the
                       default display mode.
+                      -->
                     </t>
 
                     <t hangText="popup">
                       <vspace/>
+                      Authorization Server は認証および同意 UI を User Agent のポップアップウィンドウに表示すべきである (SHOULD).
+                      User Agent のポップアップウィンドウはログインダイアログに適切なサイズで, 親ウィンドウ全体を覆うことのないようにすべきである.
+                      <!--
                       The Authorization Server SHOULD display the
                       authentication and consent UI consistent with a popup User Agent
                       window.
                       The popup User Agent window should be of an appropriate size
                       for a login-focused dialog and should not obscure
                       the entire window that it is popping up over.
+                      -->
                     </t>
 
                     <t hangText="touch">
                       <vspace/>
+                      Authorization Server は認証および同意 UI をタッチインタフェースを持つデバイスに適した形で表示すべきである (SHOULD).
+                      <!--
                       The Authorization Server SHOULD display the
                       authentication and consent UI consistent with a device that
                       leverages a touch interface.
+                      -->
                     </t>
 
                     <t hangText="wap">
                       <vspace/>
+                      Authorization Server は認証および同意 UI を "feature phone" に適した形で表示すべきである (SHOULD).
+                      <!--
                       The Authorization Server SHOULD display the
                       authentication and consent UI consistent with a "feature phone"
                       type display.
+                      -->
                     </t>
                   </list>
 
+                  Authorization Server は User Agent の機能を検知して適切な表示を行うようにしても良い (MAY).
+                  <!--
                   The Authorization Server MAY also attempt to detect the capabilities
                   of the User Agent and present an appropriate display.
+                  -->
                 </t>
 
                 <t hangText="prompt">
                   <vspace/>
                   OPTIONAL.
+                  Authorization Server が End-User に再認証および同意を再度要求するかどうか指定するための, スペース区切りの ASCII 文字列のリスト.
+                  以下の値が定義されている.
+                  <!--
+                  OPTIONAL.
                   Space delimited, case sensitive list of ASCII string values
                   that specifies whether the Authorization Server prompts
                   the End-User for reauthentication and consent.
                   The defined values are:
+                  -->
 
                   <list style="hanging">
                     <t hangText="none">
                       <vspace/>
+                      Authorization Server はいかなる認証および同意 UI をも表示してはならない (MUST NOT).
+                      End-User が認証済でない場合, Client が要求する Claim 取得に十分な事前同意を取得済でない場合, またはリクエストを処理するために必要な何らかの条件を満たさない場合には, エラーが返される.
+                      典型的なエラーコードは <spanx style="verb">login_required</spanx>, <spanx style="verb">interaction_required</spanx> である.
+                      この prompt 値は現在の認証状態, 同意状況を確認する為にも利用できる.
+                      <!--
                       The Authorization Server
                       MUST NOT display any authentication or consent
                       user interface pages.
@@ -840,26 +1007,42 @@
                       <spanx style="verb">interaction_required</spanx>.
                       This can be used as a
                       method to check for existing authentication and/or consent.
+                      -->
                     </t>
 
                     <t hangText="login">
                       <vspace/>
+                      Authorization Server は End-User を再認証するべきである (SHOULD).
+                      再認証が不可能な場合はエラーを返す (MUST).
+                      典型的なエラーコードは <spanx style="verb">login_required</spanx> である.
+                      <!--
                       The Authorization Server SHOULD prompt the
                       End-User for reauthentication.
                       If it cannot reauthenticate the End-User, it MUST return an error,
                       typically <spanx style="verb">login_required</spanx>.
+                      -->
                     </t>
 
                     <t hangText="consent">
                       <vspace/>
+                      Authorization Server は Client にレスポンスを返す前に End-User に同意を要求するべきである (SHOULD).
+                      同意要求が不可能な場合はエラーを返す (MUST).
+                      典型的なエラーコードは <spanx style="verb">consent_required</spanx> である.
+                      <!--
                       The Authorization Server SHOULD prompt the End-User for consent
                       before returning information to the Client.
                       If it cannot obtain consent, it MUST return an error,
                       typically <spanx style="verb">consent_required</spanx>.
+                      -->
                     </t>
 
                     <t hangText="select_account">
                       <vspace/>
+                      Authorization Server は End-User にアカウント選択を促すべきである (SHOULD).
+                      この prompt 値は, End-User が Authorization Server 上に複数アカウントを持っているとき, 現在のセッションに紐づくアカウントの中から一つを選択することを可能にする.
+                      End-User によるアカウント選択が不可能な場合はエラーを返す (MUST).
+                      典型的なエラーコードは <spanx style="verb">account_selection_required</spanx> である.
+                      <!--
                       The Authorization Server SHOULD
                       prompt the End-User to select a user account.  This enables
                       an End-User who has multiple accounts at the Authorization Server
@@ -868,19 +1051,30 @@
                       If it cannot obtain an account selection choice made by the End-User,
                       it MUST return an error,
                       typically <spanx style="verb">account_selection_required</spanx>.
+                      -->
                     </t>
                   </list>
 
+                  <spanx style="verb">prompt</spanx> パラメータは Client に対して, End-User のセッションがアクティブであることを確認したり, End-User にリクエストに対する注意を促すことを可能にする.
+                  <spanx style="verb">none</spanx> がその他の値とともに用いられる場合はエラーとなる.
+                  <!--
                   The <spanx style="verb">prompt</spanx> parameter
                   can be used by the Client to make sure that the End-User is
                   still present for the current session or to bring attention to the
                   request. If this parameter contains <spanx style="verb">none</spanx>
                   with any other value, an
                   error is returned.
+                  -->
                 </t>
 
                 <t hangText="max_age">
                   <vspace/>
+                  OPTIONAL.
+                  Authentication Age の最大値.
+                  End-User が OP によって明示的に認証されてからの経過時間の最大許容値 (秒).
+                  もし経過時間がこの値より大きい場合, OP は End-User を明示的に再認証しなければならない (MUST).
+                  <spanx style="verb">max_age</spanx> が指定された場合, 発行される ID Token は <spanx style="verb">auth_time</spanx> Claim を含まねばならない (MUST).
+                  <!--
                   OPTIONAL.
                   Maximum Authentication Age.
                   Specifies the allowable elapsed time in seconds
@@ -890,10 +1084,17 @@
                   re-authenticate the End-User.
                   When <spanx style="verb">max_age</spanx> is used, the ID Token returned
                   MUST include an <spanx style="verb">auth_time</spanx> Claim Value.
+                  -->
                 </t>
 
                 <t hangText="ui_locales">
                   <vspace/>
+                  OPTIONAL.
+                  End-User の選好する UI の表示言語および文字種.
+                  スペース区切りの <xref target="RFC5646">BCP47</xref> 言語タグ値のリストとして表現され, 順序は選好順となる.
+                  例えば "fr-CA fr en" という値が指定された場合, カナダで用いられるフランス語が第一選好となり, 次いで地域指定のないフランス語, そして英語と続く.
+                  要求されたロケールがサポートされていない場合でも, OpenID Provider はエラーとするべきではない (SHOULD NOT).
+                  <!--
                   OPTIONAL.
                   End-User's preferred languages and scripts for the user interface,
                   represented as a space-separated list of
@@ -905,10 +1106,16 @@
                   followed by English (without a region designation).
                   An error SHOULD NOT result if some or all of the requested locales
                   are not supported by the OpenID Provider.
+                  -->
                 </t>
 
                 <t hangText="claims_locales">
                   <vspace/>
+                  OPTIONAL.
+                  End-User の選好する Claim の表示言語および文字種.
+                  スペース区切りの <xref target="RFC5646">BCP47</xref> 言語タグ値のリストとして表現され, 順序は選好順となる.
+                  要求されたロケールがサポートされていない場合でも, OpenID Provider はエラーとするべきではない (SHOULD NOT).
+                  <!--
                   OPTIONAL.
                   End-User's preferred languages and scripts for Claims being returned,
                   represented as a space-separated list of
@@ -916,10 +1123,20 @@
                   ordered by preference.
                   An error SHOULD NOT result if some or all of the requested locales
                   are not supported by the OpenID Provider.
+                  -->
                 </t>
 
                 <t hangText="id_token_hint">
                   <vspace/>
+                  OPTIONAL.
+                  Authorization Server が以前発行した ID Token.
+                  Client が認証した End-User の現在もしくは過去のセッションに関するヒントとして利用される.
+                  もしこの ID Token に紐づく End-User が認証済, もしくはこのリクエスト中で認証された場合, Authorization Server はポジティブレスポンスを返す.
+                  さもなければ, Authorization Server はエラーを返す (SHOULD).
+                  <spanx style="verb">prompt=none</spanx> を利用する場合は, 可能であれば <spanx style="verb">id_token_hint</spanx> を指定するべきであり (SHOULD), さもなければ <spanx style="verb">invalid_request</spanx> を返しても良い (MAY).
+                  ただしサーバーはその場合可能な限りサクセスレスポンスを返すこと.
+                  <spanx style="verb">id_token_hint</spanx> 利用時は, ID Token の audience に Authorization Server 自身が含まれている必要はない.
+                  <!--
                   OPTIONAL.
                   ID Token previously issued by the Authorization Server
                   being passed as a hint about the End-User's current or past
@@ -937,10 +1154,18 @@
                   The Authorization Server need not be listed as an
                   audience of the ID Token when it is used as an
                   <spanx style="verb">id_token_hint</spanx> value.
+                  -->
                 </t>
 
                 <t hangText="login_hint">
                   <vspace/>
+                  OPTIONAL.
+                  Authorization Server に対する End-User ログイン識別子のヒントとして利用される.
+                  RP が End-User に Email アドレス (もしくはその他の識別子) を要求し, それを Authorization Server にヒントとして送信することでヒントとする.
+                  Discovery に利用された値をヒントの値として利用することを推奨する (RECOMMENDED).
+                  この値は <spanx style="verb">phone_number</spanx> Claim に指定されるフォーマットに従った電話番号でもよい (MAY).
+                  このパラメータを利用するか否かは OP の判断にゆだねる.
+                  <!--
                   OPTIONAL.
                   Hint to the Authorization Server
                   about the login identifier the End-User might use to log in (if necessary).
@@ -951,10 +1176,17 @@
                   This value MAY also be a phone number in the format specified for the
                   <spanx style="verb">phone_number</spanx> Claim.
                   The use of this parameter is left to the OP's discretion.
+                  -->
                 </t>
 
                 <t hangText="acr_values">
                   <vspace/>
+                  OPTIONAL.
+                  Authentication Context Class Reference リクエスト値.
+                  Authorization Server が認可リクエストを処理する際に要求される <spanx style="verb">acr</spanx> の値をスペース区切りで示した文字列.
+                  認証処理が満たした Authentication Context Class は, <xref target="IDToken"/> に示す <spanx style="verb">acr</spanx> Claim Value として返される.
+                  <spanx style="verb">acr</spanx> Claim はこのパラメータを用いることで Voluntary Claim としてリクエストされることになる.
+                  <!--
                   OPTIONAL.
                   Requested Authentication Context Class Reference values.
                   Space-separated string that specifies the <spanx style="verb">acr</spanx>
@@ -966,6 +1198,7 @@
                   as specified in <xref target="IDToken"/>.
                   The <spanx style="verb">acr</spanx> Claim is requested as
                   a Voluntary Claim by this parameter.
+                  -->
                 </t>
               </list>
             </t>
@@ -974,16 +1207,25 @@
 
         <section anchor="CodeRequest"
                  title="Client Sends Request to Authorization Server">
+          <t>
+            Client は Authorization Endpoint に HTTPS で Authentication Request を送信する.
+          </t>
+          <!--
           <t>Having constructed the Authentication Request, the Client sends it
           to the Authorization Endpoint using HTTPS.</t>
+          -->
 
           <figure>
             <preamble>
+              以下の例では Client が User Agent に HTTP 302 リダイレクトレスポンスを返し, User Agent に対して Authorization Endpoint に Authentication Request を送るよう指示している. (改行は掲載上の都合による)
+
+              <!--
               The following is a non-normative example
               HTTP 302 redirect response by the Client, which triggers
               the User Agent to make an Authentication Request
               to the Authorization Endpoint
               (with line wraps within values for display purposes only):
+              -->
             </preamble>
 
             <artwork><![CDATA[
@@ -999,10 +1241,13 @@
 
           <figure>
             <preamble>
+              User Agent は上記の Client からの HTTP 302 リダイレクトレスポンスに従い, Authorization Server に以下のようなリクエストを送る. (改行は掲載上の都合による)
+              <!--
               The following is the non-normative example request
               that would be sent by the User Agent to the Authorization Server
               in response to the HTTP 302 redirect response by the Client above
               (with line wraps within values for display purposes only):
+              -->
             </preamble>
 
             <artwork><![CDATA[
@@ -1020,37 +1265,65 @@
         <section anchor="Authenticates" title="Authorization Server Authenticates End-User">
 
           <t>
+            Authorization Server は, リクエストパラメータ値に基づき, End-User をログインさせたり既にログイン済みであることを検証する.
+            End-User とのインタラクションが HTTP で行われる場合は, <xref target="TLSRequirements"/> に基づきTLS を用いること (MUST).
+            認証手段の詳細については, 本仕様の定めるところではない.
+          </t>
+          <!--
+          <t>
             The Authorization Server logs in the End-User or verifies whether
             the End-User is logged in, depending upon the request parameter values used.
             If interaction with the End-User occurs over an HTTP channel,
             it MUST use TLS, as per <xref target="TLSRequirements"/>.
             The exact authentication methods used are out of scope for this specification.
           </t>
+          -->
         </section>
 
         <section anchor="Consent" title="Authorization Server Obtains End-User Consent/Authorization">
 
+          <t>
+            Authorization Server は要求された Claim に対する認可結果を得る.
+            認可取得には, End-User が何に同意をしようとしているのかを明示する同意ダイアログを用いることもあれば, その他の何らかの手段 (事前の管理者による同意等) を用いることもあろう.
+          </t>
+          <!--
           <t>The Authorization Server obtains an authorization decision
           for the requested Claims. This can done by presenting the End-User
           with a dialogue that enables the End-User to recognize what is being
           consenting to and grant consent or by establishing consent via
           other means (for example, via previous administrative consent).</t>
+          -->
 
+          <t>
+            <spanx style="verb">openid</spanx> scope 値は, その OAuth 2.0 リクエストが OpenID Connect リクエストであることを宣言する.
+            その他の scope 値の利用は任意である (OPTIONAL).
+          </t>
+          <!--
           <t>
             The <spanx style="verb">openid</spanx> scope value declares
             that this OAuth 2.0 request is an OpenID Connect request.
             Use of all other scope values is OPTIONAL.
           </t>
+          -->
         </section>
 
         <section anchor="CodeResponse"
                  title="Authorization Server Sends End-User Back to Client">
 
+          <t>
+            認可結果が得られると, Authorization Server はサクセスレスポンスまたはエラーレスポンスを返す.
+          </t>
+          <!--
           <t>Once the authorization is determined, the Authorization Server
           returns a successful response or an error response.</t>
+          -->
 
           <section anchor="CodeOK" title="End-User Grants Authorization">
 
+            <t>
+              End-User がアクセス権要求を承認した場合, Authorization Server は <spanx style="verb">code</spanx> を発行し, <xref target="RFC6749">OAuth 2.0</xref> の Section 4.1.2 に従い, 以下のクエリパラメータを Redirection URI のクエリー部に <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットで付与して Client に渡す.
+            </t>
+            <!--
             <t>If the End-User grants the access request, the
             Authorization Server issues a <spanx style="verb">code</spanx> and delivers
             it to the Client by adding the following query parameters to the query
@@ -1058,6 +1331,7 @@
             <spanx style="verb">application/x-www-form-urlencoded</spanx>
             format as defined in Section 4.1.2 of
             <xref target="RFC6749">OAuth 2.0</xref>.</t>
+            -->
 
             <t>
               <list style="hanging">
@@ -1069,6 +1343,10 @@
 
                 <t hangText="state">
                   <vspace/>
+                  OAuth 2.0 state 値.
+                  Authorization Request に <spanx style="verb">state</spanx> パラメータが含まれていた場合は必須 (REQUIRED).
+                  Clients は <spanx style="verb">state</spanx> 値が Authorization Request に含めた値と同一であることを検証しなければならない (MUST).
+                  <!--
                   OAuth 2.0 state value.
                   REQUIRED if the
                   <spanx style="verb">state</spanx> parameter is present in the
@@ -1076,13 +1354,19 @@
                   <spanx style="verb">state</spanx> value is equal to the
                   value of <spanx style="verb">state</spanx> parameter in the
                   Authorization Request.
+                  -->
                 </t>
               </list>
             </t>
 
             <figure>
+              <preamble>
+                以下に例を示す. (改行は掲載上の都合による)
+              </preamble>
+              <!--
               <preamble>The following is a non-normative example
               (with line wraps for the display purposes only):</preamble>
+              -->
 
               <artwork><![CDATA[
   HTTP/1.1 302 Found
@@ -1097,6 +1381,11 @@
                    title="End-User Denies Authorization or Invalid Request">
 
             <t>
+              End-User が認可を拒否したり, End-User の認証に失敗した場合, Authorization Server は <xref target="RFC6749">OAuth 2.0</xref> Section 4.1.2.1 に従ってエラーの Authorization Response を返さなければならない (MUST).
+              (RFC 6749 に関係のないエラーは, 適切な HTTP ステータスコードを用いて User Agent に返すこと)
+            </t>
+            <!--
+            <t>
               If the End-User denies the authorization or the End-User authentication
               fails, the Authorization Server MUST return the error
               Authorization Response as defined in 4.1.2.1 of
@@ -1104,6 +1393,7 @@
               (HTTP errors unrelated to RFC 6749 are returned to the User Agent using the
               appropriate HTTP status code.)
             </t>
+            -->
           </section>
         </section>
 
@@ -1111,13 +1401,24 @@
                  title="Client Obtains ID Token and Access Token">
 
           <t>
+            次に Client は, 以下のように Token Endpoint に対して Authorization Code を付与した形で Access Token Request を送る.
+          </t>
+          <!--
+          <t>
             The Client then makes an Access Token Request using the
             Authorization Code to obtain tokens from the Token Endpoint
             in the following manner:
           </t>
+          -->
 
           <section anchor="TokenRequest" title="Client Sends Code">
 
+            <t>
+              Client は <xref target="RFC6749">OAuth 2.0</xref> の Section 4.1.3 にあるように, Token Endpoint に対して Form Serialization (<xref target="FormSerialization"/>) を用いてリクエストを送る.
+              ここで Client は OAuth 2.0 の Section 2.3.1 に従い, 自身の Client Credentials を HTTP Basic 方式で Authorization ヘッダーに付与して認証を行う.
+              (この方法は <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> において <spanx style="verb">client_secret_basic</spanx> と呼ばれているものである)
+            </t>
+            <!--
             <t>
               The Client makes a request to the Token Endpoint using
               the Form Serialization, per <xref target="FormSerialization"/>, as described in
@@ -1129,14 +1430,27 @@
               <spanx style="verb">client_secret_basic</spanx> authentication method value
               in <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>).
             </t>
+            -->
+            <t>
+              Token Endpoint との通信は TLS を用いること (MUST).
+              TLS の利用についての詳細は <xref target="TLSRequirements"/> を参照.
+            </t>
+            <!--
             <t>
               Communication with the Token Endpoint MUST utilize TLS.
               See <xref target="TLSRequirements"/> for more information on using TLS.
             </t>
+            -->
 
             <figure>
+              <preamble>
+                以下は Token Request の例である.
+                (改行は掲載上の都合による)
+              </preamble>
+              <!--
               <preamble>The following is a non-normative example of such a Token Request
               (with line wraps for the display purposes only):</preamble>
+              -->
 
               <artwork><![CDATA[
   POST /token HTTP/1.1
@@ -1153,26 +1467,39 @@
           <section anchor="TokenOK" title="Client Receives Tokens">
 
             <t>
+              Client は <xref target="RFC6749">OAuth 2.0</xref> Section 4.1.4 にあるように, 以下のパラメーターをレスポンスとして受け取る.
+              レスポンスは UTF-8 エンコードとすること (SHOULD).
+            </t>
+            <!--
+            <t>
               The Client receives a response with the following parameters
               as described in Section 4.1.4 of <xref target="RFC6749">OAuth 2.0</xref>.
               The response SHOULD be encoded using UTF-8.
             </t>
+            -->
             <t>
               <list style="hanging">
                 <t hangText="access_token">
                   <vspace/>
                   REQUIRED.
+                  UserInfo Endpoint にアクセスするための Access Token.
+                  <!--
                   Access Token for the
                   UserInfo Endpoint.
+                  -->
                 </t>
 
                 <t hangText="token_type">
                   <vspace/>
                   REQUIRED.
+                  OAuth 2.0 Token Type 値.
+                  この値は Clients が <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> に従い <spanx style="verb">Bearer</spanx> とすること (MUST).
+                  <!--
                   OAuth 2.0 Token Type value.
                   The value MUST be <spanx style="verb">Bearer</spanx>, as specified in
                   <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>,
                   for Clients using this subset.
+                  -->
                 </t>
 
                 <t hangText="id_token">
@@ -1184,8 +1511,11 @@
                 <t hangText="expires_in">
                   <vspace/>
                   OPTIONAL.
+                  Access Token が生成されてから期限切れになるまでの秒数.
+                  <!--
                   Expiration time of the Access Token in seconds
                   since the response was generated.
+                  -->
                 </t>
 
                 <t hangText="refresh_token">
@@ -1195,12 +1525,22 @@
               </list>
             </t>
 
+            <t>
+              次に Client は Access Token を使って Resource Server 上の保護リソースにアクセスする.
+            </t>
+            <!--
             <t>The Client can then use the Access Token to access protected
             resources at Resource Servers.</t>
+            -->
 
             <figure>
+              <preamble>
+                以下に例を示す. (改行は掲載上の都合による)
+              </preamble>
+              <!--
               <preamble>The following is a non-normative example
               (with line wraps for the display purposes only):</preamble>
+              -->
               <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
