@@ -3882,7 +3882,10 @@
 
     <section anchor="Serializations" title="Serializations">
       <t>
+        リクエストメッセージは以下のいずれかの方法でシリアライズできる (MAY).
+        <!--
         A request message MAY be serialized using one of the following methods:
+        -->
         <list style="numbers">
           <t>Query String Serialization</t>
           <t>Form Serialization</t>
@@ -3891,6 +3894,14 @@
 
       <section anchor="QuerySerialization" title="Query String Serialization">
 
+        <t>Query String Serialization を使ってパラメータをシリアライズするためには,
+        Client は <xref target="W3C.REC-html401-19991224"/> で定義された
+        <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットを使いパラメータと値をクエリコンポーネントへ追加することで文字列を構成する.
+        Query String Serialization は一般的に
+        HTTP <spanx style="verb">GET</spanx> リクエストで使用される.
+        同じシリアライズ手法は URL のフラグメントコンポーネントにパラメータを追加する際にも使用される.
+        </t>
+        <!--
         <t>In order to serialize the parameters using the Query String
         Serialization, the Client constructs the string by adding the
         parameters and values to the query component using the <spanx
@@ -3901,11 +3912,16 @@
         The same serialization method is also used when adding
         parameters to the fragment component of a URL.
         </t>
+        -->
 
         <figure>
           <preamble>
+            以下はシリアライズの参考例である.
+            (改行は掲載上の都合による)
+            <!--
             Following is a non-normative example of this serialization
             (with line wraps within values for display purposes only):
+            -->
           </preamble>
 
           <artwork><![CDATA[
@@ -3921,16 +3937,24 @@
 
       <section anchor="FormSerialization" title="Form Serialization">
 
+        <t>パラメータやその値は, HTTP リクエストのエンティティボディに <xref target="W3C.REC-html401-19991224"/> に定義されているように <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットでパラメータ名とその値を追加することで Form Serialize される.
+        Form Serialization は一般的には HTTP <spanx style="verb">POST</spanx> リクエストで利用される.</t>
+        <!--
         <t>Parameters and their values are Form Serialized by adding the
         parameter names and values to the entity body of the HTTP request using
         the <spanx style="verb">application/x-www-form-urlencoded</spanx> format
         as defined by <xref target="W3C.REC-html401-19991224"/>.
         Form Serialization is typically used in HTTP <spanx style="verb">POST</spanx> requests.</t>
+        -->
 
         <figure>
           <preamble>
+            以下はシリアライズの参考例である.
+            (改行は掲載上の都合による)
+            <!--
             Following is a non-normative example of this serialization
             (with line wraps within values for display purposes only):
+            -->
           </preamble>
 
           <artwork><![CDATA[
@@ -3950,6 +3974,12 @@
 
     <section anchor="StringOps" title="String Operations">
       <t>
+        いくつかの OpenID Connect メッセージを処理する際にはメッセージの中の値を既知の値を比較することが求められる.
+        例えば, UserInfo エンドポイントから返された Claim Name は <spanx style="verb">sub</spanx> などの特定の Claim Name と比較される.
+        よって Unicode 文字列比較処理はセキュリティ上重要な意味を持つ.
+      </t>
+      <!--
+      <t>
         Processing some OpenID Connect messages requires comparing
         values in the messages to known values. For example, the Claim
         Names returned by the UserInfo Endpoint might be compared to
@@ -3957,35 +3987,66 @@
         style="verb">sub</spanx>.  Comparing Unicode strings,
         however, has significant security implications.
       </t>
+      -->
       <t>
+        したがって, JSON 文字列を他の Unicode 文字列と比較する際は下記の通り実施しなければならない (MUST).
+        <!--
         Therefore, comparisons between JSON strings and other Unicode
         strings MUST be performed as specified below:
-
+        -->
         <list style="numbers">
+          <t>
+            JSON に適用されたすべてのエスケープ処理を取り除き Unicode コードポイントの配列を生成する.
+          </t>
+          <!--
           <t>
             Remove any JSON applied escaping to produce an array of
             Unicode code points.
           </t>
+          -->
+          <t>
+            Unicode Normalization <xref target="USA15"/> を JSON 文字列, もしくは比較対象文字列に対していかなる時点であっても適用してはならない (MUST NOT).
+          </t>
+          <!--
           <t>
             Unicode Normalization <xref target="USA15"/> MUST NOT
             be applied at any point to either the JSON string or to
             the string it is to be compared against.
           </t>
+          -->
+          <t>
+            二つの文字列の比較は, Unicode コードポイント同士の等値比較として実施されなければならない (MUST).
+          </t>
+          <!--
           <t>
             Comparisons between the two strings MUST be performed as a
             Unicode code point to code point equality comparison.
           </t>
+          -->
         </list>
       </t>
+      <t>
+        いくつかの箇所において, 本仕様はスペースで区切られた文字列のリストを使用している.
+        そのようないかなる場合においても, この目的では ASCII のスペース文字 (0x20)
+        のみを使用しなければならない (MUST).
+      </t>
+      <!--
       <t>
         In several places, this specification uses space delimited
         lists of strings.  In all such cases, the ASCII space
         character (0x20) MUST be the only character used for this purpose.
       </t>
+      -->
 
     </section>
 
     <section anchor='TLS' title='TLS Version'>
+      <t>
+        本仕様では Transport Layer Security (TLS) が用いられるが, 実際に広く使われているかどうかや既知のセキュリティ脆弱性に依存して, TLS の適切なバージョンはその時々で異なりうる.
+        本仕様執筆時には, TLS バージョン 1.2 <xref target='RFC5246' />　が最新であるが, 実装が限定されており, すぐに各実装で利用可能とはいえないかもしれない.
+        TLS バージョン 1.0 <xref target='RFC2246' /> は現在もっとも広く利用されているバージョンで, 最も広範な相互運用性を提供するであろう.
+      </t>
+      <!--
       <t>
         Whenever Transport Layer Security (TLS) is used by this specification,
         the appropriate version (or versions) of
@@ -3995,23 +4056,40 @@
         readily available for implementation. TLS version 1.0 <xref target='RFC2246' /> is the
         most widely deployed version and will provide the broadest interoperability.
       </t>
+      -->
     </section>
 
     <section anchor="ImplementationConsiderations" title="Implementation Considerations">
+      <t>
+        本仕様書では Relying Party が, OAuth Implicit Flow で利用する機能を定義する.
+        Relying Parties は本仕様書内で "REQUIRED" であると記載されている, もしくは "MUST" 付きで説明されている機能を実装しなければならない (MUST).
+      </t>
+      <!--
       <t>
         This specification defines features used by Relying Parties
         using the OAuth Implicit Flow.
         These Relying Parties MUST implement the features that are listed
         in this specification as being "REQUIRED" or are described with a "MUST".
       </t>
+      -->
 
       <section anchor="DiscoReg" title="Discovery and Registration">
 
+        <t>
+          OpenID Connect 環境によっては, あらかじめ設定された OpenID Provider や Relying Party を利用することができる.
+          その場合, アイデンティティ情報やサービス情報の Discovery や Client の Dynamic Registration をサポートする必要はないかもしれない.
+        </t>
+        <!--
         <t>Some OpenID Connect installations can use a pre-configured set of
         OpenID Providers and/or Relying Parties. In those cases, it might not be
         necessary to support dynamic discovery of information about identities
         or services or dynamic registration of Clients.</t>
+        -->
 
+        <t>
+          しかしながら, 事前の信頼構築を前提とせず, Relying Party と OpenID Provider の間での事前予測不可能な形でのインタラクションをサポートする場合には, <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> と <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> によってこれを実現すべきである (SHOULD).
+        </t>
+        <!--
         <t>However, if installations choose to support unanticipated
         interactions between Relying Parties and OpenID Providers that do not
         have pre-configured relationships, they SHOULD accomplish this by
@@ -4019,17 +4097,31 @@
         target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> and <xref
         target="OpenID.Registration">OpenID Connect Dynamic Client Registration
         1.0</xref> specifications.</t>
+        -->
       </section>
     </section>
 
     <section anchor="Security" title="Security Considerations">
 
       <t>
+        以下に挙げたもの以外のセキュリティ上の考慮点については,
+        <xref target="OpenID.Core">OpenID Connect Core 1.0</xref> 仕様を参照すること.
+      </t>
+      <!--
+      <t>
         For security considerations other than those listed below, refer to the
         <xref target="OpenID.Core">OpenID Connect Core 1.0</xref> specification.
       </t>
+      -->
 
       <section anchor="TLSRequirements" title="TLS Requirements">
+        <t>
+          実装する際は TLS をサポートしなくてはならない (MUST).
+          どのバージョンを実装するかは時期によって異なり, 実装時に広く使われているかと既知のセキュリティ上の脆弱性に依存する.
+          本仕様を執筆している段階では TLS バージョン 1.2 <xref target='RFC5246' /> が最新バージョンであるが, 実際に使われている例は非常に限られており, 実装に利用するツールキットが対応していない可能性もある.
+          TLS version 1.0 <xref target='RFC2246' /> が最も広く使われているバージョンであり, 最も高い相互運用性を提供している.
+        </t>
+        <!--
         <t>
           Implementations MUST support TLS.
           Which version(s) ought to be implemented will vary over
@@ -4044,16 +4136,27 @@
           is the most widely deployed version, and will give the
           broadest interoperability.
         </t>
+        -->
+        <t>
+          情報の漏えいや改ざんを防ぐため, TLS を使った機密保護を, 機密性と完全性の保護を提供する暗号スイートを用いて適用しなくてはならない (MUST).
+        </t>
+        <!--
         <t>
           To protect against information disclosure and tampering,
           confidentiality protection MUST be applied using TLS
           with a ciphersuite that provides confidentiality and
           integrity protection.
         </t>
+        -->
+        <t>
+          TLS を使用する際は, <xref target="RFC6125">RFC 6125</xref> に従い TLS サーバ証明書を検証しなければならない (MUST).
+        </t>
+        <!--
         <t>
           Whenever TLS is used, a TLS server certificate check
           MUST be performed, per <xref target="RFC6125">RFC 6125</xref>.
         </t>
+        -->
       </section>
     </section>
 
@@ -4061,29 +4164,51 @@
 
       <section anchor="PII" title="Personally Identifiable Information">
 
+        <t>
+          UserInfo Response は一般的には Personally Identifiable Information (PII) を含む.
+          したがって, 特定の目的のための情報の開示に関する End-User の同意は, 関連する法律に従い, 認可時もしくは認可時に先立って取得されるべきである (SHOULD).
+          利用目的は一般的には <spanx style="verb">redirect_uris</spanx> とともに登録される.
+        </t>
+        <!--
         <t>The UserInfo Response typically contains Personally Identifiable
         Information (PII). As such, End-User consent for the release of the information
         for the specified purpose SHOULD be obtained at or prior to the
         authorization time in accordance with relevant regulations. The purpose
         of use is typically registered in association with the <spanx
         style="verb">redirect_uris</spanx>.</t>
+        -->
 
+        <t>
+          必要な UserInfo データだけが Client 側に保管されるべきであり, Client は受信したデータを告知した利用目的と関連づけるべきである (SHOULD).
+        </t>
+        <!--
         <t>Only necessary UserInfo data should be stored at the Client and the
         Client SHOULD associate the received data with the purpose of use
         statement.</t>
+        -->
       </section>
 
       <section anchor="AccessMonitoring" title="Data Access Monitoring">
         <t>
+          Resource Server は End-User に対して, 誰が自分のデータにアクセスしたかを監視できよう, 自身の UserInfo へのアクセスログを閲覧可能にべきである (SHOULD).
+        </t>
+        <!--
+        <t>
           The Resource Server SHOULD make End-Users' UserInfo access logs
           available to them so that they can monitor who accessed their data.
         </t>
+        -->
       </section>
 
       <section anchor="Correlation" title="Correlation">
+        <t>
+          Client 間での名寄せの可能性からエンドユーザを保護するため, Pairwise Pseudonymous Identifier (PPID) を <spanx style="verb">sub</spanx> (subject) として使用することを検討すべきである (SHOULD).
+        </t>
+        <!--
         <t>To protect the End-User from a possible correlation among Clients, the
         use of a Pairwise Pseudonymous Identifier (PPID) as the
         <spanx style="verb">sub</spanx> (subject) SHOULD be considered.</t>
+        -->
       </section>
 
     </section>
