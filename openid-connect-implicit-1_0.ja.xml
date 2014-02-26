@@ -61,12 +61,27 @@
     <workgroup>OpenID Connect Working Group</workgroup>
 
     <abstract>
+      <t>
+        OpenID Connect 1.0 は, OAuth 2.0 プロトコルの上にシンプルなアイデンティティレイヤーを付与したものである.
+        このプロトコルは, Client が Authorization Server の認証結果に基づいて End-User のアイデンティティを検証することを可能にする.
+        また同時に End-User の必要最低限のプロフィール情報を, 相互運用可能かつ RESTful な形で取得することも可能にする.
+      </t>
+      <!--
       <t>OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0
       protocol. It enables Clients to verify the identity of the End-User based
       on the authentication performed by an Authorization Server, as well as to
       obtain basic profile information about the End-User in an interoperable and
       REST-like manner.</t>
+      -->
 
+      <t>
+        本ドキュメント OpenID Connect Implicit Client Implementer's Guide 1.0 は,
+        OpenID Connect Core 1.0 仕様のサブセットであり,
+        OAuth 2.0 Implicit Flowを利用して Webベースの Relying Party
+        を実装する際に読みやすいように構成されている.
+        本仕様は Core 仕様と重複したコンテンツを含んでいるが, それは実装者が本仕様を読むだけで OAuth Implicit Flow を利用した Relying Party を実装できるよう意図したものである.
+      </t>
+      <!--
       <t>
         This OpenID Connect Implicit Client Implementer's Guide 1.0 contains a subset of the
         OpenID Connect Core 1.0 specification
@@ -78,10 +93,16 @@
         Web-based Relying Parties using the
         OAuth Implicit Flow.
       </t>
+      -->
+      <t>
+        OpenID Provider および Web ベース以外のアプリケーションの実装者は, Core 仕様を参照のこと.
+      </t>
+      <!--
       <t>
         OpenID Providers and non-Web-based applications
         should instead consult the Core specification.
       </t>
+      -->
     </abstract>
   </front>
 
@@ -89,6 +110,15 @@
 
     <section anchor="Introduction" title="Introduction">
 
+      <t>
+        本ドキュメント OpenID Connect Implicit Client Implementer's Guide 1.0 は,
+        <xref target="OpenID.Core">OpenID Connect Core 1.0</xref> 仕様のサブセットであり,
+        OAuth 2.0 <xref target="RFC6749"/> Implicit Flowを利用して Webベースの Relying Party
+        を実装する際に読みやすいように構成されている.
+        本仕様は Core 仕様と重複したコンテンツを含んでいるが, それは実装者が本仕様を読むだけで OAuth Implicit Flow を利用した Relying Party を実装できるよう意図したものである.
+        本実装者ガイドと OpenID Connect Core 仕様の間に齟齬がある場合は, Core 仕様を優先する.
+      </t>
+      <!--
       <t>
         This OpenID Connect Implicit Client Implementer's Guide 1.0 contains a subset of the
         <xref target="OpenID.Core">OpenID Connect Core 1.0</xref> specification
@@ -102,6 +132,16 @@
         Should there be any conflicts between the contents of this implementer's guide
         and the OpenID Connect Core specification, the latter takes precedence.
       </t>
+      -->
+      <t>
+        OAuth <spanx style="verb">authorization_code</spanx> grant typeを利用する
+        Webベース Relying Partyを実装する場合には,
+        <xref target="OpenID.Basic">OpenID Connect Basic Client Implementer's Guide 1.0</xref>
+        を参照のこと.
+        OpenID Provider および Web ベース以外のアプリケーションの実装者は, Core 仕様を参照のこと.
+        本ガイドは OpenID Provider および Web ベース以外のアプリケーションに関する Implementation Considerations および Security Considerations を省略している.
+      </t>
+      <!--
       <t>
         See the
         <xref target="OpenID.Basic">OpenID Connect Basic Client Implementer's Guide 1.0</xref>
@@ -113,7 +153,15 @@
         This guide omits implementation and security
         considerations for OpenID Providers and non-Web-based applications.
       </t>
+      -->
 
+      <t>
+        OpenID Connect のベースとなる <xref target="RFC6749">OAuth 2.0 Authorization Framework</xref> と <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> は, 3rd-party アプリケーションが HTTP リソースへの限定的アクセス権を取得および行使するための全般的フレームワークを提供している.
+        これらはリソースアクセスのための Access Token を取得および行使する方法は定義するが, アイデンティティ情報を提供するための標準的手段は定義しない.
+        とりわけ, OAuth 2.0 のプロファイリングを行わずに End-User の認証に必要な情報を提供することは不可能である.
+        本ドキュメント読者は上記2つの仕様を理解していることが期待される.
+      </t>
+      <!--
       <t>
         As background,
         the <xref target="RFC6749">OAuth 2.0 Authorization Framework</xref>
@@ -126,6 +174,13 @@
         providing information about the authentication of an End-User.
         Readers are expected to be familiar with these specifications.
       </t>
+      -->
+      <t>
+        OpenID Connect は OAuth 2.0 認可プロセスを拡張し, 認証目的で利用できるようにする.
+        本拡張を利用する場合, Client は <spanx style="verb">openid</spanx> scope を指定して Authorization Request を送信する.
+        本拡張を利用した Authorization Request は, Authentication Request と呼ばれる.
+      </t>
+      <!--
       <t>
         OpenID Connect implements authentication as an extension to the
         OAuth 2.0 authorization process.
@@ -135,6 +190,13 @@
         An Authorization Request using these extensions
         is called an Authentication Request.
       </t>
+      -->
+      <t>
+        認証結果は ID Token (<xref target="IDToken"/> 参照) と呼ばれる <xref target="JWT">JSON Web Token (JWT)</xref> として返される.
+        OpenID Connect をサポートする OAuth 2.0 Authentication Server は, OpenID Provider (OP) とも呼ばれる.
+        OpenID Connect を利用する OAuth 2.0 Client は Relying Party (RP) とも呼ばれる.
+      </t>
+      <!--
       <t>
         Information about the authentication performed is returned
         in a <xref target="JWT">JSON Web Token (JWT)</xref>
@@ -144,6 +206,12 @@
         OAuth 2.0 Clients using OpenID Connect
         are also referred to as Relying Parties (RPs).
       </t>
+      -->
+      <t>
+        本ドキュメントでは, Relying Party は Authorization Endpoint, Token Endpoint 等を含む OpenID Provider の設定情報を既に得ているものとする.
+        これらの情報は通常 <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> にある Discovery を通じて得られるが, その他の手段で得られることもある.
+      </t>
+      <!--
       <t>
         This specification assumes that the Relying Party has already obtained
         configuration information about the OpenID Provider, including its
@@ -152,6 +220,12 @@
         as described in <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>,
         or may be obtained via other mechanisms.
       </t>
+      -->
+      <t>
+        また同様に, Relying Party は OpenID Provider 利用に必要なクレデンシャルを取得し, OP 利用に必要な情報を登録しているものとする.
+        これの処理は通常 <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> にある Dynamic Registration を通じて行われるが, その他の手段で行われることもある.
+      </t>
+      <!--
       <t>
         Likewise, this specification assumes that the Relying Party has already obtained
         sufficient credentials and provided information needed to use the OpenID Provider.
@@ -160,13 +234,23 @@
         <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>,
         or may be obtained via other mechanisms.
       </t>
+      -->
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
+        <t>本ドキュメント中の "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", および "OPTIONAL" の意味するところは, <xref target="RFC2119"/> の定める通りである.</t>
+        <!--
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
         "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
         document are to be interpreted as described in <xref
         target="RFC2119"/>.</t>
+        -->
 
+        <t>
+          本ドキュメントの .txt バージョンでは, 表記そのままで利用される値についてはクオートで囲んでいる.
+          このような値をプロトコルメッセージ中で用いる場合, クオートを含めてはならない (MUST NOT).
+          HTML バージョンではクオートで囲う代わりに <spanx style="verb">this fixed-width font</spanx> を用いる.
+        </t>
+        <!--
         <t>
           In the .txt version of this document,
           values are quoted to indicate that they are to be taken literally.
@@ -176,20 +260,43 @@
           values to be taken literally are indicated by
           the use of <spanx style="verb">this fixed-width font</spanx>.
         </t>
+        -->
+        <t>
+          <xref target="JWS">JSON Web Signature (JWS)</xref> を用いる場合, シリアライゼーションには JWS Compact Serialization を用いる.
+          JWS JSON Serialization は利用しない.
+        </t>
+        <!--
         <t>
           All uses of <xref target="JWS">JSON Web Signature (JWS)</xref>
           data structures in this specification utilize
           the JWS Compact Serialization;
           the JWS JSON Serialization is not used.
         </t>
+        -->
+        <t>
+          本ドキュメント中の RFC 2119 に定義されるキーワードが OpenID Provider の挙動に言及する場合, それはあくまで Client 実装者が OpenID Provider の挙動を理解しやすいように用いられているに過ぎない.
+        </t>
+        <!--
         <t>
           When the RFC 2119 language applies to the behavior of OpenID Providers,
           it is in this specification for explanatory value to help Client
           implementers understand the expected behavior of OpenID Providers.
         </t>
+        -->
       </section>
 
       <section anchor="Terminology" title="Terminology">
+        <t>
+          本ドキュメントでは,
+          <xref target="RFC6749">OAuth 2.0</xref> で定義された "Access Token", "Authorization Code",
+          "Authorization Endpoint", "Authorization Grant", "Authorization Server",
+          "Client", "Client Identifier", "Client Secret",
+          "Protected Resource", "Redirection URI", "Refresh Token",
+          "Resource Owner", "Resource Server", "Response Type", および "Token Endpoint",
+          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", および "JSON Web Token (JWT)",
+          <xref target="RFC2616">RFC 2616</xref> で定義された "User Agent" という用語を用いる.
+        </t>
+        <!--
         <t>
           This specification uses the terms "Access Token", "Authorization Code",
           "Authorization Endpoint", "Authorization Grant", "Authorization Server",
@@ -201,14 +308,30 @@
           defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
           and the term "User Agent" defined by <xref target="RFC2616">RFC 2616</xref>.
         </t>
+        -->
         <t>
+          本ドキュメントはその他に以下の用語を用いる.
+          <!--
           This specification also defines the following terms:
+          -->
           <list style="hanging">
+            <t hangText="Authentication">
+              <vspace/>
+              提示された Identity と実際の Entity が紐づいているという十分な確信を得るためのプロセス.
+            </t>
+            <!--
             <t hangText="Authentication">
               <vspace/>
               Process used to achieve sufficient confidence in the binding
               between the Entity and the presented Identity.
             </t>
+            -->
+            <t hangText="Authentication Request">
+              <vspace/>
+              OpenID Connect が定める拡張パラメータおよびスコープを利用して, Authorization Server に End-User の認証を要求する OAuth 2.0 Authorization Request.
+              このとき Authorization Server は OpenID Connect Provider, Client は OpenID Connect Relying Party となる.
+            </t>
+            <!--
             <t hangText="Authentication Request">
               <vspace/>
               OAuth 2.0 Authorization Request using extension parameters and scopes
@@ -216,39 +339,91 @@
               by the Authorization Server, which is an OpenID Connect Provider,
               to the Client, which is an OpenID Connect Relying Party.
             </t>
+            -->
+            <t hangText="Claim">
+              <vspace/>
+              Entity に関する情報の部分集合.
+            </t>
+            <!--
             <t hangText="Claim">
               <vspace/>
               Piece of information asserted about an Entity.
             </t>
+            -->
+            <t hangText="Claims Provider">
+              <vspace/>
+              Entity の Claim を返すサーバー.
+            </t>
+            <!--
             <t hangText="Claims Provider">
               <vspace/>
               Server that can return Claims about an Entity.
             </t>
+            -->
+            <t hangText="End-User">
+              <vspace/>
+              一連のフローに参加する人間.
+            </t>
+            <!--
             <t hangText="End-User">
               <vspace/>
               Human participant.
             </t>
+            -->
+            <t hangText="Entity">
+              <vspace/>
+              あるコンテキストの中で識別される, 他と独立した個.
+              End-User は Entity の一例.
+            </t>
+            <!--
             <t hangText="Entity">
               <vspace/>
               Something that has a separate and distinct existence and that can be
               identified in a context. An End-User is one example of an Entity.
             </t>
+            -->
+            <t hangText="ID Token">
+              <vspace/>
+              Authentication イベントに関する Claim を含む <xref target="JWT">JSON Web Token (JWT)</xref>.
+              その他の Claim を含むこともある (MAY).
+            </t>
+            <!--
             <t hangText="ID Token">
               <vspace/>
               <xref target="JWT">JSON Web Token (JWT)</xref> that contains Claims about the Authentication event.
               It MAY contain other Claims.
             </t>
+            -->
 
             <t hangText="Identifier">
               <vspace/>
-             Value that uniquely characterizes an Entity in a specific context.
+              あるコンテキスト中で Entity をユニークに特徴づける値.
             </t>
+            <!--
+            <t hangText="Identifier">
+              <vspace/>
+              Value that uniquely characterizes an Entity in a specific context.
+            </t>
+            -->
 
+            <t hangText="Issuer">
+              <vspace/>
+              Claim を発行する Entity.
+            </t>
+            <!--
             <t hangText="Issuer">
               <vspace/>
               Entity that issues a set of Claims.
             </t>
+            -->
 
+            <t hangText="Issuer Identifier">
+              <vspace/>
+              検証可能な Issuer の識別子.
+              Issuer Identifier は, 大文字小文字を区別する URL である.
+              この URL は <spanx style="verb">https</spanx> スキーム, ホスト, そして任意でポート番号およびパス要素からなり, クエリーとフラグメント要素は含まない.
+            </t>
+            <!--
             <t hangText="Issuer Identifier">
               <vspace/>
               Verifiable Identifier for an Issuer.
@@ -257,7 +432,14 @@
               contains scheme, host, and optionally, port number and path
               components and no query or fragment components.
             </t>
+            -->
 
+            <t hangText="OpenID Provider (OP)">
+              <vspace/>
+              End-User を Authenticate できる OAuth 2.0 Authorization Server.
+              End-User の Authentication イベントに関する Claim を Relying Party に提供する.
+            </t>
+            <!--
             <t hangText="OpenID Provider (OP)">
               <vspace/>
               OAuth 2.0 Authorization Server that is capable of
@@ -265,11 +447,25 @@
               providing Claims to a Relying Party
               about the Authentication event and the End-User.
             </t>
+            -->
+            <t hangText="Pairwise Pseudonymous Identifier (PPID)">
+              <vspace/>
+              ある Relying Party に対してのみ, ある Entity の識別子として提供される値.
+              他の Relying Party には, 当該 PPID を当該 Entity と関連づけることはできない.
+            </t>
+            <!--
             <t hangText="Pairwise Pseudonymous Identifier (PPID)">
               <vspace/>
               Identifier that identifies the Entity to a Relying Party that cannot be correlated
               with the Entity's PPID at another Relying Party.
             </t>
+            -->
+            <t hangText="Personally Identifiable Information (PII)">
+              <vspace/>
+              特定の人物に紐づき, 実際の人物の識別に用いることができる情報.
+              もしくは特定の人物に直接および間接的にリンクされる可能性のある情報.
+            </t>
+            <!--
             <t hangText="Personally Identifiable Information (PII)">
               <vspace/>
               Information that (a) can be used to identify the natural person
@@ -277,43 +473,95 @@
               (b) is or might be directly or indirectly linked to a
               natural person to whom such information relates.
             </t>
+            -->
+            <t hangText="Relying Party (RP)">
+              <vspace/>
+              OpenID Provider に End-User Authentication と Claim を要求する OAuth 2.0 Client.
+            </t>
+            <!--
             <t hangText="Relying Party (RP)">
               <vspace/>
               OAuth 2.0 Client application requiring End-User Authentication
               and Claims from an OpenID Provider.
             </t>
+            -->
+            <t hangText="Self-Issued OpenID Provider">
+              <vspace/>
+              私有の self-hosted な OpenID Providerであり, 自己署名つきの ID Token を発行するもの.
+            </t>
+            <!--
             <t hangText="Self-Issued OpenID Provider">
               <vspace/>
               Personal, self-hosted OpenID Provider that issues self-signed ID Tokens.
             </t>
+            -->
+            <t hangText="Subject Identifier">
+              <vspace/>
+              Issuer にとって局地的にユニークで再利用されることのない End-User 識別子.
+              この値は Client に利用されることを想定する.
+            </t>
+            <!--
             <t hangText="Subject Identifier">
               <vspace/>
               Locally unique and never
               reassigned identifier within the Issuer for the End-User,
               which is intended to be consumed by the Client.
             </t>
+            -->
+            <t hangText="UserInfo Endpoint">
+              <vspace/>
+              Protected Resource のひとつ.
+              Access Token を提示する Client に対して, Authorization Grant に従って End-User に関する情報を提供する.
+            </t>
+            <!--
             <t hangText="UserInfo Endpoint">
               <vspace/>
               Protected Resource that, when presented with an Access Token by the Client,
               returns authorized information about the End-User represented by the corresponding
               Authorization Grant.
             </t>
+            -->
+            <t hangText="Validation">
+              <vspace/>
+              あるものごとの健全性および正当性を確立するためのプロセス.
+            </t>
+            <!--
             <t hangText="Validation">
               <vspace/>
               Process intended to establish the soundness or correctness of a construct.
             </t>
+            -->
+            <t hangText="Verification">
+              <vspace/>
+              ある事実や値の正確さを検査もしくは証明するためのプロセス.
+            </t>
+            <!--
             <t hangText="Verification">
               <vspace/>
               Process intended to test or prove the truth or accuracy of a fact or value.
             </t>
+            -->
+            <t hangText="Voluntary Claim">
+              <vspace/>
+              Client が End-User が要求するあるタスクを実行する際に, 有用ではあるが Essential ではないとを Client が指定した Claim.
+            </t>
+            <!--
             <t hangText="Voluntary Claim">
               <vspace/>
               Claim specified by the Client as being useful but not Essential
               for the specific task requested by the End-User.
             </t>
+            -->
 
           </list>
         </t>
+        <t>
+          IMPORTANT NOTE TO READERS:
+          上記の用語定義は本仕様が定めるところであり, 本仕様の実装においてはこれらの定義に従うこと.
+          "Issuer Identifier" をはじめとして, 本仕様で大文字表記されている用語はすべて上記の定義に従う.
+          仕様書読者は必ずこれらの用語定義に従うこと.
+        </t>
+        <!--
         <t>
           IMPORTANT NOTE TO READERS: The terminology definitions in
           this section are a normative portion of this specification,
@@ -323,31 +571,65 @@
           Whenever the reader encounters them, their definitions
           found in this section must be followed.
         </t>
+        -->
       </section>
 
       <section anchor="Overview" title="Overview">
 
+        <t>
+          OpenID Connect プロトコルは, おおまかに言って以下のステップに従う.
+        </t>
+        <!--
         <t>The OpenID Connect protocol, in abstract, follows the following
         steps.</t>
+        -->
 
         <t>
           <list style="numbers">
+            <t>
+              RP (Client) が OpenID Provider (OP) にリクエストを送る.
+            </t>
+            <!--
             <t>The RP (Client) sends a request to the OpenID Provider (OP).</t>
+            -->
 
+            <t>
+              OP は End-User を認証し, 認可を受ける.
+            </t>
+            <!--
             <t>The OP authenticates the End-User and obtains authorization.</t>
+            -->
 
+            <t>
+              OP は ID Token および (通常は) Access Token を返す.
+            </t>
+            <!--
             <t>The OP responds with an ID Token and usually an Access Token.</t>
+            -->
 
+            <t>
+              RP は Access Token を添えて UserInfo Endpoint にリクエストを送る.
+            </t>
+            <!--
             <t>The RP can send a request with the Access Token to the UserInfo Endpoint.</t>
+            -->
 
+            <t>
+              UserInfo Endpoint は End-User の Claim を返す.
+            </t>
+            <!--
             <t>The UserInfo Endpoint returns Claims about the End-User.</t>
+            -->
 
           </list>
         </t>
 
         <figure>
           <preamble>
+            これら一連のステップを以下に図示する.
+            <!--
             These steps are illustrated in the following diagram:
+            -->
           </preamble>
 
           <artwork><![CDATA[
