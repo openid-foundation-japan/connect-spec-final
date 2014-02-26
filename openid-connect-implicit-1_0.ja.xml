@@ -2675,10 +2675,19 @@
       </section>
 
       <section anchor="StandardClaims" title="Standard Claims">
+        <t>
+          OpenID Connect では以下に示す標準 Claim セットを定義する.
+          これらは通常の OP からは UserInfo Response として,
+          Self-Issued OP からは ID Token の中に返される.
+        </t>
+        <!--
         <t>This subset of OpenID Connect defines a set of standard Claims.
         They are returned by normal OPs in the UserInfo Response
         and are returned by Self-Issued OPs in the ID Token.
         </t>
+        -->
+
+        <!-- 以下, 2.5はまるごと basic と同じ -->
 
         <texttable anchor="ClaimTable" title="Reserved Member Definitions">
 
@@ -2688,52 +2697,99 @@
 
           <c>sub</c>
           <c>string</c>
+          <c>
+            Subject - Issuer における End-User の識別子.
+          </c>
+          <!--
           <c>Subject - Identifier for the End-User at the Issuer.</c>
+          -->
 
           <c>name</c>
           <c>string</c>
+          <c>
+            End-User の表示用フルネーム.
+            肩書きや称号 (suffix) 等が含まれることもある.
+            氏名等の表示順は End-User の locale や選好に従う.
+          </c>
+          <!--
           <c>
             End-User's full name in displayable form including all name parts,
             possibly including titles and suffixes,
             ordered according to the End-User's locale and preferences.
           </c>
+          -->
 
           <c>given_name</c>
           <c>string</c>
+          <c>
+            End-User の名 (given name / first name).
+            複数の given name を持つ文化圏もあることに注意.
+            全ての given name が含まれる可能性があり, その場合はスペース区切りで表記される.
+          </c>
+          <!--
           <c>
             Given name(s) or first name(s) of the End-User.
             Note that in some cultures, people can have multiple given names;
             all can be present, with the names being separated by space characters.
           </c>
+          -->
 
           <c>family_name</c>
           <c>string</c>
+          <c>
+            End-User の姓 (surname / last name).
+            複数の family name を持つ文化圏や family name を持たない文化圏もあることに注意.
+            全ての family name が含まれる可能性があり, その場合はスペース区切りで表記される.
+          </c>
+          <!--
           <c>
             Surname(s) or last name(s) of the End-User.
             Note that in some cultures, people can have multiple family names
             or no family name;
             all can be present, with the names being separated by space characters.
           </c>
+          -->
 
           <c>middle_name</c>
           <c>string</c>
+          <c>
+            End-User の middle name.
+            複数の middle name を持つ文化圏もあることに注意.
+            全ての middle name が含まれる可能性があり, その場合はスペース区切りで表記される.
+            また middle name を使用しない文化圏もある.
+          </c>
+          <!--
           <c>
             Middle name(s) of the End-User.
             Note that in some cultures, people can have multiple middle names;
             all can be present, with the names being separated by space characters.
             Also note that in some cultures, middle names are not used.
           </c>
+          -->
 
           <c>nickname</c>
           <c>string</c>
+          <c>
+            End-User のニックネーム.
+            これは <spanx style="verb">given_name</spanx> と同じこともあれば異なることもある.
+            例えば, <spanx style="verb">nickname</spanx> が <spanx style="verb">Mike</spanx>, <spanx style="verb">given_name</spanx> が <spanx style="verb">Michael</spanx> として返されることがある.
+          </c>
+          <!--
           <c>Casual name of the End-User that may or may not be the same as the
           <spanx style="verb">given_name</spanx>. For instance, a <spanx
           style="verb">nickname</spanx> value of <spanx style="verb">Mike</spanx>
           might be returned alongside a <spanx style="verb">given_name</spanx>
           value of <spanx style="verb">Michael</spanx>.</c>
+          -->
 
           <c>preferred_username</c>
           <c>string</c>
+          <c>
+            <spanx style="verb">janedoe</spanx> や <spanx style="verb">j.doe</spanx> といった, End-User の選好する簡略名.
+            これは <spanx style="verb">@</spanx> や <spanx style="verb">/</spanx> や空白文字といった特殊文字を含むあらゆる valid な JSON 文字列でありうる (MAY).
+            <xref target="ClaimStability"></xref> にあるように, RP は この値がユニークであるという前提で扱ってはならない (MUST NOT).
+          </c>
+          <!--
           <c>Shorthand name by which the End-User wishes to be referred to at the RP, such as
           <spanx style="verb">janedoe</spanx> or <spanx style="verb">j.doe</spanx>.
           This value MAY be any valid JSON string including
@@ -2742,16 +2798,29 @@
           The RP MUST NOT rely upon this value being unique,
           as discussed in <xref target="ClaimStability"></xref>.
           </c>
+          -->
 
           <c>profile</c>
           <c>string</c>
           <c>
+            End-User のプロフィールページの URL.
+            この Web ページに掲載されるコンテンツはこの End-User に関するものであろう (SHOULD).
+          </c>
+          <!--
+          <c>
             URL of the End-User's profile page.
             The contents of this Web page SHOULD be about the End-User.
           </c>
+          -->
 
           <c>picture</c>
           <c>string</c>
+          <c>
+            End-User のプロフィール画像の URL.
+            この URL は画像ファイル (PNG, JPEG, GIF 画像ファイル等) を参照すること (MUST).
+            またこの画像は End-User が撮影した任意の写真ではなく, End-User に言及する際に適切な画像とするべきである (SHOULD).
+          </c>
+          <!--
           <c>
             URL of the End-User's profile picture.
             This URL MUST refer to an image file
@@ -2762,17 +2831,30 @@
             suitable for displaying when describing the End-User,
             rather than an arbitrary photo taken by the End-User.
           </c>
+          -->
 
           <c>website</c>
           <c>string</c>
+          <c>
+            End-User の Web ページやブログの URL.
+            この Web ページは End-User 自身や End-User が所属する組織が発信する情報を含むべきである (SHOULD).
+          </c>
+          <!--
           <c>
             URL of the End-User's Web page or blog.
             This Web page SHOULD contain information published by the End-User
             or an organization that the End-User is affiliated with.
           </c>
+          -->
 
           <c>email</c>
           <c>string</c>
+          <c>
+            End-User の選好する Email アドレス.
+            <xref target="RFC5322">RFC 5322</xref> の addr-spec シンタックスに従うこと.
+            <xref target="ClaimStability"></xref> にあるように, RP は この値がユニークであるという前提で扱ってはならない (MUST NOT).
+          </c>
+          <!--
           <c>
             End-User's preferred e-mail address.
             Its value MUST conform to the <xref target="RFC5322">RFC 5322</xref>
@@ -2780,9 +2862,16 @@
             The RP MUST NOT rely upon this value being unique,
             as discussed in <xref target="ClaimStability"></xref>.
           </c>
+          -->
 
           <c>email_verified</c>
           <c>boolean</c>
+          <c>
+            End-User の Email アドレスが検証済であれば true, さもなければ false.
+            Claim Value が <spanx style="verb">true</spanx> の場合, これは OP が検証を行った時点において該当 Email アドレスが End-User のコントロール下にあるという確認処理を行ったことを示す.
+            Email アドレスの検証の詳細についてはコンテキストに依存し, 関係者間でのトラストフレームワークや契約上の同意事項等などによって異なる.
+          </c>
+          <!--
           <c>
             True if the End-User's e-mail address has been verified; otherwise false.
             When this Claim Value is <spanx style="verb">true</spanx>,
@@ -2793,16 +2882,32 @@
             and dependent upon the trust framework or contractual agreements
             within which the parties are operating.
           </c>
+          -->
 
           <c>gender</c>
           <c>string</c>
+          <c>
+            End-User の性別.
+            本仕様では <spanx style="verb">female</spanx>, <spanx style="verb">male</spanx> を定義する.
+            定義済の値に適切なものがない場合, その他の値を利用してもよい (MAY).
+          </c>
+          <!--
           <c>End-User's gender.  Values defined by this
           specification are <spanx style="verb">female</spanx> and
           <spanx style="verb">male</spanx>.  Other values MAY be used
           when neither of the defined values are applicable.</c>
+          -->
 
           <c>birthdate</c>
           <c>string</c>
+          <c>
+            End-User の誕生日.
+            <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx> 形式で表現される.
+            生年を <spanx style="verb">0000</spanx> とすることで生年を省略することもできる (MAY).
+            生年のみを提示する場合は <spanx style="verb">YYYY</spanx> 形式としても良い.
+            プラットフォームの日付関連の関数の実装によって, 生年のみを提供した場合の月日の扱いは様々であるため, 実装者はこの点を考慮にいれて日付を処理すべきである.
+          </c>
+          <!--
           <c>End-User's birthday, represented as an
           <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx>
           format. The year MAY be <spanx style="verb">0000</spanx>, indicating that it is omitted.
@@ -2810,16 +2915,33 @@
           depending on the underlying platform's date related function, providing just year can
           result in varying month and day, so the implementers need to take this factor into account
           to correctly process the dates. </c>
+          -->
 
           <c>zoneinfo</c>
           <c>string</c>
+          <c>
+            End-User のタイムゾーンを示す <xref target="zoneinfo"/> に登録された文字列.
+            (<spanx style="verb">Europe/Paris</spanx>, <spanx style="verb">America/Los_Angeles</spanx> 等)
+          </c>
+          <!--
           <c>String from zoneinfo <xref target="zoneinfo"/> time zone
           database representing the End-User's time zone.
           For example, <spanx style="verb">Europe/Paris</spanx> or
           <spanx style="verb">America/Los_Angeles</spanx>.</c>
+          -->
 
           <c>locale</c>
           <c>string</c>
+          <c>
+            End-User の locale.
+            <xref target="RFC5646">BCP47</xref> 言語タグ表現.
+            これは通常 <xref target="ISO639-1">ISO 639-1 Alpha-2</xref> 言語コードを小文字表記, <xref target="ISO3166-1">ISO 3166-1 Alpha-2</xref> 国コードを大文字表記し, ダッシュでつなげたものである.
+            (<spanx style="verb">en-US</spanx>, <spanx style="verb">fr-CA</spanx> 等)
+            実装によってはダッシュの代わりにアンダースコアを区切り文字に用いる場合もあるため, 互換性の観点からは注意すること.
+            (<spanx style="verb">en_US</spanx> 等)
+            Relying Party はダッシュ区切りに加えてアンダースコア区切りのシンタックスを受け入れてもよい (MAY).
+          </c>
+          <!--
           <c>End-User's locale, represented as a
           <xref target="RFC5646">BCP47</xref> language tag.
           This is typically an <xref target="ISO639-1">ISO 639-1 Alpha-2</xref>
@@ -2831,9 +2953,18 @@
           as the separator rather than a dash, for example,
           <spanx style="verb">en_US</spanx>; Relying Parties MAY choose to
           accept this locale syntax as well.</c>
+          -->
 
           <c>phone_number</c>
           <c>string</c>
+          <c>
+            End-User の選好する電話番号.
+            この Claim のフォーマットとしては <xref target="E.164">E.164</xref> を推奨する (RECOMMENDED).
+            (<spanx style="verb">+1 (425) 555-1212</spanx>, <spanx style="verb">+56 (2) 687 2400</spanx> 等)
+            電話番号が拡張を含む場合, その拡張は <xref target="RFC3966">RFC 3966</xref> 拡張シンタックスで表記することを推奨する (RECOMMENDED).
+            (<spanx style="verb">+1 (604) 555-1234;ext=5678</spanx> 等)
+          </c>
+          <!--
           <c>
             End-User's preferred telephone number. <xref target="E.164">E.164</xref>
             is RECOMMENDED as the format of this Claim,
@@ -2844,9 +2975,17 @@
             <xref target="RFC3966">RFC 3966</xref> extension syntax,
             for example, <spanx style="verb">+1 (604) 555-1234;ext=5678</spanx>.
           </c>
+          -->
 
           <c>phone_number_verified</c>
           <c>boolean</c>
+          <c>
+            End-User の電話番号が検証済であれば ture, さもなければ false.
+            Claim Value が <spanx style="verb">true</spanx> の場合, これは OP が検証を行った時点において該当電話番号が End-User のコントロール下にあるという確認処理を行ったことを示す.
+            電話番号の検証の詳細についてはコンテキストに依存し, 関係者間でのトラストフレームワークや契約上の同意事項等などによって異なる.
+            また true の場合, <spanx style="verb">phone_number</spanx> Claim は E.164 形式でなければならず (MUST), すべての拡張は RFC 3966 形式でなければならない (MUST).
+          </c>
+          <!--
           <c>
             True if the End-User's phone number has been verified; otherwise false.
             When this Claim Value is <spanx style="verb">true</spanx>,
@@ -2860,28 +2999,46 @@
             Claim MUST be in E.164 format
             and any extensions MUST be represented in RFC 3966 format.
           </c>
+          -->
 
           <c>address</c>
           <c>JSON object</c>
+          <c>
+            End-User の選好する郵送先住所.
+            <spanx style="verb">address</spanx> メンバーは <xref target="AddressClaim"/> に定義されたメンバーを含む JSON <xref target="RFC4627"/> 構造である.
+          </c>
+          <!--
           <c>
             End-User's preferred postal address.
             The value of the <spanx style="verb">address</spanx> member is
             a JSON <xref target="RFC4627"/> structure containing some or all of
             the members defined in <xref target="AddressClaim"/>.
           </c>
+          -->
 
           <c>updated_at</c>
           <c>number</c>
+          <c>
+            End-User に関する情報の最終更新日時.
+            この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
+          </c>
+          <!--
           <c>
             Time the End-User's information was last updated.
             Its value is a JSON number representing the number of seconds from
             1970-01-01T0:0:0Z as measured in UTC until the date/time.
           </c>
+          -->
         </texttable>
 
         <figure>
+          <preamble>
+            以下に例を示す.
+          </preamble>
+          <!--
           <preamble>Following is a non-normative example of such
           a response:</preamble>
+          -->
 
           <artwork><![CDATA[
   {
@@ -2896,12 +3053,18 @@
 ]]></artwork>
         </figure>
 
+        <t>
+          Registration <xref target="OpenID.Registration"/> において特に他フォーマットを指定されない限り, UserInfo Endpoint では Claim を JSON 形式で返し (MUST), Content-Type ヘッダーを用いてフォーマットを示すこと (MUST).
+          以下に許可されたコンテンツタイプを示す.
+        </t>
+        <!--
         <t>The UserInfo Endpoint MUST return Claims in JSON format unless a
         different format was specified during Registration
         <xref target="OpenID.Registration"/>.
         The UserInfo Endpoint MUST return a content-type header to indicate
         which format is being returned. The following are accepted content
         types:</t>
+        -->
 
         <texttable style="all">
           <ttcol>Content-Type</ttcol>
@@ -2916,6 +3079,12 @@
 
         <section anchor="AddressClaim" title="Address Claim">
           <t>
+            Address Claim は物理的な郵送先住所である.
+            End-User の登録済情報とプライバシー設定に基づいて, <spanx style="verb">address</spanx> の一部のみを返却することもある (MAY).
+            例えば <spanx style="verb">country</spanx> と <spanx style="verb">region</spanx> を返し, それ以外の詳細なアドレス情報を省略するなどが考えられる.
+          </t>
+          <!--
+          <t>
             The Address Claim represents a physical mailing address.
             Implementations MAY return only a subset of the
             fields of an <spanx style="verb">address</spanx>, depending upon
@@ -2925,6 +3094,12 @@
             style="verb">region</spanx> might be returned without returning
             more fine-grained address information.
           </t>
+          -->
+          <t>
+            住所全体を整形済サブフィールドに1文字列として入れてもよいし (MAY), 他のサブフィールドに個別の要素として各住所要素を指定するだけでもよいし (MAY), 両方を含めてもよい (MAY).
+            もし両方を含める場合, 整形済住所は住所の各要素の連結方法を示すものとし, 両方が同じアドレスを示すこと (SHOULD).
+          </t>
+          <!--
           <t>
             Implementations MAY return just the full address
             as a single string in the formatted sub-field,
@@ -2936,6 +3111,7 @@
             with the formatted address indicating how the
             component fields are combined.
           </t>
+          -->
           <t>
             <list style="hanging">
               <t hangText="formatted">
@@ -2986,6 +3162,14 @@
 
         <section anchor="ClaimsLanguagesAndScripts" title="Claims Languages and Scripts">
           <t>
+            Human-readable な Claim Value およびそれらへの参照は, 複数言語および複数文字種で表現することができる (MAY).
+            言語および文字種の指定には <xref target="RFC5646">BCP47</xref> 言語タグを <spanx style="verb">#</spanx> を区切り文字としてメンバー名に付与する.
+            例えば <spanx style="verb">family_name#ja-Kana-JP</spanx> は日本語のカタカナ表記の Family Name を示す.
+            カタカナ表記の氏名は, 漢字表記 (<spanx style="verb">family_name#ja-Hani-JP</spanx>) の氏名の発音を示したりインデックス目的等で用いられることが多い.
+            他にも <spanx style="verb">website</spanx> が言語指定のない Web サイト, <spanx style="verb">website#de</spanx> がドイツ語の Web サイトを参照していることを示すといった例も挙げられる.
+          </t>
+          <!--
+          <t>
             Human-readable Claim Values and Claim Values that reference human-readable values
             MAY be represented in multiple languages and scripts.
             To specify the languages and scripts, <xref
@@ -3000,6 +3184,13 @@
             referencing a Web site in an unspecified language and a Web site
             in German.
           </t>
+          -->
+          <t>
+            Claim Name は大文字小文字を区別するため, Claim Name 内の言語タグは <xref target="IANA.Language">IANA Language Subtag Registry</xref> に登録されたままの表記とすることを強く推奨する (RECOMMENDED).
+            一般的に言語名は小文字, 地域名は大文字, 文字種は大文字小文字混合で表記されることが多い.
+            しかしながら BCP47 言語タグ値は大文字小文字を区別しないため, 実装は言語タグを大文字小文字区別なく処理できるべきである (SHOULD).
+          </t>
+          <!--
           <t>
             Since Claim Names are case sensitive, it is strongly RECOMMENDED
             that language tag values used in Claim Names be spelled using the
@@ -3012,6 +3203,15 @@
             implementations SHOULD interpret the language tag values supplied
             in a case insensitive manner.
           </t>
+          -->
+          <t>
+            BCP47 で推奨されるように, Claim の言語タグ値は必要な時にのみ指定すべきである (SHOULD).
+            例えばほとんどの場合 <spanx style="verb">fr-CA</spanx> や <spanx style="verb">fr-FR</spanx> でなく <spanx style="verb">fr</spanx> で十分である.
+            可能であれば OP は要求された Claim locale と自身が持つ Claim のマッチングを試みるべきである (SHOULD).
+            例えば Client が <spanx style="verb">de</spanx> (ドイツ語) の Claim を要求してきており, OP が <spanx style="verb">de-CH</spanx> (スイスのドイツ語) 表記の Claim は持つが地域指定無しの一般的ドイツ語表記の Claim を持たない場合, OP はスイスのドイツ語の値を返すのが適切である.
+            (Client をできるかぎりシンプルに保つため, ここでは言語タグのマッチングが内包する複雑性をわざと OP に寄せている)
+          </t>
+          <!--
           <t>
             Per the recommendations in BCP47, language tag values for Claims
             SHOULD only be as specific as necessary.
@@ -3027,10 +3227,21 @@
             (This intentionally moves as much of the complexity of language tag
             matching to the OP as possible, to simplify Clients.)
           </t>
+          -->
+          <t>
+            リクエスト中の <spanx style="verb">claims_locales</spanx> を使って, 返却される Claim の好ましい言語および文字種を指定することができる.
+          </t>
+          <!--
           <t>
             A <spanx style="verb">claims_locales</spanx> request can be used to
             specify the preferred languages and scripts to use for the returned Claims.
           </t>
+          -->
+          <t>
+            OP が <spanx style="verb">claims_locales</spanx> やその他の手段により End-User と Client が単一言語および文字種表記の Claim を要求していると特定した場合, 該当言語および文字種表記の Claim を返却する際には言語タグを付けずに返すことを推奨する (RECOMMENDED).
+            また Client は言語タグ付きの Claim を処理可能なよう実装することを推奨する (RECOMMENDED).
+          </t>
+          <!--
           <t>
             When the OP determines, either through the
             <spanx style="verb">claims_locales</spanx> parameter,
@@ -3041,10 +3252,17 @@
             It is also RECOMMENDED that Clients be written in a manner
             that they can handle and utilize Claims using language tags.
           </t>
+          -->
         </section>
 
         <section anchor="ClaimStability" title="Claim Stability and Uniqueness">
 
+          <t>
+            <spanx style="verb">sub</spanx> (subject) と <spanx style="verb">iss</spanx> (issuer) Claim のペアは, RP が End-User の不変な識別子として信頼できる唯一の Claim である.
+            <xref target="IDToken"></xref> で述べたように, <spanx style="verb">sub</spanx> は Issuer が End-User に割り振るローカルでユニークかつ再利用されない識別子でなければならない (MUST).
+            以上のことから, <spanx style="verb">iss</spanx> Claim と <spanx style="verb">sub</spanx> Claim のペアが, 唯一の保証された End-User の識別子となる.
+          </t>
+          <!--
           <t>
             The <spanx style="verb">sub</spanx> (subject) and
             <spanx style="verb">iss</spanx> (issuer) Claims, used together,
@@ -3057,6 +3275,14 @@
             combination of the <spanx style="verb">iss</spanx> Claim
             and the <spanx style="verb">sub</spanx> Claim.
           </t>
+          -->
+          <t>
+            その他の Claim に関しては, 時間経過や複数ユーザー間での不変性等は保証されず, Issuer は独自の制約やポリシーを適用してよい.
+            例えば Issuer は時系列上の異なるポイントにおいて, 同一の <spanx style="verb">email</spanx> Claim Value を異なるユーザーのために再利用してもよい (MAY).
+            よって <spanx style="verb">email</spanx> アドレスは時間経過によって異なる End-User に紐づく可能性がある (MAY).
+            以上のことより, <spanx style="verb">email</spanx>, <spanx style="verb">phone_number</spanx>, <spanx style="verb">preferred_username</spanx> などの Claim を End-User のユニークな識別子として利用してはならない (MUST NOT).
+          </t>
+          <!--
           <t>
             All other Claims carry no such guarantees across different issuers in terms of
             stability over time or uniqueness across users, and Issuers are permitted to
@@ -3070,6 +3296,7 @@
             <spanx style="verb">preferred_username</spanx>
             and MUST NOT be used as unique identifiers for the End-User.
           </t>
+          -->
 
         </section>
 
