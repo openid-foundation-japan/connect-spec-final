@@ -377,6 +377,7 @@
 
             <t hangText="Issuer">
               <vspace/>
+              Claim を発行する Entity.
               <!--
               Entity that issues a set of Claims.
               -->
