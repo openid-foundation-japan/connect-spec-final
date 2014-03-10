@@ -503,7 +503,7 @@
       <section anchor="Overview" title="Overview">
 
         <t>
-          これら一連のステップを以下に図示する.
+          OpenID Connect プロトコルは, おおまかに言って以下のステップに従う.
         </t>
         <!--
         <t>The OpenID Connect protocol, in abstract, follows the following
@@ -1628,7 +1628,7 @@
               ID Token の想定されるオーディエンス (Audience).
               この値は Relying Party の OAuth 2.0 <spanx style="verb">client_id</spanx> を含まなければならない (MUST).
               他のオーディエンスの識別子を含んでもよい (MAY).
-              一般的には <spanx style="verb">aud</spanx> は大文字小文字を区別した文字列の配列であるが, オーディエンスが単体の場合は <spanx style="verb">aud</spanx> 値を大文字小文字を区別した単一文字列としてもよい.
+              一般的には <spanx style="verb">aud</spanx> は大文字小文字を区別した文字列の配列であるが, オーディエンスが単体の場合は <spanx style="verb">aud</spanx> 値を大文字小文字を区別した単一文字列としてもよい (MAY).
               <!--
               REQUIRED.
               Audience(s) that this ID Token is intended for.
@@ -1703,7 +1703,7 @@
               Client セッションと ID Token を紐づける文字列値.
               リプレイアタック防止のために用いられる.
               Authentication Request で指定されたままの値を ID Token に含める.
-              Client は Authentication Request に含めた <spanx style="verb">nonce</spanx> 値が ID Token に含まれる <spanx style="verb">nonce</spanx> Claim 値と一致することを検証しなければならない (MUST).
+              Client は Authentication Request に含めた <spanx style="verb">nonce</spanx> 値が ID Token に含まれる <spanx style="verb">nonce</spanx> Claim Value と一致することを検証しなければならない (MUST).
               Authentication Request に nonce が含まれていた場合, Authorization Server は ID Token にそのままの値で <spanx style="verb">nonce</spanx> Claim を含めねばならない (MUST).
               <spanx style="verb">nonce</spanx> は大文字小文字を区別する文字列である.
               <!--
@@ -1995,7 +1995,7 @@
 
               <t>
                 <spanx style="verb">acr</spanx> Claim がリクエストに含まれていた場合, Client は ID Token の <spanx style="verb">acr</spanx> Claim が適切かどうか検証すべきである (SHOULD).
-                <spanx style="verb">acr</spanx> Claim 値とその意味は, 本仕様の定めるところではない.
+                <spanx style="verb">acr</spanx> Claim Value とその意味は, 本仕様の定めるところではない.
               </t>
               <!--
               <t>If the <spanx style="verb">acr</spanx> Claim was requested, the
