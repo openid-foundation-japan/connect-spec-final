@@ -2854,18 +2854,36 @@
 
           <section anchor="TokenResponseValidation" title="Token Response Validation">
             <t>
+              Client は以下の手順に従い Token Response を検証すること (MUST).
+              <!--
               The Client MUST validate the Token Response as follows:
+              -->
               <list style="numbers">
+                <t>
+                  RFC 6749 (特に Sections 5.1 および 10.12) のバリデーションルールに従う.
+                </t>
+                <!--
                 <t>
                   Follow the validation rules in RFC 6749,
                   especially those in Sections 5.1 and 10.12.
                 </t>
+                -->
+                <t>
+                  ID Token バリデーションルールに関しては <xref target="IDTokenValidation"/> に従う.
+                </t>
+                <!--
                 <t>
                   Follow the ID Token validation rules in <xref target="IDTokenValidation"/>.
                 </t>
+                -->
+                <t>
+                  Access Token バリデーョンルールに関しては <xref target="CodeFlowTokenValidation"/> に従う.
+                </t>
+                <!--
                 <t>
                   Follow the Access Token validation rules in <xref target="CodeFlowTokenValidation"/>.
                 </t>
+                -->
               </list>
             </t>
 
@@ -2874,16 +2892,27 @@
           <section anchor="CodeIDToken" title="ID Token">
 
             <t>
+              ID Token のコンテンツに関しては <xref target="IDToken"/> を参照のこと.
+              Authorization Code Flow を利用する場合, 以下に示すように, いくつかの ID Token Claim に追加要件が適用される.
+            </t>
+            <!--
+            <t>
               The contents of the ID Token are as described in <xref target="IDToken"/>.
               When using the Authorization Code Flow,
               these additional requirements for the following ID Token Claims apply:
             </t>
+            -->
             <t>
               <list style="hanging">
 
                 <t hangText="at_hash">
                   <vspace/>
                   OPTIONAL.
+                  Access Token のハッシュ値.
+                  この値は, <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
+                  <spanx style="verb">at_hash</spanx> は大文字小文字を区別する文字列である.
+                  <!--
                   Access Token hash value.
                   Its value is the base64url encoding of the left-most half of the
                   hash of the octets of the ASCII representation of the
@@ -2896,6 +2925,7 @@
                   <spanx style="verb">access_token</spanx> value
                   with SHA-256, then take the left-most 128 bits and base64url encode them.
                   The <spanx style="verb">at_hash</spanx> value is a case sensitive string.
+                  -->
                 </t>
 
               </list>
@@ -2905,12 +2935,22 @@
 
           <section anchor="IDTokenValidation" title="ID Token Validation">
             <t>
+              Client は Token Response 内の ID Token を確認しなければならない (MUST).
+            </t>
+            <!--
+            <t>
               Clients MUST validate the ID Token in the Token Response
               in the following manner:
             </t>
+            -->
 
             <t>
               <list style="numbers">
+                <t>
+                  ID Token が 暗号化されているならば, Client が Registration にて指定し OP が ID Token の暗号化に利用した鍵とアルゴリズムを用いて復号する.
+                  Registration 時に OP と暗号化が取り決められても ID Token が暗号化されていなかったときは, RP はそれを拒絶するべき (SHOULD).
+                </t>
+                <!--
                 <t>
                   If the ID Token is encrypted, decrypt it using the
                   keys and algorithms that the Client specified during Registration
@@ -2918,12 +2958,24 @@
                   If encryption was negotiated with the OP at Registration time
                   and the ID Token is not encrypted, the RP SHOULD reject it.
                 </t>
+                -->
+                <t>
+                  (一般的に Discovery を通して取得される) OpenID Provider の Issuer Identifier は <spanx style="verb">iss</spanx> (issuer) Claim の値と正確に一致しなければならない (MUST).
+                </t>
+                <!--
                 <t>
                   The Issuer Identifier for the OpenID Provider
                   (which is typically obtained during Discovery)
                   MUST exactly match the value of the
                   <spanx style="verb">iss</spanx> (issuer) Claim.
                 </t>
+                -->
+                <t>
+                  Client は <spanx style="verb">aud</spanx> (audience) Claim が <spanx style="verb">iss</spanx> (issuer) Claim で示される Issuer にて登録された, 自身の <spanx style="verb">client_id</spanx> をオーディエンスとして含むことを確認しなければならない (MUST).
+                  <spanx style="verb">aud</spanx> (audience) Claim は複数要素の配列を含んでも良い (MAY).
+                  ID Token が Client を有効なオーディエンスとして記載しない, もしくは Client から信用されていない追加のオーディエンスを含むならば, そのID Token は拒絶されなければならない.
+                </t>
+                <!--
                 <t>
                   The Client MUST validate that the
                   <spanx style="verb">aud</spanx> (audience) Claim
@@ -2936,16 +2988,35 @@
                   The ID Token MUST be rejected if the ID Token does not list
                   the Client as a valid audience, or if it contains additional audiences not trusted by the Client.
                 </t>
+                -->
+
+                <t>
+                  ID Token が複数のオーディエンスを含むならば, Client は <spanx style="verb">azp</spanx> Claim があることを確認すべき (SHOULD).
+                </t>
+                <!--
                 <t>
                   If the ID Token contains multiple audiences, the Client SHOULD verify
                   that an <spanx style="verb">azp</spanx> Claim is present.
                 </t>
+                -->
+
+                <t>
+                  <spanx style="verb">azp</spanx> (authorized party) Claim があるならば, Client は Clime の値が自身の <spanx style="verb">client_id</spanx> であることを確認すべき (SHOULD).
+                </t>
+                <!--
                 <t>
                   If an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
                   the Client SHOULD verify that its <spanx style="verb">client_id</spanx>
                   is the Claim Value.
                 </t>
+                -->
 
+                <t>
+                  (このフローの中で) ID Token を Client と Token Endpoint の間の直接通信により受け取ったならば, トークンの署名確認の代わりに TLS Server の確認を issuer の確認のために利用してもよい (MAY).
+                  Client は <xref target="JWS">JWS</xref> に従い, JWT <spanx style="verb">alg</spanx> ヘッダパラメータを用いて全ての ID Token の署名を確認しなければならない (MUST).
+                  Client は Issuer から提供された鍵を利用しなければならない (MUST).
+                </t>
+                <!--
                 <t>
                   If the ID Token is received via direct
                   communication between the Client and the Token Endpoint
@@ -2957,13 +3028,24 @@
                   JWT <spanx style="verb">alg</spanx> header parameter.
                   The Client MUST use the keys provided by the Issuer.
                 </t>
+                -->
 
+                <t>
+                  <spanx style="verb">alg</spanx> の値はデフォルトの <spanx style="verb">RS256</spanx> もしくは Registration にて Client により <spanx style="verb">id_token_signed_response_alg</spanx> パラメータとして送られたアルゴリズムであるべき (SHOULD).
+                </t>
+                <!--
                 <t>The <spanx style="verb">alg</spanx> value SHOULD be the default of
                 <spanx style="verb">RS256</spanx>
                 or the algorithm sent by the Client
                 in the <spanx style="verb">id_token_signed_response_alg</spanx> parameter
                 during Registration.</t>
+                -->
 
+                <t>
+                  JWT <spanx style="verb">alg</spanx> ヘッダパラメータが <spanx style="verb">HS256</spanx>, <spanx style="verb">HS384</spanx> および <spanx style="verb">HS512</spanx> のような MAC ベースのアルゴリズムを利用するならば, <spanx style="verb">aud</spanx> (audience) Claim に含まれる <spanx style="verb">client_id</spanx> に対応する <spanx style="verb">client_secret</spanx> の UTF-8 表現バイト列が署名の確認に用いられる.
+                  MAC ベースのアルゴリズムについて, <spanx style="verb">aud</spanx> が複数の値を持つとき, もしくは <spanx style="verb">aud</spanx> の値と異なる <spanx style="verb">azp</spanx> の値があるときの振る舞いは規定されない.
+                </t>
+                <!--
                 <t>If the JWT <spanx style="verb">alg</spanx> header parameter
                 uses a MAC based algorithm such as
                 <spanx style="verb">HS256</spanx>, <spanx style="verb">HS384</spanx>,
@@ -2978,16 +3060,36 @@
                 if an <spanx style="verb">azp</spanx> value is present
                 that is different than the <spanx style="verb">aud</spanx> value.
                 </t>
+                -->
+                <t>
+                  現在時刻は <spanx style="verb">exp</spanx> Claim の時刻表現より前でなければならない (MUST).
+                </t>
+                <!--
                 <t>
                   The current time MUST be before the time represented by the
                   <spanx style="verb">exp</spanx> Claim.
                 </t>
+                -->
 
-                <t>The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
-                were issued too far away from the current time, limiting the amount of
-                time that nonces need to be stored to prevent attacks.
-                The acceptable range is Client specific.</t>
+                <t>
+                  <spanx style="verb">iat</spanx> Claim は現在時刻からはるか昔に発行されたトークンを拒絶するために利用でき, 攻撃を防ぐために nonce が保存される必要がある期間を制限する.
+                  許容できる範囲は Client の仕様である.
+                </t>
+                <!--
+                <t>
+                  The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
+                  were issued too far away from the current time, limiting the amount of
+                  time that nonces need to be stored to prevent attacks.
+                  The acceptable range is Client specific.
+                </t>
+                -->
 
+                <t>
+                  nonce の値が Authentication Request にて送られたならば, <spanx style="verb">nonce</spanx> Claim が存在し, その値が Authentication Request にて送られたものと一致することを確認するためにチェックされなければならない (MUST).
+                  Client は <spanx style="verb">nonce</spanx> の値を リプレイアタックのためにチェックすべき (SHOULD).
+                  リプレイアタックを検知する正確な方法は Client の仕様である.
+                </t>
+                <!--
                 <t>
                   If a nonce value was sent in the Authentication Request,
                   a <spanx style="verb">nonce</spanx> Claim MUST be present
@@ -2997,12 +3099,23 @@
                   for replay attacks.
                   The precise method for detecting replay attacks is Client specific.
                 </t>
+                -->
 
+                <t>
+                  <spanx style="verb">acr</spanx> Claim が 要求されたならば, Client は主張された Claim の値が適切かどうかをチェックすべきである (SHOULD).
+                  <spanx style="verb">acr</spanx> Claim の値と意味はこの仕様の対象外である.
+                </t>
+                <!--
                 <t>If the <spanx style="verb">acr</spanx> Claim was requested, the
                 Client SHOULD check that the asserted Claim Value is appropriate.
                 The meaning and processing of
                 <spanx style="verb">acr</spanx> Claim Values is out of scope for this specification.</t>
+                -->
 
+                <t>
+                  <spanx style="verb">auth_time</spanx> Claim が要求されたならば, この Claim のための特定のリクエストもしくは <spanx style="verb">max_age</spanx> パラメータを用いて Client は <spanx style="verb">auth_time</spanx> Claim の値をチェックし, もし最新のユーザー認証からあまりに長い時間が経過したと判定されたときは再認証を要求すべきである (SHOULD).
+                </t>
+                <!--
                 <t>
                   If the <spanx style="verb">auth_time</spanx> Claim was requested,
                   either through a specific request for this Claim
@@ -3011,12 +3124,17 @@
                   value and request re-authentication if it determines too much time
                   has elapsed since the last End-User authentication.
                 </t>
+                -->
               </list>
             </t>
 
           </section>
 
           <section anchor="CodeFlowTokenValidation" title="Access Token Validation">
+            <t>
+              Authorization Code Flow を利用し, ID Token が <spanx style="verb">at_hash</spanx> Claim を含むときには <xref target="ImplicitTokenValidation"/> にある Implicit Flow と同様に, Client はそれを Token Endpoint から返された ID Token と Access Token を用いて Access Token の確認に利用してもよい (MAY).
+            </t>
+            <!--
             <t>
               When using the Authorization Code Flow,
               if the ID Token contains an <spanx style="verb">at_hash</spanx> Claim,
@@ -3025,6 +3143,7 @@
               as defined in <xref target="ImplicitTokenValidation"/>,
               but using the ID Token and Access Token returned from the Token Endpoint.
             </t>
+            -->
           </section>
 
         </section>
