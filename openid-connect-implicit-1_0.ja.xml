@@ -2272,7 +2272,7 @@
 
         <section anchor="AccessTokenValidation" title="Access Token Validation">
           <t>
-            Implicit Flow で ID Token とともに 発行された Access Token を検証するには、
+            Implicit Flow で ID Token とともに 発行された Access Token を検証するには,
             Client は以下を検証するべきである (SHOULD).
           </t>
           <!--
@@ -2283,7 +2283,8 @@
           <t>
             <list style="numbers">
               <t>
-                <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値を求める。このとき用いるハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> ヘッダーパラメータに対応する <xref target="JWA">JWA</xref> で定められたものである.
+                <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値を求める.
+                このとき用いるハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> ヘッダーパラメータに対応する <xref target="JWA">JWA</xref> で定められたものである.
                 例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, ハッシュアルゴリズムは SHA-256である.
               </t>
               <!--
