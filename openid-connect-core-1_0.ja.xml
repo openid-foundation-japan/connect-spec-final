@@ -2688,6 +2688,13 @@
 
           <section anchor="TokenResponse" title="Successful Token Response">
             <t>
+              Client から Token Request を受け取り, リクエストの検証を行った後, Authorization Server はサクセスレスポンスを返す.
+              このレスポンスには ID Token と Access Token を含む.
+              サクセスレスポンス中のパラメータは <xref target="RFC6749">OAuth 2.0</xref> Section 4.1.4 で定義される.
+              レスポンスメディアタイプは <spanx style="verb">application/json</spanx> とする.
+            </t>
+            <!--
+            <t>
               After receiving and validating a valid and authorized Token Request
               from the Client, the Authorization Server returns a successful
               response that includes an ID Token and an Access Token.  The
@@ -2696,6 +2703,14 @@
               The response uses the <spanx style="verb">application/json</spanx>
               media type.
             </t>
+            -->
+            <t>
+              OAuth 2.0 <spanx style="verb">token_type</spanx> レスポンスパラメータは, <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> に従い <spanx style="verb">Bearer</spanx> とすること (MUST).
+              ただし他の Token Type が Client との間でネゴシエートされている場合は, その限りではない.
+              Server は <spanx style="verb">Bearer</spanx> Token Type をサポートすべきである (SHOULD).
+              その他の Token Type の利用に関しては, 本仕様の定めるところではない.
+            </t>
+            <!--
             <t>
               The OAuth 2.0 <spanx style="verb">token_type</spanx> response parameter
               value MUST be <spanx style="verb">Bearer</spanx>,
@@ -2704,24 +2719,38 @@
               Servers SHOULD support the <spanx style="verb">Bearer</spanx> Token Type;
               use of other Token Types is outside the scope of this specification.
             </t>
+            -->
+            <t>
+              OAuth 2.0 で定義されるパラメータに加え, 以下のパラメータをレスポンスに含めること (MUST).
+            </t>
+            <!--
             <t>
               In addition to the response parameters specified by OAuth 2.0, the following
               parameters MUST be included in the response:
             </t>
+            -->
             <t>
               <list style="hanging">
                 <t hangText="id_token">
                   <vspace/>
+                  認証セッションに紐づいた ID Token 値.
+                  <!--
                   ID Token value associated with the
                   authenticated session.
+                  -->
                 </t>
               </list>
             </t>
+            <t>
+              トークン, 鍵, その他のセンシティブ情報を含む全ての Token Response には, 以下の HTTP レスポンスヘッダーを指定しなければならない.
+            </t>
+            <!--
             <t>
               All Token Responses that contain tokens, secrets, or other
               sensitive information MUST include the following HTTP response header
               fields and values:
             </t>
+            -->
 
             <texttable title="HTTP Response Headers and Values">
               <ttcol>Header Name</ttcol>
@@ -2739,10 +2768,16 @@
 
             <figure>
               <preamble>
+                以下はサクセス Token Response の例である.
+                ID Token の署名は <xref target="ExampleRSAKey"/> にある鍵で検証可能である.
+              </preamble>
+              <!--
+              <preamble>
                 The following is a non-normative example of a successful Token Response.
                 The ID Token signature in the example can be verified with the key at
                 <xref target="ExampleRSAKey"/>.
               </preamble>
+              -->
 
               <artwork><![CDATA[
   HTTP/1.1 200 OK
@@ -2769,12 +2804,23 @@
 ]]></artwork>
             </figure>
 
+            <t>
+              <xref target="RFC6749">OAuth 2.0</xref> にあるように, Client は理解できないレスポンスパラメータを無視すべきである (SHOULD).
+            </t>
+            <!--
             <t>As specified in <xref target="RFC6749">OAuth 2.0</xref>, Clients
             SHOULD ignore unrecognized response parameters.</t>
+            -->
           </section>
 
           <section anchor="TokenErrorResponse" title="Token Error Response">
 
+            <t>
+              Token Request が不正もしくは未認可な場合, Authorization Server はエラーレスポンスを返す.
+              Token Error Response のパラメータは <xref target="RFC6749">OAuth 2.0</xref> Section 5.2 で定義されている.
+              HTTP レスポンスボディのメディアタイプは <spanx style="verb">application/json</spanx> であり, HTTP レスポンスコードは400とする.
+            </t>
+            <!--
             <t>
               If the Token Request is invalid or unauthorized, the
               Authorization Server constructs the error response. The parameters
@@ -2783,9 +2829,15 @@
               The HTTP response body uses the <spanx style="verb">application/json</spanx>
               media type with HTTP response code of 400.
             </t>
+            -->
 
             <figure>
+              <preamble>
+                以下に Token Error Response の例を示す.
+              </preamble>
+              <!--
               <preamble>The following is a non-normative example Token Error Response:</preamble>
+              -->
 
               <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
