@@ -2245,12 +2245,22 @@
           <section anchor="AuthError" title="Authentication Error Response">
 
             <t>
+              Authentication Error Response は, RP により送られた Authorization Request メッセージに応じて OP の Authorization Endpoint から返される OAuth 2.0 Authorization Error Response メッセージである.
+            </t>
+            <!--
+            <t>
               An Authentication Error Response is an OAuth 2.0 Authorization Error Response
               message returned from the
               OP's Authorization Endpoint in response to the Authorization Request
               message sent by the RP.
             </t>
+            -->
 
+            <t>
+              End-User が認可を拒否したり, End-User の認証に失敗した場合, OP ( Authorization Server ) は <xref target="RFC6749">OAuth 2.0</xref> Section 4.1.2.1 に定義されている Error Response パラメータを用いて伝える.
+              (RFC 6749 に関係のないエラーは, 適切な HTTP ステータスコードを用いて User Agent に返すこと)
+            </t>
+            <!--
             <t>
               If the End-User denies the request or the End-User authentication
               fails, the OP (Authorization Server) informs the RP (Client)
@@ -2259,6 +2269,11 @@
               (HTTP errors unrelated to RFC 6749 are returned to the User Agent using the
               appropriate HTTP status code.)
             </t>
+            -->
+            <t>
+              Redirection URI が無効でない限り, Authorization Server は適切なエラーと state パラメータで Authorization Request にて指定された Redirection URI に Client を返す.
+            </t>
+            <!--
             <t>
               Unless the Redirection URI is invalid,
               the Authorization Server returns the Client to
@@ -2266,16 +2281,25 @@
               with the appropriate error and state parameters.
               Other parameters SHOULD NOT be returned.
             </t>
+            -->
+            <t>
+              OAuth 2.0 の Section 4.1.2.1 に定義されているエラーコードに加え, この仕様では次のようなエラーコードを定義する:
+            </t>
+            <!--
             <t>
               In addition to the error codes defined in Section 4.1.2.1 of
               OAuth 2.0, this specification also defines the following error codes:
             </t>
+            -->
 
             <t>
               <list style="hanging">
 
                 <t hangText="interaction_required">
                   <vspace/>
+                  Authorization Server は処理を進めるためにいくつかの End-User interaction を必要とする.
+                  Authentication Request 中の <spanx style="verb">prompt</spanx> パラメータが <spanx style="verb">none</spanx> であるが, End-User interaction のためのユーザーインターフェースの表示なしには Authentication Request が完了できない時にこのエラーが返される.
+                  <!--
                   The Authorization Server
                   requires End-User interaction of some form to proceed.
                   This error MAY be returned when the
@@ -2283,20 +2307,29 @@
                   Authentication Request is <spanx style="verb">none</spanx>,
                   but the Authentication Request cannot be completed
                   without displaying a user interface for End-User interaction.
+                  -->
                 </t>
 
                 <t hangText="login_required">
                   <vspace/>
+                  Authorization Server は End-User の認証を必要とする.
+                  Authentication Request 中の <spanx style="verb">prompt</spanx> パラメータが <spanx style="verb">none</spanx> であるが, End-User の認証のためのユーザーインターフェースの表示なしには Authentication Request が完了できない時にこのエラーが返される.
+                  <!--
                   The Authorization Server requires
                   End-User authentication. This error MAY be returned when the
                   <spanx style="verb">prompt</spanx> parameter value in the
                   Authentication Request is <spanx style="verb">none</spanx>,
                   but the Authentication Request cannot be completed
                   without displaying a user interface for End-User authentication.
+                  -->
                 </t>
 
                 <t hangText="account_selection_required">
                   <vspace/>
+                  End-User は Authorization Server にてセッションの選択を必要とされる (REQUIRED).
+                  End-User は Authorization Server にて異なるアカウントで認証されているが, セッションを選択していないかもしれない (MAY).
+                  Authentication Request 中の <spanx style="verb">prompt</spanx> パラメータが <spanx style="verb">none</spanx> であるが, 利用するセッションを選択するためのユーザーインターフェースの表示なしには Authentication Request が完了できない時にこのエラーが返される.
+                  <!--
                   The End-User is REQUIRED
                   to select a session at the Authorization Server. The End-User MAY
                   be authenticated at the Authorization Server with different
@@ -2306,99 +2339,145 @@
                   Authentication Request is <spanx style="verb">none</spanx>,
                   but the Authentication Request cannot be completed
                   without displaying a user interface to prompt for a session to use.
+                  -->
                 </t>
 
                 <t hangText="consent_required">
                   <vspace/>
+                  Authorization Server は End-User の同意を必要とする.
+                  Authentication Request 中の <spanx style="verb">prompt</spanx> パラメータが <spanx style="verb">none</spanx> であるが, End-User の同意のためのユーザーインターフェースの表示なしには Authentication Request が完了できない時にこのエラーが返される.
+                  <!--
                   The Authorization Server
                   requires End-User consent. This error MAY be returned when the
                   <spanx style="verb">prompt</spanx> parameter value in the
                   Authentication Request is <spanx style="verb">none</spanx>,
                   but the Authentication Request cannot be completed
                   without displaying a user interface for End-User consent.
+                  -->
                 </t>
 
                 <t hangText="invalid_request_uri">
                   <vspace/>
+                  Authorization Request 中の <spanx style="verb">request_uri</spanx> はエラーを返すか, 無効なデータを含む.
+                  <!--
                   The
                   <spanx style="verb">request_uri</spanx> in
                   the Authorization Request returns an error or contains invalid data.
+                  -->
                 </t>
 
                 <t hangText="invalid_request_object">
                   <vspace/>
+                  <spanx style="verb">request</spanx> パラメータが無効な Request Object を含む.
+                  <!--
                   The
                   <spanx style="verb">request</spanx> parameter contains an invalid
                   Request Object.
+                  -->
                 </t>
 
                 <t hangText="request_not_supported">
                   <vspace/>
+                  OP は <xref target="JWTRequests"/> にて定義されている <spanx style="verb">request</spanx> パラメータをサポートしていない.
+                  <!--
                   The OP does not support use of the
                   <spanx style="verb">request</spanx> parameter
                   defined in <xref target="JWTRequests"/>.
+                  -->
                 </t>
 
                 <t hangText="request_uri_not_supported">
                   <vspace/>
+                  OP は <xref target="JWTRequests"/> にて定義されている <spanx style="verb">request_uri</spanx> パラメータをサポートしていない.
+                  <!--
                   The OP does not support use of the
                   <spanx style="verb">request_uri</spanx> parameter
                   defined in <xref target="JWTRequests"/>.
+                  -->
                 </t>
 
                 <t hangText="registration_not_supported">
                   <vspace/>
+                  OP は <xref target="RegistrationParameter"/> で定義されている <spanx style="verb">registration</spanx> パラメータをサポートしていない.
+                  <!--
                   The OP does not support use of the
                   <spanx style="verb">registration</spanx> parameter
                   defined in <xref target="RegistrationParameter"/>.
+                  -->
                 </t>
 
               </list>
             </t>
 
             <t>
+              エラーレスポンスパラメータは以下のようになる.
+              <!--
               The error response parameters are the following:
+              -->
 
               <list style="hanging">
                 <t hangText="error">
                   <vspace/>
+                  REQUIRED.
+                  エラーコード.
+                  <!--
                   REQUIRED. Error code.
+                  -->
                 </t>
 
                 <t hangText="error_description">
                   <vspace/>
+                  OPTIONAL.
+                  人間が読める ASCII エンコードされたエラーの説明文.
+                  <!--
                   OPTIONAL. Human-readable ASCII
                   encoded text description of the error.
+                  -->
                 </t>
 
                 <t hangText="error_uri">
                   <vspace/>
+                  OPTIONAL.
+                  エラーについての追加情報を含むWebページのURI.
+                  <!--
                   OPTIONAL. URI of a web page that
                   includes additional information about the error.
+                  -->
                 </t>
 
                 <t hangText="state">
                   <vspace/>
+                  OAuth 2.0 の state の値.
+                  Authorization Request が <spanx style="verb">state</spanx> パラメータを含む場合は REQUIRED.
+                  Client から受け取った値をセットする.
+                  <!--
                   OAuth 2.0 state value.
                   REQUIRED if the Authorization Request
                   included the <spanx style="verb">state</spanx> parameter. Set
                   to the value received from the Client.
+                  -->
                 </t>
               </list>
             </t>
 
             <t>
+              Authorization Code Flow を利用するとき, エラーレスポンスパラメータは異なる Response Mode が指定されない限り Redirection URI のクエリ要素に付加される.
+              <!--
               When using the Authorization Code Flow, the error response
               parameters are added to the query component of the Redirection URI,
               unless a different Response Mode was specified.
+              -->
             </t>
 
             <t>
               <figure>
                 <preamble>
+                  以下にこのフローを用いたエラーレスポンスの例を示す. (改行は掲載上の都合による)
+                  <!--
                   The following is a non-normative example
                   error response using this flow
                   (with line wraps within values for display purposes only):
+                  -->
                 </preamble>
 
                 <artwork><![CDATA[
@@ -2415,10 +2494,15 @@
 
           <section anchor="AuthResponseValidation" title="Authentication Response Validation">
             <t>
+              Authorization Code Flow を利用するとき, Client は RFC 6749, 特に Section 4.1.2 と Section 10.12 に従ってレスポンスを検証しなければならない (MUST).
+            </t>
+            <!--
+            <t>
               When using the Authorization Code Flow,
               the Client MUST validate the response according to RFC 6749,
               especially Sections 4.1.2 and 10.12.
             </t>
+            -->
           </section>
 
         </section>
