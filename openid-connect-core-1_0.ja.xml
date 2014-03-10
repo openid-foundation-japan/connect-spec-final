@@ -2156,6 +2156,17 @@
           <section anchor="Consent" title="Authorization Server Obtains End-User Consent/Authorization">
 
             <t>
+              End-User を認証した後, Authorization Server は, Relying Party に 情報を送る前に認可決定を取得しなければならない (MUST).
+              使用された要求パラメータによって許可されている場合,
+              同意事項を明確にした End-User 対話を通じてか,
+              要求の処理やその他の手法 (例えば, 管理機能を用いた事前同意) による同意の確立によって,
+              この認可決定は行われるかもしれない (MAY).
+              Sections <xref target="IDToken" format="counter"/> と
+              <xref target="UserInfo" format="counter"/> で,
+              情報の送出機構について述べる.
+            </t>
+            <!--
+            <t>
               Once the End-User is authenticated, the Authorization Server MUST
               obtain an authorization decision before releasing information
               to the Relying Party.
@@ -2168,17 +2179,27 @@
               <xref target="UserInfo" format="counter"/> describe
               information release mechanisms.
             </t>
+            -->
 
           </section>
 
           <section anchor="AuthResponse" title="Successful Authentication Response">
 
             <t>
+              Authentication Response は, RP により送られた Authorization Request メッセージに応じて OP の Authorization Endpoint から返される OAuth 2.0 Authorization Response メッセージである.
+            </t>
+            <!--
+            <t>
               An Authentication Response is an OAuth 2.0 Authorization Response
               message returned from the
               OP's Authorization Endpoint in response to the Authorization Request
               message sent by the RP.
             </t>
+            -->
+            <t>
+              Authorization Code Flow を利用するとき, Authorization Response は <xref target="RFC6749">OAuth 2.0</xref> の Section 4.1.2 にて定義されるパラメータを Authorization Request 中で指定された <spanx style="verb">redirect_uri</spanx> にクエリパラメータとして加え, 異なる Response Mode が指定されない限りは <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットを用いて返さなければならない (MUST).
+            </t>
+            <!--
             <t>
               When using the Authorization Code Flow, the Authorization Response
               MUST return the parameters defined in Section 4.1.2 of
@@ -2188,13 +2209,19 @@
               using the <spanx style="verb">application/x-www-form-urlencoded</spanx> format,
               unless a different Response Mode was specified.
             </t>
+            -->
 
             <figure>
+              <preamble>
+                以下にこのフローを用いた成功レスポンスの例を示す. (改行は掲載上の都合による)
+              </preamble>
+              <!--
               <preamble>
                 The following is a non-normative example
                 successful response using this flow
                 (with line wraps within values for display purposes only):
               </preamble>
+              -->
 
               <artwork><![CDATA[
   HTTP/1.1 302 Found
@@ -2205,9 +2232,14 @@
             </figure>
 
             <t>
+              Authorization Code の内容についての実装メモは <xref target="CodeNotes"/> を参照のこと.
+            </t>
+            <!--
+            <t>
               For implementation notes on the contents of
               the Authorization Code, see <xref target="CodeNotes"/>.
             </t>
+            -->
           </section>
 
           <section anchor="AuthError" title="Authentication Error Response">
