@@ -642,27 +642,50 @@
 
       <section anchor="Overview" title="Overview">
 
+        <!--
         <t>The OpenID Connect protocol, in abstract, follows the following
         steps.</t>
+        -->
+        <t>概要にある OpenID Connect プロトコルは以下の手順に従う.</t>
 
         <t>
           <list style="numbers">
+            <!--
             <t>The RP (Client) sends a request to the OpenID Provider (OP).</t>
+            -->
+            <t>RP (クライアント)は OpenID プロバイダー (OP) にリクエストを送る.</t>
 
+            <!--
             <t>The OP authenticates the End-User and obtains authorization.</t>
+            -->
+            <t>OP は End-User を認証し認可を与える.</t>
 
+            <!--
             <t>The OP responds with an ID Token and usually an Access Token.</t>
+            -->
+            <t>OP は ID トークンと通常はアクセストークンによって応答する.</t>
 
+            <!--
             <t>The RP can send a request with the Access Token to the UserInfo Endpoint.</t>
+            -->
+            <t>RP はアクセストークンを使って UserInfo エンドポイントにリクエストを送ることができる.</t>
 
+            <!--
             <t>The UserInfo Endpoint returns Claims about the End-User.</t>
+            -->
+            <t>UserInfo エンドポイントは End-User についてクレームを返却する.</t>
 
           </list>
         </t>
 
         <figure>
+          <!--
           <preamble>
             These steps are illustrated in the following diagram:
+          </preamble>
+          -->
+          <preamble>
+            これらの手順は以下の図に示されている:
           </preamble>
 
           <artwork><![CDATA[
