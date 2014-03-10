@@ -237,6 +237,18 @@
 
       <section anchor="Terminology" title="Terminology">
         <t>
+          本ドキュメントでは,
+          <xref target="RFC6749">OAuth 2.0</xref> で定義された "Access Token", "Authorization Code",
+          "Authorization Endpoint", "Authorization Grant", "Authorization Server",
+          "Client", "Client Authentication", "Client Identifier", "Client Secret",
+          "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
+          "Resource Owner", "Resource Server", "Response Type", および "Token Endpoint",
+          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", "JSON Web Token (JWT)", および "Nested JWT" ,
+          <xref target="RFC2616">RFC 2616</xref> で定義された "User Agent",
+          <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> で定義された "Response Mode" という用語を用いる.
+        </t>
+        <!--
+        <t>
           This specification uses the terms "Access Token", "Authorization Code",
           "Authorization Endpoint", "Authorization Grant", "Authorization Server",
           "Client", "Client Authentication", "Client Identifier", "Client Secret",
@@ -249,231 +261,362 @@
           and the term "Response Mode" defined by
           <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.
         </t>
+        -->
         <t>
+          本ドキュメントはその他に以下の用語を用いる.
+          <!--
           This specification also defines the following terms:
+          -->
           <list style="hanging">
             <t hangText="Authentication">
               <vspace/>
+              提示された Identity と実際の Entity が紐づいていることを確認するプロセス.
+              <!--
               Process used to achieve sufficient confidence in the binding
               between the Entity and the presented Identity.
+              -->
             </t>
             <t hangText="Authentication Request">
               <vspace/>
+              OpenID Connect が定める拡張パラメータおよびスコープを利用して, Authorization Server に End-User の認証を要求する OAuth 2.0 Authorization Request.
+              このとき Authorization Server は OpenID Connect Provider, Client は OpenID Connect Relying Party となる.
+              <!--
               OAuth 2.0 Authorization Request using extension parameters and scopes
               defined by OpenID Connect to request that the End-User be authenticated
               by the Authorization Server, which is an OpenID Connect Provider,
               to the Client, which is an OpenID Connect Relying Party.
+              -->
             </t>
 
             <t hangText="Authentication Context">
               <vspace/>
+              認証応答に関する意思決定を行う前に Relying Party が要求できる情報.
+              そのようなコンテキストは実際に用いられた認証方式や <xref target="ISO29115">ISO/IEC 29115</xref> entity authentication assurance level のような保障レベルを含むが, これに限定されるものではない.
+              <!--
               Information that the Relying Party can require before it makes an
               entitlement decision with respect to an authentication response.
               Such context can include, but is not limited to, the actual
               authentication method used or level of assurance such as
               <xref target="ISO29115">ISO/IEC 29115</xref>
               entity authentication assurance level.
+              -->
             </t>
 
             <t hangText="Authentication Context Class">
               <vspace/>
+              特定のコンテキストで互いに等しいと考えられる認証方式もしくは手続きの集合.
+              <!--
               Set of authentication methods or procedures that are considered
               to be equivalent to each other in a particular context.
+              -->
             </t>
 
             <t hangText="Authentication Context Class Reference">
               <vspace/>
+              Authentication Context Class の識別子.
+              <!--
               Identifier for an Authentication Context Class.
+              -->
             </t>
 
             <t hangText="Authorization Code Flow">
               <vspace/>
+              Authorization Code が Authorization Endpoint から返され, 全てのトークンが Token Endpoint から返されるOAuth 2.0 のフロー.
+              <!--
               OAuth 2.0 flow in which
               an Authorization Code is returned from the Authorization Endpoint and
               all tokens are returned from the Token Endpoint.
+              -->
             </t>
 
             <t hangText="Authorization Request">
               <vspace/>
+              <xref target="RFC6749"/> にて定義された OAuth 2.0 Authorization Request.
+              <!--
               OAuth 2.0 Authorization Request as defined by <xref target="RFC6749"/>.
+              -->
             </t>
 
             <t hangText="Claim">
               <vspace/>
+              Entity に関する情報の部分集合.
+              <!--
               Piece of information asserted about an Entity.
+              -->
             </t>
 
             <t hangText="Claim Type">
               <vspace/>
+              Claim の値を表現する構文.
+              本仕様では Normal, Aggregated, および Distributed という Claim Type を定義する.
+              <!--
               Syntax used for representing a Claim Value.
               This specification defines Normal, Aggregated, and Distributed Claim Types.
+              -->
             </t>
 
             <t hangText="Claims Provider">
               <vspace/>
+              Entity の Claim を返すサーバー.
+              <!--
               Server that can return Claims about an Entity.
+              -->
             </t>
 
             <t hangText="Credential">
               <vspace/>
+              Identity や他のリソースを使用する権利があることの証拠として提示されるデータ.
+              <!--
               Data presented as evidence of the right to use an identity
               or other resources.
+              -->
             </t>
 
             <t hangText="End-User">
               <vspace/>
+              一連のフローに参加する人間.
+              <!--
               Human participant.
+              -->
             </t>
             <t hangText="Entity">
               <vspace/>
+              あるコンテキストの中で識別される, 他と独立した個.
+              End-User は Entity の一例.
+              <!--
               Something that has a separate and distinct existence and that can be
               identified in a context. An End-User is one example of an Entity.
+              -->
             </t>
 
             <t hangText="Essential Claim">
               <vspace/>
+              Client により指定される Claim.
+              End-User により要求された特定のタスクに対して円滑な認可処理を確保するために必要とされている.
+              <!--
               Claim specified by the Client as being necessary to ensure a smooth
               authorization experience for the specific task requested by the End-User.
+              -->
             </t>
 
             <t hangText="Hybrid Flow">
               <vspace/>
+              Authorization Code といくつかのトークンが Authorization Endpoint から返され, その他のトークンが Token Endpoint から返される OAuth 2.0 のフロー.
+              <!--
               OAuth 2.0 flow in which
               an Authorization Code is returned from the Authorization Endpoint,
               some tokens are returned from the Authorization Endpoint,
               and others are returned from the Token Endpoint.
+              -->
             </t>
 
             <t hangText="ID Token">
               <vspace/>
+              Authentication イベントに関する Claim を含む <xref target="JWT">JSON Web Token (JWT)</xref>.
+              その他の Claim を含むこともある (MAY).
+              <!--
               <xref target="JWT">JSON Web Token (JWT)</xref> that contains Claims about the Authentication event.
               It MAY contain other Claims.
+              -->
             </t>
 
             <t hangText="Identifier">
               <vspace/>
-             Value that uniquely characterizes an Entity in a specific context.
+              あるコンテキスト中で Entity をユニークに特徴づける値.
+              <!--
+              Value that uniquely characterizes an Entity in a specific context.
+              -->
             </t>
 
             <t hangText="Identity">
               <vspace/>
+              Entity に関する属性の集合.
+              <!--
               Set of attributes related to an Entity.
+              -->
             </t>
 
             <t hangText="Implicit Flow">
               <vspace/>
+              全てのトークンが Authorization Endpoint から返され, Token Endpoint も Authorization Code も利用されない OAuth 2.0 のフロー.
+              <!--
               OAuth 2.0 flow in which all tokens are returned from the Authorization Endpoint
               and neither the Token Endpoint nor an Authorization Code are used.
+              -->
             </t>
 
             <t hangText="Issuer">
               <vspace/>
+              Claim の集合を発行する Entity.
+              <!--
               Entity that issues a set of Claims.
+              -->
             </t>
 
             <t hangText="Issuer Identifier">
               <vspace/>
+              検証可能な Issuer の識別子.
+              Issuer Identifier は, 大文字小文字を区別する URL である.
+              この URL は <spanx style="verb">https</spanx> スキーム, ホスト, そして任意でポート番号およびパス要素からなり, クエリーとフラグメント要素は含まない.
+              <!--
               Verifiable Identifier for an Issuer.
               An Issuer Identifier is a case sensitive URL
               using the <spanx style="verb">https</spanx> scheme that
               contains scheme, host, and optionally, port number and path
               components and no query or fragment components.
+              -->
             </t>
 
             <t hangText="Message">
               <vspace/>
+              OpenID Relying Party と OpenID Provider の間でやりとりされるリクエストもしくはレスポンス.
+              <!--
               Request or a response between an OpenID
               Relying Party and an OpenID Provider.
+              -->
             </t>
 
             <t hangText="OpenID Provider (OP)">
               <vspace/>
+              End-User を Authenticate できる OAuth 2.0 Authorization Server.
+              End-User の Authentication イベントに関する Claim を Relying Party に提供する.
+              <!--
               OAuth 2.0 Authorization Server that is capable of
               Authenticating the End-User and
               providing Claims to a Relying Party
               about the Authentication event and the End-User.
+              -->
             </t>
 
             <t hangText="Request Object">
               <vspace/>
+              Claim としてリクエストパラメータを含む JWT.
+              <!--
               JWT that contains a set of request parameters as its Claims.
+              -->
             </t>
 
             <t hangText="Request URI">
               <vspace/>
+              Request Object を含むリソースを参照する URL.
+              Request URI のコンテンツは Authorization Server から取得可能でなければならない (MUST).
+              <!--
               URL that references a resource containing a Request Object.
               The Request URI contents MUST be retrievable by the
               Authorization Server.
+              -->
             </t>
 
             <t hangText="Pairwise Pseudonymous Identifier (PPID)">
               <vspace/>
+              ある Relying Party に対してのみ, ある Entity の識別子として提供される値.
+              他の Relying Party には, 当該 PPID を当該 Entity と関連づけることはできない.
+              <!--
               Identifier that identifies the Entity to a Relying Party that cannot be correlated
               with the Entity's PPID at another Relying Party.
+              -->
             </t>
 
             <t hangText="Personally Identifiable Information (PII)">
               <vspace/>
+              特定の人物に紐づき, 実際の人物の識別に用いることができる情報.
+              もしくは特定の人物に直接および間接的にリンクされる可能性のある情報.
+              <!--
               Information that (a) can be used to identify the natural person
               to whom such information relates, or
               (b) is or might be directly or indirectly linked to a
               natural person to whom such information relates.
+              -->
             </t>
 
             <t hangText="Relying Party (RP)">
               <vspace/>
+              OpenID Provider に End-User Authentication と Claim を要求する OAuth 2.0 Client.
+              <!--
               OAuth 2.0 Client application requiring End-User Authentication
               and Claims from an OpenID Provider.
+              -->
             </t>
 
             <t hangText="Sector Identifier">
               <vspace/>
+              Relying Party により利用される URL のホスト要素.
+              Relying Party に対する Subject Identifier 計算の入力となる.
+              <!--
               Host component of a URL used by the Relying Party's organization
               that is an input to the computation of pairwise Subject Identifiers
               for that Relying Party.
+              -->
             </t>
 
             <t hangText="Self-Issued OpenID Provider">
               <vspace/>
+              自己署名の ID Token を発行する, 個人的で self-hosted な OpenID Provider.
+              <!--
               Personal, self-hosted OpenID Provider that issues self-signed ID Tokens.
+              -->
             </t>
 
             <t hangText="Subject Identifier">
               <vspace/>
+              Issuer にとって局地的にユニークで再利用されることのない End-User 識別子.
+              この値は Client に利用されることを想定する.
+              <!--
               Locally unique and never
               reassigned identifier within the Issuer for the End-User,
               which is intended to be consumed by the Client.
+              -->
             </t>
 
             <t hangText="UserInfo Endpoint">
               <vspace/>
+              Protected Resource のひとつ.
+              Access Token を提示する Client に対して, Authorization Grant に従って End-User に関する情報を提供する.
+              URLは <spanx style="verb">https</spanx> scheme を利用しなければならず (MUST), ポート番号, パス, クエリパラメータの要素を含むことがある (MAY).
+              <!--
               Protected Resource that, when presented with an Access Token by the Client,
               returns authorized information about the End-User represented by the corresponding
               Authorization Grant.
               The UserInfo Endpoint
               URL MUST use the <spanx style="verb">https</spanx> scheme and MAY contain
               port, path, and query parameter components.
-
+              -->
             </t>
 
             <t hangText="Validation">
               <vspace/>
+              あるものごとの健全性および正当性を確立するためのプロセス.
+              <!--
               Process intended to establish the soundness or correctness of a construct.
+              -->
             </t>
 
             <t hangText="Verification">
               <vspace/>
+              ある事実や値の正確さを検査もしくは証明するためのプロセス.
+              <!--
               Process intended to test or prove the truth or accuracy of a fact or value.
+              -->
             </t>
 
             <t hangText="Voluntary Claim">
               <vspace/>
+              Client が End-User が要求するあるタスクを実行する際に, 有用ではあるが Essential ではないとを Client が指定した Claim.
+              <!--
               Claim specified by the Client as being useful but not Essential
               for the specific task requested by the End-User.
+              -->
             </t>
 
           </list>
         </t>
+        <t>
+          IMPORTANT NOTE TO READERS:
+          上記の用語定義は本仕様が定めるところであり, 本仕様の実装においてはこれらの定義に従うこと.
+          "Issuer Identifier" をはじめとして, 本仕様で大文字表記されている用語はすべて上記の定義に従う.
+          仕様書読者は必ずこれらの用語定義に従うこと.
+        </t>
+        <!--
         <t>
           IMPORTANT NOTE TO READERS: The terminology definitions in
           this section are a normative portion of this specification,
@@ -483,12 +626,18 @@
           Whenever the reader encounters them, their definitions
           found in this section must be followed.
         </t>
+        -->
+        <t>
+          利用される用語の一部分の詳細を知るために, <xref target="RFC4949">Internet Security Glossary, Version 2</xref>, <xref target="ISO29115">ISO/IEC 29115 Entity Authentication Assurance</xref>, および <xref target="X.1252">ITU-T X.1252</xref> を参照すること.
+        </t>
+        <!--
         <t>
           For more background on some of the terminology used,
           see <xref target="RFC4949">Internet Security Glossary, Version 2</xref>,
           <xref target="ISO29115">ISO/IEC 29115 Entity Authentication Assurance</xref>,
           and <xref target="X.1252">ITU-T X.1252</xref>.
         </t>
+        -->
       </section>
 
       <section anchor="Overview" title="Overview">
