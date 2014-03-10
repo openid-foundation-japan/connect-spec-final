@@ -1957,8 +1957,44 @@
 
           <section anchor="AuthRequestValidation" title="Authentication Request Validation">
             <t>
+              Authorization Server は, 以下のように受信した要求を検証しなければならない (MUST).
+            </t>
+            <!--
+            <t>
               The Authorization Server MUST validate the request received as follows:
             </t>
+            -->
+            <t>
+              <list style="numbers">
+                <t>
+                  Authorization Server は, 全ての OAuth 2.0 パラメータを OAuth 2.0 仕様に従って検証しなければならない (MUST).
+                </t>
+                <t>
+                  <spanx style="verb">scope</spanx> パラメータが存在することと,
+                  <spanx style="verb">openid</spanx> scope 値を含んでいることを検証.
+                  (もし <spanx style="verb">openid</spanx> scope 値が存在しなかった場合,
+                  その要求は OpenID Connect の要求ではないが,
+                  有効な OAuth 2.0 の要求である可能性がある.)
+                </t>
+                <t>
+                  Authorization Server は, 全ての必須 (REQUIRED) パラメータが存在するか,
+                  そしてそれらの使用方法が当仕様に従っているかを検証しなければならない (MUST).
+                </t>
+                <t>
+                  ID Token の <spanx style="verb">sub</spanx> (subject) Claim に値が指定されて要求された場合,
+                  Authorization Server は, <spanx style="verb">sub</spanx> 値で識別される End-Userが,
+                  Authorization Server 上にアクティブなセッションを持っているか,
+                  またはその要求の結果として認証された場合のみ,
+                  成功応答を送信しなければならない (MUST) .
+                  End-User が Authorization Server 上にアクティブなセッションを持っていたとしても,
+                  Authorization Server は, 異なるユーザの ID Token や Access Token を応答してはならない (MUST NOT) .
+                  このような要求は,  <spanx style="verb">id_token_hint</spanx> パラメータを用いるか,
+                  もしくは実装が <spanx style="verb">claims</spanx> パラメータをサポートしていれば,
+                  <xref target="IndividualClaimsRequests"/> に記述されているように特定の Claim 値を要求することによって実現することができる.
+                </t>
+              </list>
+            </t>
+            <!--
             <t>
               <list style="numbers">
                 <t>
@@ -1996,15 +2032,29 @@
                 </t>
               </list>
             </t>
+            -->
 
+            <t>
+              <xref target="RFC6749">OAuth 2.0</xref> の規定どおり,
+              Authorization Server は認識できない要求パラメータを無視すべきである (SHOULD) .
+            </t>
+            <!--
             <t>
               As specified in <xref target="RFC6749">OAuth 2.0</xref>,
               Authorization Servers SHOULD ignore unrecognized request parameters.
             </t>
+            -->
+            <t>
+              Authorization Server はなんからのエラーに遭遇した場合,
+              <xref target="AuthError"/> に従い,
+              失敗応答を返さなければならない (MUST) .
+            </t>
+            <!--
             <t>
               If the Authorization Server encounters any error,
               it MUST return an error response, per <xref target="AuthError"/>.
             </t>
+            -->
           </section>
 
           <section anchor="Authenticates" title="Authorization Server Authenticates End-User">
