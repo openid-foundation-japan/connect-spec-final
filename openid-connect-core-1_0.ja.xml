@@ -2060,6 +2060,14 @@
           <section anchor="Authenticates" title="Authorization Server Authenticates End-User">
 
             <t>
+              要求が妥当であった場合,  Authorization Server は使用された要求パラメータに応じて,
+              End-User を 認証するか, End-User が認証済かの確認を試みる.
+              Authorization Server によって用いられる End-User の認証方式 (例えば, ユーザ名とパスワード, セッションクッキー等) については当仕様の規定範疇外である.
+              使用された要求パラメータの値や使用された認証方式に応じ,
+              Authorization Server は認証ユーザーインタフェースを表示するかもしれない (MAY).
+            </t>
+            <!--
+            <t>
               If the request is valid, the Authorization Server attempts
               to Authenticate the End-User or determines whether the End-User is Authenticated,
               depending upon the request parameter values used.
@@ -2070,7 +2078,25 @@
               the Authorization Server, depending upon the request parameter values used
               and the authentication methods used.
             </t>
+            -->
 
+            <t>
+              Authorization Server は以下のケースのとき, End-User の認証を試みなければならない (MUST).
+            <list style="symbols">
+              <t>
+                End-User はまだ認証されていない.
+              </t>
+
+              <t>
+                Authentication Request は,
+                <spanx style="verb">login</spanx> という値を持つ
+                <spanx style="verb">prompt</spanx> パラメータを含んでいる.
+                このケースでは, End-User が既に認証されていたとしても,
+                Authorization Server は End-User を再認証しなければならない (MUST).
+              </t>
+            </list>
+            </t>
+            <!--
             <t>The Authorization Server MUST attempt to Authenticate the
             End-User in the following cases:
             <list style="symbols">
@@ -2083,6 +2109,22 @@
               even if the End-User is already authenticated.</t>
             </list>
             </t>
+            -->
+
+            <t>
+              Authorization Server は以下のケースのとき, End-User と対話を行ってはならない (MUST NOT).
+            <list style="symbols">
+              <t>
+                Authentication Request は,
+                <spanx style="verb">none</spanx> という値を持つ
+                <spanx style="verb">prompt</spanx> パラメータを含んでいる.
+                このケースでは, End-User がまだ認証されていなかったり,
+                対話なしに認証することができない場合,
+                Authorization Server は エラーを返さなければならない (MUST).
+              </t>
+            </list>
+            </t>
+            <!--
             <t>The Authorization Server MUST NOT interact with the End-User
             in the following case:
             <list style="symbols">
@@ -2094,13 +2136,21 @@
               is not already Authenticated or could not be silently Authenticated.</t>
             </list>
             </t>
+            -->
 
+            <t>
+              End-User と対話を行うとき,
+              <xref target="RFC6749">OAuth 2.0</xref> の Section 10.12 と 10.13 に記述されている通り,
+              Authorization Server は, Cross-Site Request Forgery や Clickjacking に対する適切な対策を行わなければならない (MUST).
+            </t>
+            <!--
             <t>
               When interacting with the End-User,
               the Authorization Server MUST employ appropriate measures against
               Cross-Site Request Forgery and Clickjacking as, described in
               Sections 10.12 and 10.13 of <xref target="RFC6749">OAuth 2.0</xref>.
             </t>
+            -->
           </section>
 
           <section anchor="Consent" title="Authorization Server Obtains End-User Consent/Authorization">
