@@ -1088,6 +1088,12 @@
 
     <section anchor="Authentication" title="Authentication">
       <t>
+        OpenID Connect では, End-User をログインさせる, もしくは既にログイン済みであることを確認するため, 認証が行われる.
+        OpenID Connect は Server が実施した Authentication の結果が Client にセキュアな方法で返されるため, Client はその結果を信頼する (rely) ことができる.
+        このような背景から, OpenID Connect では Client のことを Relying Party (RP) と呼ぶ.
+      </t>
+      <!--
+      <t>
         OpenID Connect performs authentication to log in the End-User
         or to determine that the End-User is already logged in.
         OpenID Connect returns the result of the Authentication
@@ -1095,13 +1101,23 @@
         so that the Client can rely on it.
         For this reason, the Client is called Relying Party (RP) in this case.
       </t>
+      -->
       <t>
+        Authentication 結果は ID Token に含まれて返却される.
+        (<xref target="IDToken"/> 参照)
+        ID Token には Issuer, Subject Identifier, 認証の有効期限などを表す Claim が含まれる.
+      </t>
+      <!--<t>
         The Authentication result is returned in an
         ID Token, as defined in <xref target="IDToken"/>.
         It has Claims expressing such information as the Issuer,
         the Subject Identifier, when the authentication expires, etc.
-      </t>
+      </t>-->
       <t>
+        認証フローには, Authorization Code Flow (<spanx style="verb">response_type=code</spanx>), Implicit Flow (<spanx style="verb">response_type=id_token&nbsp;token</spanx> もしくは <spanx style="verb">response_type=id_token</spanx>) および Hybrid Flow (<xref target="OAuth.Responses">Oauth 2.0 Multiple Response Type Encoding Practices</xref> で定義される他のレスポンスタイプ値) の3種類が存在する.
+        各フローによって, ID Token と Access Token がどのように Client へ返却されるかが異なる.
+      </t>
+      <!--<t>
         Authentication can follow one of three paths:
         the Authorization Code Flow (<spanx style="verb">response_type=code</spanx>),
         the Implicit Flow (<spanx style="verb">response_type=id_token&nbsp;token</spanx>
@@ -1110,13 +1126,17 @@
         <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>).
         The flows determine how the ID Token and Access Token
         are returned to the Client.
-      </t>
+      </t>-->
       <t>
+        3つのフローの特徴を以下の参考表に記載する.
+        この表は, 特定のコンテキストにおいてどのフローを選択すればよいかの指針を示すものである.
+      </t>
+      <!--<t>
         The characteristics of the three flows are summarized
         in the following non-normative table.
         The table is intended to provide some guidance on which flow to choose
         in particular contexts.
-      </t>
+      </t>-->
 
       <texttable title="OpenID Connect Authentication Flows">
 
@@ -1125,37 +1145,44 @@
         <ttcol>Implicit Flow</ttcol>
         <ttcol>Hybrid Flow</ttcol>
 
-        <c>All tokens returned from Authorization Endpoint</c>
+        <c>全てのトークンは Authorization Endpoint から返却される</c>
+        <!--<c>All tokens returned from Authorization Endpoint</c>-->
         <c>no</c>
         <c>yes</c>
         <c>no</c>
 
-        <c>All tokens returned from Token Endpoint</c>
+        <c>全てのトークンは Token Endpoint から返却される</c>
+        <!--<c>All tokens returned from Token Endpoint</c>-->
         <c>yes</c>
         <c>no</c>
         <c>no</c>
 
-        <c>Tokens not revealed to User Agent</c>
+        <c>トークンが User Agent にわたらない</c>
+        <!--<c>Tokens not revealed to User Agent</c>-->
         <c>yes</c>
         <c>no</c>
         <c>no</c>
 
-        <c>Client can be authenticated</c>
+        <c>Client 認証が可能である</c>
+        <!--<c>Client can be authenticated</c>-->
         <c>yes</c>
         <c>no</c>
         <c>yes</c>
 
-        <c>Refresh Token possible</c>
+        <c>Refresh Token を利用できる</c>
+        <!--<c>Refresh Token possible</c>-->
         <c>yes</c>
         <c>no</c>
         <c>yes</c>
 
-        <c>Communication in one round trip</c>
+        <c>通信が1往復だけである</c>
+        <!--<c>Communication in one round trip</c>-->
         <c>no</c>
         <c>yes</c>
         <c>no</c>
 
-        <c>Most communication server-to-server</c>
+        <c>ほとんどの通信がサーバ間通信である</c>
+        <!--<c>Most communication server-to-server</c>-->
         <c>yes</c>
         <c>no</c>
         <c>varies</c>
@@ -1163,11 +1190,15 @@
       </texttable>
 
       <t>
+        どのフローを利用するかは, Authorization リクエスト中の <spanx style="verb">response_type</spanx> 値によって決定される.
+        それぞれの <spanx style="verb">response_type</spanx> 値とフローの対応を以下に示す.
+      </t>
+      <!--<t>
         The flow used is determined by the <spanx style="verb">response_type</spanx>
         value contained in the Authorization Request.
         These <spanx style="verb">response_type</spanx> values select
         these flows:
-      </t>
+      </t>-->
 
       <texttable title='OpenID Connect "response_type" Values'>
         <ttcol>"response_type" value</ttcol>
@@ -1193,6 +1224,10 @@
 
       </texttable>
       <t>
+        <xref target="RFC6749">OAuth 2.0</xref> で定義されている <spanx style="verb">code</spanx> 以外の Response Type 値は, <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> に定義される.
+        注) OAuth 2.0 は Implicit Flow に Response Type <spanx style="verb">token</spanx> という値を定義してはいるが, その場合 ID Token が返却できないため, OpenID Connect ではこの Response Type は利用しない.
+      </t>
+      <!--<t>
         All but the <spanx style="verb">code</spanx> Response Type value,
         which is defined by <xref target="RFC6749">OAuth 2.0</xref>,
         are defined in the
@@ -1202,7 +1237,7 @@
         <spanx style="verb">token</spanx> Response Type value
         for the Implicit Flow, OpenID Connect does not use this Response Type,
         since no ID Token would be returned.
-      </t>
+      </t>-->
 
       <section anchor="CodeFlowAuth" title="Authentication using the Authorization Code Flow">
         <t>
