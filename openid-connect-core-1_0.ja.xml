@@ -4134,40 +4134,73 @@
           <section anchor="HybridCallback" title="Redirect URI Fragment Handling">
 
             <t>
+              Hybrid Flow では Implicit Flow 同様 Redirect URI のフラグメントを利用するため, <xref target="ImplicitCallback"/> と同様の要件が求められる.
+              実装時の注意点は <xref target="FragmentNotes"/> を参照のこと.
+            </t>
+            <!--
+            <t>
               When using the Hybrid Flow, the same requirements for
               Redirection URI fragment parameter handling apply as do for
               the Implicit Flow, as defined in <xref target="ImplicitCallback"/>.
               Also see <xref target="FragmentNotes"/> for implementation notes
               on URI fragment handling.
             </t>
+            -->
           </section>
 
           <section anchor="HybridAuthResponseValidation" title="Authentication Response Validation">
 
             <t>
+              Hybrid Flow を使用する場合, Client は以下の通りレスポンスを検証しなければならない (MUST).
+              <!--
               When using the Hybrid Flow,
               the Client MUST validate the response as follows:
+              -->
               <list style="numbers">
+                <t>
+                  レスポンスが <xref target="OAuth.Responses"/> の Section 5 に準拠していることを検証する.
+                </t>
+                <!--
                 <t>
                   Verify that the response conforms to Section 5 of
                   <xref target="OAuth.Responses"/>.
                 </t>
+                -->
+                <t>
+                  検証ルールは, RFC 6949 の特に Section 4.2.2 と 10.12 に従うこと.
+                </t>
+                <!--
                 <t>
                   Follow the validation rules in RFC 6749,
                   especially those in Sections 4.2.2 and 10.12.
                 </t>
+                -->
+                <t>
+                  使用される <spanx style="verb">response_type</spanx> の値が, <spanx style="verb">code&nbsp;id_token</spanx> か <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> の場合, ID Token の検証ルールは, <xref target="HybridIDTValidation"/> に従うこと.
+                </t>
+                <!--
                 <t>
                   Follow the ID Token validation rules in <xref target="HybridIDTValidation"/>
                   when the <spanx style="verb">response_type</spanx> value used is
                   <spanx style="verb">code&nbsp;id_token</spanx> or
                   <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx>.
                 </t>
+                -->
+                <t>
+                  使用される <spanx style="verb">response_type</spanx> の値が, <spanx style="verb">code&nbsp;token</spanx> か <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> の場合, Access Token の検証ルールは, <xref target="HybridTokenValidation"/> に従うこと.
+                </t>
+                <!--
                 <t>
                   Follow the Access Token validation rules in <xref target="HybridTokenValidation"/>
                   when the <spanx style="verb">response_type</spanx> value used is
                   <spanx style="verb">code&nbsp;token</spanx> or
                   <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx>.
                 </t>
+                -->
+                <t>
+                  使用される <spanx style="verb">response_type</spanx> の値が, <spanx style="verb">code&nbsp;id_token</spanx>, <spanx style="verb">code&nbsp;token</spanx>, または <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> の場合, Authorization Code の検証ルールは, <xref target="CodeValidation"/> に従うこと.
+                </t>
+                <!--
                 <t>
                   Follow the Authorization Code validation rules in <xref target="CodeValidation"/>
                   when the <spanx style="verb">response_type</spanx> value used is
@@ -4175,6 +4208,7 @@
                   <spanx style="verb">code&nbsp;token</spanx>, or
                   <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx>.
                 </t>
+                -->
               </list>
             </t>
           </section>
@@ -4182,20 +4216,38 @@
           <section anchor="HybridTokenValidation" title="Access Token Validation">
 
             <t>
+              Hybrid Flow では, Authorization Endpoint から返される Access Token に対して Implicit Flow と同様の検証処理を行うこと.
+              (<xref target="ImplicitTokenValidation"/> 参照)
+            </t>
+            <!--
+            <t>
               When using the Hybrid Flow, Access Tokens
               returned from the Authorization Endpoint are validated
               in the same manner as for the Implicit Flow,
               as defined in <xref target="ImplicitTokenValidation"/>.
             </t>
+            -->
           </section>
 
           <section anchor="CodeValidation" title="Authorization Code Validation">
 
+            <t>
+              Authorization Endpoint で ID Token と一緒に発行された Authorization Code を検証するために, Client は以下を行うべきである (SHOULD).
+            </t>
+            <!--
             <t>To validate an Authorization Code issued from the Authorization Endpoint with an ID Token,
             the Client SHOULD do the following:</t>
+            -->
 
             <t>
               <list style="numbers">
+                <t>
+                  <spanx style="verb">code</spanx> の ASCII オクテットのハッシュ値を計算する.
+                  ハッシュアルゴリズムは, ID Token の <xref target="JWS">JWS</xref> ヘッダに含まれる <spanx style="verb">alg</spanx> ヘッダパラメータで利用されるものを利用する.
+                  各 <spanx style="verb">alg</spanx> ヘッダパラメータに対応するハッシュアルゴリズムは <xref target="JWA">JWA</xref> で定義されている.
+                  たとえば, <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, 使用されるハッシュアルゴリズムは SHA-256 である.
+                </t>
+                <!--
                 <t>Hash the octets of the ASCII representation of
                 the <spanx style="verb">code</spanx>
                 with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
@@ -4205,12 +4257,23 @@
                 <spanx style="verb">RS256</spanx>,
                 the hash algorithm used is SHA-256.
                 </t>
+                -->
 
+                <t>
+                  ハッシュの左半分を取得し, base64urlエンコードする.
+                </t>
+                <!--
                 <t>Take the left-most half of the hash and base64url encode it.</t>
+                -->
 
+                <t>
+                  ID Token に <spanx style="verb">c_hash</spanx> が含まれる場合, その値は前述のプロセスにより計算された値と ID Token 中の <spanx style="verb">c_hash</spanx> が一致しなければならない (MUST).
+                </t>
+                <!--
                 <t>The value of <spanx style="verb">c_hash</spanx> in the ID Token MUST
                 match the value produced in the previous step if <spanx style="verb">c_hash</spanx>
                 is present in the ID Token.</t>
+                -->
               </list>
             </t>
           </section>
