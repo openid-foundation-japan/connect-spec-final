@@ -3687,21 +3687,36 @@
           <section anchor="ImplicitIDToken" title="ID Token">
 
             <t>
+              ID Token の内容は <xref target="IDToken"/> で述べられている.
+              Implicit Flow を使用する場合,
+              以下の ID Token Claims に対する追加要件が適用される:
+            </t>
+            <!--
+            <t>
               The contents of the ID Token are as described in <xref target="IDToken"/>.
               When using the Implicit Flow,
               these additional requirements for the following ID Token Claims apply:
             </t>
+            -->
             <t>
               <list style="hanging">
 
                 <t hangText="nonce">
                   <vspace/>
+                  このフローでは <spanx style="verb">nonce</spanx> Claim の使用は必須である (REQUIRED).
+                  <!--
                   Use of the <spanx style="verb">nonce</spanx> Claim is REQUIRED
                   for this flow.
+                  -->
                 </t>
 
                 <t hangText="at_hash">
                   <vspace/>
+                  Access Token のハッシュ値.
+                  この値は, <spanx style="verb">access_token</spanx> の ASCII バイト列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
+                  <spanx style="verb">at_hash</spanx> は大文字小文字を区別する文字列である.
+                  <!--
                   Access Token hash value.
                   Its value is the base64url encoding of the left-most half of the
                   hash of the octets of the ASCII representation of the
@@ -3714,8 +3729,12 @@
                   <spanx style="verb">access_token</spanx> value
                   with SHA-256, then take the left-most 128 bits and base64url encode them.
                   The <spanx style="verb">at_hash</spanx> value is a case sensitive string.
+                  -->
                 </t>
                 <t>
+                  ID Token が <spanx style="verb">access_token</spanx> とともに Authorization Endpoint から発行された場合(<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token&nbsp;token</spanx> である場合に該当する), このクレームは必須である (REQUIRED).
+                  Access Token が発行されない場合(<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token</spanx> である場合に該当する), このクレームは使用されなくてもよい (MAY NOT).
+                  <!--
                   If the ID Token is issued from the Authorization Endpoint with an
                   <spanx style="verb">access_token</spanx> value,
                   which is the case for the <spanx style="verb">response_type</spanx> value
@@ -3724,6 +3743,7 @@
                   it MAY NOT be used when no Access Token is issued,
                   which is the case for the <spanx style="verb">response_type</spanx> value
                   <spanx style="verb">id_token</spanx>.
+                  -->
                 </t>
 
               </list>
@@ -3732,19 +3752,36 @@
 
           <section anchor="ImplicitIDTValidation" title="ID Token Validation">
             <t>
+              Implicit Flow を使用する場合, ID Token の内容はこのセクションで指定された違いを除いて, <xref target="IDTokenValidation"/> で述べられているように, Authorization Code Flow と同様に検証されなければならない (MUST).
+            </t>
+            <!--
+            <t>
               When using the Implicit Flow, the contents of the ID Token MUST be validated
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="IDTokenValidation"/>,
               with the exception of the differences specified in this section.
             </t>
+            -->
             <t>
               <list style="numbers">
+                <t>
+                  Clientは ID Token の署名を, JWT ヘッダ中の <spanx style="verb">alg</spanx> パラメータで指定されたアルゴリズムを使い, <xref target="JWS">JWS</xref> に従って検証しなければならない (MUST).
+                </t>
+                <!--
                 <t>
                   The Client MUST validate the signature of the ID Token according to
                   <xref target="JWS">JWS</xref> using the algorithm specified in the
                   <spanx style="verb">alg</spanx> parameter of the JWT header.
                 </t>
+                -->
 
+                <t>
+                  <spanx style="verb">nonce</spanx>
+                  Claim の値が Authentication Request にて送られたものと一致することを確認しなければならない (MUST).
+                  Clientは <spanx style="verb">nonce</spanx> の値をリプレイアタック対策のためにチェックすべきである (SHOULD).
+                  リプレイアタック検知方法の詳細はClientによって異なる.
+                </t>
+                <!--
                 <t>
                   The value of the <spanx style="verb">nonce</spanx>
                   Claim MUST be checked to verify that
@@ -3753,6 +3790,7 @@
                   for replay attacks.
                   The precise method for detecting replay attacks is Client specific.
                 </t>
+                -->
 
               </list>
             </t>
