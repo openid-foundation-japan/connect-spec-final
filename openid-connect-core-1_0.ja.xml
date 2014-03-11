@@ -1306,7 +1306,7 @@
           <t>
             <list style="numbers">
               <t>
-                Client は必要なパラメータを含む Authorization Request を用意する.
+                Client は必要なパラメータを含む Authentication Request を用意する.
               </t>
               <!--
               <t>Client prepares an Authentication Request containing the desired
@@ -1490,7 +1490,7 @@
                   レスポンスが返される Redirection URI.
                   この URI は, Client が OpenID Provider に対して事前に登録済みの Redirection URI のいずれかと完全一致しなければならない (MUST).
                   マッチングルールは <xref target="RFC3986"/> (Simple String Comparison) の Section 6.2.1 に従うこと.
-                  このフローを使用する場合, Redirection URI は <spanx style="verb">https</spanx> スキーマを利用することが望まれる (SHOULD) が, Client Type が <spanx style="verb">confidential</spanx> であり, かつ OP が <spanx style="verb">http</spanx> の利用を容認する場合に限り, <spanx style="verb">http</spanx> スキーマを利用してもよい (MAY).
+                  このフローを使用する場合, Redirection URI には <spanx style="verb">https</spanx> スキーマを利用することが望まれる (SHOULD) が, Client Type が <spanx style="verb">confidential</spanx> であり, かつ OP が <spanx style="verb">http</spanx> の利用を容認する場合に限り, <spanx style="verb">http</spanx> スキーマを利用してもよい (MAY).
                   Client Type 等の定義については OAuth 2.0 の Section 2.1 を参照のこと.
                   Redirection URI には, ネイティブアプリケーションにコールバックを送る目的などで, 上記以外のスキーマを利用することもできる.
                   <!--
@@ -1572,7 +1572,7 @@
                   <vspace/>
                   OPTIONAL.
                   Client セッションと ID Token を紐づける文字列であり, リプレイアタック対策に用いられる.
-                  この値は Authentication Request で指定され, そのままの値で ID Token に含まれる.
+                  この値は Authorization Request で指定され, そのままの値で ID Token に含まれる.
                   <spanx style="verb">nonce</spanx> 値には, 推測不可能なように十分なエントロピーを持たせること (MUST).
                   実装の注意事項については <xref target="NonceNotes"/> を参照すること.
                   <!--
@@ -1861,7 +1861,7 @@
                   <vspace/>
                   OPTIONAL.
                   Authentication Context Class Reference リクエスト値.
-                  Authorization Server が認可リクエストを処理する際に要求される <spanx style="verb">acr</spanx> の値をスペース区切りで示した文字列.
+                  Authorization Server が Authentication Request を処理する際に要求される <spanx style="verb">acr</spanx> の値をスペース区切りで示した文字列.
                   認証処理が満たした Authentication Context Class は, <xref target="IDToken"/> に示す <spanx style="verb">acr</spanx> Claim Value として返される.
                   <spanx style="verb">acr</spanx> Claim はこのパラメータを用いることで Voluntary Claim としてリクエストされることになる.
                   <!--
@@ -3152,38 +3152,87 @@
 
       <section anchor="ImplicitFlowAuth" title="Authentication using the Implicit Flow">
         <t>
+          この章では Authorization Code Flow での認証フローについて述べる.
+          Authorization Code Flow を利用する場合, Token Endpoint は使用されず, 全てのトークンは Authorization Endpoint から返される.
+        </t>
+        <!--
+        <t>
           This section describes how to perform authentication using the Implicit Flow.
           When using the Implicit Flow,
           all tokens are returned from the Authorization Endpoint;
           the Token Endpoint is not used.
         </t>
+        -->
 
+        <t>
+          Implicit Flow は主にスクリプト言語を用いて実装されブラウザ上で動作する Client によって使用される.
+          Access Token と ID Token は, Client に直接返却され,
+          その Access Token と ID Token は, End-User と End-User の User Agent にアクセスするアプリケーションに露出する可能性がある.
+          Authorization Server は Client Authentication を行わない.
+        </t>
+        <!--
         <t>The Implicit Flow is mainly used by Clients implemented in a browser
         using a scripting language. The Access Token and ID Token are returned
         directly to the Client, which may expose them to the End-User and
         applications that have access to the End-User's User Agent.
         The Authorization Server does not perform Client Authentication.
         </t>
+        -->
 
         <section anchor="ImplicitFlowSteps" title="Implicit Flow Steps">
+          <t>
+            Authorization Code Flow の流れは以下通りである.
+          </t>
+          <!--
           <t>The Implicit Flow follows the following steps:</t>
+          -->
 
           <t>
             <list style="numbers">
+              <t>
+                Client は必要なパラメータを含む Authentication Request を用意する.
+              </t>
+              <!--
               <t>Client prepares an Authentication Request containing the desired
               request parameters.</t>
+              -->
 
+              <t>
+                Client は Authorization Server にリクエストを送信する.
+              </t>
+              <!--
               <t>Client sends the request to the Authorization Server.</t>
+              -->
 
+              <t>
+                Authorization Server は End-User を Authenticate する.
+              </t>
+              <!--
               <t>Authorization Server Authenticates the End-User.</t>
+              -->
 
+              <t>
+                Authorization Server は End-User の Consent/Authorization を得る.
+              </t>
+              <!--
               <t>Authorization Server obtains End-User Consent/Authorization.</t>
+              -->
 
+              <t>
+                Authorization Server は ID Token, および要求があれば Access Token を添えて End-User を Client に戻す.
+              </t>
+              <!--
               <t>Authorization Server sends the End-User back to the Client with
               an ID Token and, if requested, an Access Token.</t>
+              -->
 
+              <t>
+                Client は ID Token を検証し, End-User の Subject Identifier を取得する.
+              </t>
+              <!--
               <t>Client validates the ID token and retrieves the End-User's
               Subject Identifier.</t>
+              -->
 
             </list>
           </t>
@@ -3191,24 +3240,41 @@
 
         <section anchor="ImplicitAuthorizationEndpoint" title="Authorization Endpoint">
           <t>
+            Implicit Flow では, 本章で述べる相違点以外は,
+            Authorization Code Flow と同様の方法 (<xref target="AuthorizationEndpoint"/> 参照) で Authorization Endpoint を利用する.
+          </t>
+          <!--
+          <t>
             When using the Implicit Flow, the Authorization Endpoint is used
             in the same manner as for the Authorization Code Flow,
             as defined in <xref target="AuthorizationEndpoint"/>,
             with the exception of the differences specified in this section.
           </t>
+          -->
 
           <section anchor="ImplicitAuthRequest" title="Authentication Request">
+            <t>
+              Authentication Request 構築方法は, 以下の Authentication Request パラメータ以外は <xref target="AuthRequest"/> に従う.
+            </t>
+            <!--
             <t>
               Authentication Requests are made
               as defined in <xref target="AuthRequest"/>,
               except that these Authentication Request parameters
               are used as follows:
             </t>
+            -->
             <t>
               <list style="hanging">
                 <t hangText="response_type">
                   <vspace/>
                   REQUIRED.
+                  使用する認証処理フローを決定する OAuth 2.0 Response Type 値.
+                  この値により, どのエンドポイントからどのようなパラメータが返されるのかなどが決定される.
+                  Implicit Code Flow を使用する場合, この値は <spanx style="verb">id_token&nbsp;token</spanx> ないしは <spanx style="verb">id_token</spanx> となる.
+                  これらの値の意味するところは <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> を参照すること.
+                  <spanx style="verb">id_token</spanx> を利用する場合, Access Token は返されない.
+                  <!--
                   OAuth 2.0 Response Type value that determines
                   the authorization processing flow to be used,
                   including what parameters are returned from the endpoints used.
@@ -3219,14 +3285,27 @@
                   <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.
                   No Access Token is returned when the value is
                   <spanx style="verb">id_token</spanx>.
+                  -->
                 </t>
                 <t>
+                  注) OAuth 2.0 は Implicit Flow に Response Type <spanx style="verb">token</spanx> という値を定義してはいるが, その場合 ID Token が返却できないため, OpenID Connect ではこの Response Type は利用しない.
+                  <!--
                   NOTE:  While OAuth 2.0 also defines the
                   <spanx style="verb">token</spanx> Response Type value
                   for the Implicit Flow, OpenID Connect does not use this Response Type,
                   since no ID Token would be returned.
+                  -->
                 </t>
 
+                <t hangText="redirect_uri">
+                  REQUIRED.
+                  レスポンスが返される Redirection URI.
+                  この URI は, Client が OpenID Provider に対して事前に登録済みの Redirection URI のいずれかと完全一致しなければならない (MUST).
+                  マッチングルールは <xref target="RFC3986"/> (Simple String Comparison) の Section 6.2.1 に従うこと.
+                  このフローを使用する場合, Client がネイティブアプリケーションでない限り, Redirection URI に <spanx style="verb">http</spanx> スキーマを利用してはならない (MUST NOT).
+                  Client がネイティブアプリケーションの場合は, ホスト名に <spanx style="verb">localhost</spanx> とした上で <spanx style="verb">http:</spanx> スキーマを利用してもよい (MAY).
+                </t>
+                <!--
                 <t hangText="redirect_uri">
                   <vspace/>
                   REQUIRED.
@@ -3241,10 +3320,16 @@
                   use the <spanx style="verb">http:</spanx> scheme with
                   <spanx style="verb">localhost</spanx> as the hostname.
                 </t>
+                -->
 
                 <t hangText="nonce">
                   <vspace/>
                   REQUIRED.
+                  Client セッションと ID Token を紐づける文字列であり, リプレイアタック対策に用いられる.
+                  この値は Authentication Request で指定され, そのままの値で ID Token に含まれる.
+                  <spanx style="verb">nonce</spanx> 値には, 推測不可能なように十分なエントロピーを持たせること (MUST).
+                  実装の注意事項については <xref target="NonceNotes"/> を参照すること.
+                  <!--
                   String value used to associate a Client session
                   with an ID Token, and to mitigate replay attacks.
                   The value is passed through unmodified from the Authentication Request to the ID Token.
@@ -3252,17 +3337,25 @@
                   <spanx style="verb">nonce</spanx> values used to prevent
                   attackers from guessing values.
                   For implementation notes, see <xref target="NonceNotes"/>.
+                  -->
                 </t>
               </list>
             </t>
 
             <figure>
               <preamble>
+                以下に Implicit Flow の例を示す.
+                以下の例では Client から HTTP 302 リダイレクトレスポンスを受け取った User Agent が Authorization Server にリクエストを送っている.
+                (改行は掲載上の都合による)
+              </preamble>
+              <!--
+              <preamble>
                 The following is a non-normative example request using the Implicit Flow
                 that would be sent by the User Agent to the Authorization Server
                 in response to a corresponding HTTP 302 redirect response by the Client
                 (with line wraps within values for display purposes only):
               </preamble>
+              -->
 
               <artwork><![CDATA[
   GET /authorize?
