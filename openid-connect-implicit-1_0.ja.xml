@@ -659,7 +659,7 @@
 
     <section anchor="ProtocolElements" title="Protocol Elements">
       <t>
-        Authentication Requests は Authorization Code Flow, Implicit Flow および Hybrid Flow のいずれかのフローに従う.
+        Authentication Request は Authorization Code Flow, Implicit Flow および Hybrid Flow のいずれかのフローに従う.
         Authorization Code Flow は, Authorization Server と Client 自身との間でセキュアに Client Secret を管理できる Client 向けのフローである.
         それが不可能な Client は Implicit Flow を用いる.
         しかしながら, Client Secret をセキュアに保持できないにも関わらず, Refresh Token 取得のためにしばしば Native アプリケーションやその他の Client が Authorization Code flow を利用することもある.
@@ -801,7 +801,7 @@
 
           <figure>
             <preamble>
-              以下は Authorization Request URL の一例である.
+              以下は Authentication Request URL の一例である.
               (改行は掲載上の都合による)
             </preamble>
             <!--
@@ -1301,7 +1301,7 @@
                   <vspace/>
                   OPTIONAL.
                   Authentication Context Class Reference リクエスト値.
-                  Authorization Server が認可リクエストを処理する際に要求される <spanx style="verb">acr</spanx> の値をスペース区切りで示した文字列.
+                  Authorization Server が認証リクエストを処理する際に要求される <spanx style="verb">acr</spanx> の値をスペース区切りで示した文字列.
                   認証処理が満たした Authentication Context Class は, <xref target="IDToken"/> に示す <spanx style="verb">acr</spanx> Claim Value として返される.
                   <spanx style="verb">acr</spanx> Claim はこのパラメータを用いることで Voluntary Claim としてリクエストされることになる.
                 </t>
