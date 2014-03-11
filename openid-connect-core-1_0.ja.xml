@@ -3373,36 +3373,61 @@
 
           <section anchor="ImplicitValidation" title="Authentication Request Validation">
             <t>
+              Implicit Flow では, Authorization Code Flow と同様の方法 (<xref target="AuthRequestValidation"/> 参照) で Authentication Request を検証する.
+            </t>
+            <!--
+            <t>
               When using the Implicit Flow, the Authentication Request is validated
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="AuthRequestValidation"/>.
             </t>
+            -->
           </section>
 
           <section anchor="ImplicitAuthenticates" title="Authorization Server Authenticates End-User">
+            <t>
+              Implicit Flow では, Authorization Code Flow と同様の方法 (<xref target="Authenticates"/> 参照) で End-User Authentication を行う.
+            </t>
+            <!--
             <t>
               When using the Implicit Flow, End-User Authentication is performed
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="Authenticates"/>.
             </t>
+            -->
           </section>
 
           <section anchor="ImplicitConsent" title="Authorization Server Obtains End-User Consent/Authorization">
+            <t>
+              Implicit Flow では, Authorization Code Flow と同様の方法 (<xref target="Consent"/> 参照) で End-User Consent を取得する.
+            </t>
+            <!--
             <t>
               When using the Implicit Flow, End-User Consent is obtained
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="Consent"/>.
             </t>
+            -->
           </section>
 
 
           <section anchor="ImplicitAuthResponse" title="Successful Authentication Response">
+            <t>
+              Implicit Flow を用いるとき, Authentication Responses はこのセクションで指定される違いを除いて
+              <xref target="AuthResponse"/> で定義されている Authorization Code Flow と同様に作成される.
+            </t>
+            <!--
             <t>
               When using the Implicit Flow, Authentication Responses are made
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="AuthResponse"/>,
               with the exception of the differences specified in this section.
             </t>
+            -->
+            <t>
+              Implicit Flow を用いるとき, 異なる Response Mode が指定されない限り, 全てのレスポンスパラメータは <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> の規定により Redirection URI のフラグメント要素に加えられる.
+            </t>
+            <!--
             <t>
               When using the Implicit Flow,
               all response parameters are added to the fragment component
@@ -3410,22 +3435,37 @@
               <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>,
               unless a different Response Mode was specified.
             </t>
-
+            -->
+            <t>
+              これらのパラメータは Authorization Endpoint から返される:
+            </t>
+            <!--
             <t>
               These parameters are returned from the Authorization Endpoint:
             </t>
+            -->
             <t>
               <list style="hanging">
                 <t hangText="access_token">
                   <vspace/>
+                  OAuth2.0 の Access Token.
+                  <spanx style="verb">response_type</spanx> の値が <spanx style="verb">id_token</spanx> でない限り, これは返される.
+                  <!--
                   OAuth 2.0 Access Token.
                   This is returned
                   unless the <spanx style="verb">response_type</spanx> value used is
                   <spanx style="verb">id_token</spanx>.
+                  -->
                 </t>
 
                 <t hangText="token_type">
                   <vspace/>
+                  OAuth 2.0 の Token Type の値.
+                  この値は <spanx style="verb">Bearer</spanx> もしくは Client が Authorization Server と交渉した他の <spanx style="verb">token_type</spanx> の値でなければならない (MUST).
+                  このプロファイルを実装している Client は <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> の仕様をサポートしなければならない (MUST).
+                  このプロファイルは bearer token の利用のみを述べる.
+                  これは <spanx style="verb">access_token</spanx> と同時に返される.
+                  <!--
                   OAuth 2.0 Token Type value.
                   The value MUST be <spanx style="verb">Bearer</spanx> or
                   another <spanx style="verb">token_type</spanx> value that the Client
@@ -3435,6 +3475,7 @@
                   This profile only describes the use of bearer tokens.
                   This is returned in the same cases as
                   <spanx style="verb">access_token</spanx> is.
+                  -->
                 </t>
 
                 <t hangText="id_token">
@@ -3445,6 +3486,10 @@
 
                 <t hangText="state">
                   <vspace/>
+                  OAuth 2.0 の state の値.
+                  <spanx style="verb">state</spanx> パラメータが Authorization Request にある場合は必須 (REQUIRED).
+                  Client は <spanx style="verb">state</spanx> の値が Authorization Request 中の <spanx style="verb">state</spanx> パラメータと等しいことを確認しなければならない (MUST).
+                  <!--
                   OAuth 2.0 state value.
                   REQUIRED if the
                   <spanx style="verb">state</spanx> parameter is present in the
@@ -3452,27 +3497,41 @@
                   <spanx style="verb">state</spanx> value is equal to the
                   value of <spanx style="verb">state</spanx> parameter in the
                   Authorization Request.
+                  -->
                 </t>
 
                 <t hangText="expires_in">
                   <vspace/>
                   OPTIONAL.
+                  Access Token の有効期限である, レスポンスが生成されてからの秒数.
+                  <!--
                   Expiration time of the Access Token in seconds
                   since the response was generated.
+                  -->
                 </t>
               </list>
             </t>
 
             <t>
+              <xref target="RFC6749">OAuth 2.0</xref> の Section 4.2.2 により, Implicit Flow を用いるときに <spanx style="verb">code</spanx> は返されない.
+            </t>
+            <!--
+            <t>
               Per Section 4.2.2 of <xref target="RFC6749">OAuth 2.0</xref>,
               no <spanx style="verb">code</spanx> result is returned
               when using the Implicit Flow.
             </t>
+            -->
 
             <figure>
+              <preamble>
+                以下に Implicit Flow を用いた成功レスポンスの例を示す. (改行は掲載上の都合による)
+              </preamble>
+              <!--
               <preamble>The following is a non-normative example
               of a successful response using the Implicit Flow
               (with line wraps for the display purposes only):</preamble>
+              -->
 
               <artwork><![CDATA[
   HTTP/1.1 302 Found
@@ -3489,11 +3548,20 @@
           <section anchor="ImplicitAuthError" title="Authentication Error Response">
 
             <t>
+              Implicit Flow を用いるとき, Authorization Error Responses はこのセクションで指定される違いを除いて <xref target="AuthError"/> で定義されている Authorization Code Flow と同様に作成される.
+            </t>
+            <!--
+            <t>
               When using the Implicit Flow, Authorization Error Responses are made
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="AuthError"/>,
               with the exception of the differences specified in this section.
             </t>
+            -->
+            <t>
+              End-User がリクエストを拒絶または End-User の認証に失敗したとき, 異なる Response Mode が指定されないかぎり Authorization Server は Error Authorization Response を <xref target="RFC6749">OAuth 2.0</xref> の 4.2.2.1 と <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> で定義されている Redirection URI のフラグメント要素にて返さなければならない (MUST).
+            </t>
+            <!--
             <t>
               If the End-User denies the request or the End-User authentication
               fails, the Authorization Server MUST return the error
@@ -3504,9 +3572,15 @@
               <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>,
               unless a different Response Mode was specified.
             </t>
+            -->
           </section>
 
           <section anchor="ImplicitCallback" title="Redirect URI Fragment Handling">
+            <t>
+              レスポンスパラメータが Redirection URI のフラグメントの値で返されるため, Client は フラグメントエンコードされた値をパースしてそれを消費する Client の処理ロジックに渡す User Agent を持つことを必要とする.
+              URIフラグメントのハンドリングは <xref target="FragmentNotes"/> を参照すること.
+            </t>
+            <!--
             <t>
               Since response parameters are returned in the Redirection URI fragment value,
               the Client needs to have the User Agent parse the fragment encoded values
@@ -3514,39 +3588,72 @@
               See <xref target="FragmentNotes"/> for implementation notes
               on URI fragment handling.
             </t>
+            -->
           </section>
 
           <section anchor="ImplicitAuthResponseValidation" title="Authentication Response Validation">
             <t>
+              Implicit Flow を用いるとき, Client は 以下のようにレスポンスを確認しなければならない (MUST).
+              <!--
               When using the Implicit Flow,
               the Client MUST validate the response as follows:
+              -->
               <list style="numbers">
+                <t>
+                  レスポンスが <xref target="OAuth.Responses"/> の Section 5 に従うことを検証する.
+                </t>
+                <!--
                 <t>
                   Verify that the response conforms to Section 5 of
                   <xref target="OAuth.Responses"/>.
                 </t>
+                -->
+                <t>
+                  RFC 6749, 特に Sections 4.2.2 と 10.12の確認規則に従う.
+                </t>
+                <!--
                 <t>
                   Follow the validation rules in RFC 6749,
                   especially those in Sections 4.2.2 and 10.12.
                 </t>
+                -->
+                <t>
+                  <xref target="ImplicitIDTValidation"/> の ID Token 確認規則に従う.
+                </t>
+                <!--
                 <t>
                   Follow the ID Token validation rules in <xref target="ImplicitIDTValidation"/>.
                 </t>
+                -->
+                <t>
+                  <spanx style="verb">response_type</spanx> の値が <spanx style="verb">id_token</spanx> を利用しない限り, <xref target="ImplicitTokenValidation"/> の Access Token 確認規則に従う.
+                </t>
+                <!--
                 <t>
                   Follow the Access Token validation rules in <xref target="ImplicitTokenValidation"/>,
                   unless the <spanx style="verb">response_type</spanx> value used is
                   <spanx style="verb">id_token</spanx>.
                 </t>
+                -->
               </list>
             </t>
           </section>
 
           <section anchor="ImplicitTokenValidation" title="Access Token Validation">
+            <t>
+              Authorization Endpoint から ID Token とともに発行された Access Token を確認するため, Client は次のことを行うべき (SHOULD).
+            </t>
+            <!--
             <t>To validate an Access Token issued from the Authorization Endpoint with an ID Token,
             the Client SHOULD do the following:</t>
+            -->
 
             <t>
               <list style="numbers">
+                <t>
+                  ID Token の <xref target="JWS">JWS</xref> ヘッダ中の <spanx style="verb">alg</spanx> ヘッダパラメータのために <xref target="JWA">JWA</xref> にて指定されているハッシュアルゴリズムにて <spanx style="verb">access_token</spanx> の ASCII バイト列をハッシュする.
+                </t>
+                <!--
                 <t>Hash the octets of the ASCII representation of
                 the <spanx style="verb">access_token</spanx>
                 with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
@@ -3556,12 +3663,23 @@
                 <spanx style="verb">RS256</spanx>,
                 the hash algorithm used is SHA-256.
                 </t>
+                -->
 
+                <t>
+                  ハッシュの左半分を取り出し, それを Base64 URL エンコードする.
+                </t>
+                <!--
                 <t>Take the left-most half of the hash and base64url encode it.</t>
+                -->
+                <t>
+                  ID Token の <spanx style="verb">at_hash</spanx> の値が直前のステップで生成された値と等しくなければならない (MUST).
+                </t>
+                <!--
                 <t>
                   The value of <spanx style="verb">at_hash</spanx> in the ID Token MUST
                   match the value produced in the previous step.
                 </t>
+                -->
               </list>
             </t>
           </section>
