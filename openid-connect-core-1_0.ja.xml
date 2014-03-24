@@ -4388,7 +4388,7 @@
           <section anchor="HybridIDTValidation" title="ID Token Validation">
 
             <t>
-              Hybrid Flow を用いる場合, Authorization Endpoint から返される ID Token は Implicit Flow の時と同じ方法 (<xref target="ImplicitIDTValidation"/> 参照) で検証すること (MUST).
+              Hybrid Flow では, Authorization Endpoint から返される ID Token は Implicit Flow と同様の方法 (<xref target="ImplicitIDTValidation"/> 参照) で検証すること (MUST).
             </t>
             <!--
             <t>
@@ -4405,55 +4405,85 @@
         <section anchor="HybridTokenEndpoint" title="Token Endpoint">
 
           <t>
+            Hybrid Flow では, 本章で述べる相違点以外は, Authorization Code Flow と同様の方法 (<xref target="TokenEndpoint"/> 参照) で Token Endpoint を利用する.
+          </t>
+          <!--
+          <t>
             When using the Hybrid Flow, the Token Endpoint is used
             in the same manner as for the Authorization Code Flow,
             as defined in <xref target="TokenEndpoint"/>,
             with the exception of the differences specified in this section.
           </t>
+          -->
 
           <section anchor="HybridTokenRequest" title="Token Request">
 
+            <t>
+              Hybrid Flow では, Authorization Code Flow と同様の方法 (<xref target="TokenRequest"/> 参照) で Token Request を構築する.
+            </t>
+            <!--
             <t>
               When using the Hybrid Flow, Token Requests are made
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="TokenRequest"/>.
             </t>
+            -->
           </section>
 
           <section anchor="HybridTokenRequestValidation" title="Token Request Validation">
 
             <t>
+              Hybrid Flow では, Authorization Code Flow と同様の方法 (<xref target="TokenRequestValidation"/> 参照) で Token Request を検証する.
+            </t>
+            <!--
+            <t>
               When using the Hybrid Flow, Token Requests are validated
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="TokenRequestValidation"/>.
             </t>
+            -->
           </section>
 
           <section anchor="HybridTokenResponse" title="Successful Token Response">
 
             <t>
+              Hybrid Flow では, Authorization Code Flow と同様の方法 (<xref target="TokenResponse"/> 参照) で Token Response を構築する.
+            </t>
+            <!--
+            <t>
               When using the Hybrid Flow, Token Responses are made
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="TokenResponse"/>.
             </t>
+            -->
           </section>
 
           <section anchor="HybridTokenErrorResponse" title="Token Error Response">
 
             <t>
+              Hybrid Flow では, Authorization Code Flow と同様の方法 (<xref target="TokenErrorResponse"/> 参照) で Token Error Response を構築する.
+            </t>
+            <!--
+            <t>
               When using the Hybrid Flow, Token Error Responses are made
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="TokenErrorResponse"/>.
             </t>
+            -->
           </section>
 
           <section anchor="HybridTokenResponseValidation" title="Token Response Validation">
 
             <t>
+              Hybrid Flow では, Authorization Code Flow と同様の方法 (<xref target="TokenResponseValidation"/> 参照) で Token Response を検証する.
+            </t>
+            <!--
+            <t>
               When using the Hybrid Flow, Token Responses are validated
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="TokenResponseValidation"/>.
             </t>
+            -->
           </section>
 
           <section anchor="HybridIDToken2" title="ID Token">
