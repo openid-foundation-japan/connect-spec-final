@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
-<rfc category="std" docName="draft-openid-connect-registration-1_0"
-     ipr="trust200902">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="draft-openid-connect-registration-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -11,11 +20,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Final" ?>
+  <?rfc private="Draft" ?>
 
   <front>
     <title abbrev="OpenID Connect Registration 1.0">OpenID Connect
-    Dynamic Client Registration 1.0</title>
+    Dynamic Client Registration 1.0 - draft 27 incorporating errata set 1</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -41,7 +50,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="27" month="August" year="2014" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -86,7 +95,7 @@
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
 	<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-	"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+	"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
 	document are to be interpreted as described in <xref
 	target="RFC2119">RFC 2119</xref>.</t>
 
@@ -391,21 +400,21 @@
 	    <vspace/>
 	    OPTIONAL.
 	    Client's JSON Web Key Set <xref target="JWK"/> document, passed by value.
-	    The semantics of the <spanx style="verb">jwk</spanx> parameter are the same
-	    as the <spanx style="verb">jwk_uri</spanx> parameter, other than that
-	    The JWK Set is passed by value, rather than by reference.
+	    The semantics of the <spanx style="verb">jwks</spanx> parameter are the same
+	    as the <spanx style="verb">jwks_uri</spanx> parameter, other than that
+	    the JWK Set is passed by value, rather than by reference.
 	    This parameter is intended only to be used by Clients that, for some reason,
-	    are unable to use the <spanx style="verb">jwk_uri</spanx> parameter,
+	    are unable to use the <spanx style="verb">jwks_uri</spanx> parameter,
 	    for instance, by native applications that might not have a location
 	    to host the contents of the JWK Set.
-	    If a Client can use <spanx style="verb">jwk_uri</spanx>,
-	    it MUST NOT use <spanx style="verb">jwk</spanx>.
-	    One significant downside of <spanx style="verb">jwk</spanx> is that it
+	    If a Client can use <spanx style="verb">jwks_uri</spanx>,
+	    it MUST NOT use <spanx style="verb">jwks</spanx>.
+	    One significant downside of <spanx style="verb">jwks</spanx> is that it
 	    does not enable key rotation
-	    (which <spanx style="verb">jwk_uri</spanx> does, as described in
+	    (which <spanx style="verb">jwks_uri</spanx> does, as described in
 	    Section 10 of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>).
-	    The <spanx style="verb">jwk_uri</spanx> and <spanx style="verb">jwk</spanx>
-	    parameters MAY NOT be used together.
+	    The <spanx style="verb">jwks_uri</spanx> and <spanx style="verb">jwks</spanx>
+	    parameters MUST NOT be used together.
 	  </t>
 
 	  <t hangText="sector_identifier_uri">
@@ -1269,16 +1278,16 @@
       <t>
 	As of the time of this writing,
 	this specification is compatible with the current version of
-	<xref target="I-D.ietf-oauth-dyn-reg">OAuth 2.0 Dynamic Client Registration Protocol</xref>, draft -14.
+	<xref target="I-D.ietf-oauth-dyn-reg">OAuth 2.0 Dynamic Client Registration Protocol</xref>, draft -20.
 	The Dynamic Client Registration work is still ongoing at the IETF
 	and changes may or may not be made there
 	that cause it to diverge from this specification
 	during the standardization process.
       </t>
       <t>
-	Implementations wanting to support additional operations
-	defined in <xref target="I-D.ietf-oauth-dyn-reg"/>, such as Update,
-	can do so using that specification,
+	Implementations wanting to support additional operations defined in
+	<xref target="I-D.ietf-oauth-dyn-reg-management">OAuth 2.0 Dynamic Client Registration Management Protocol</xref>, draft -05,
+	such as Update, can do so using that specification,
 	while being mindful that the specification is a work in progress, and may change.
       </t>
 
@@ -1289,11 +1298,11 @@
 	  this specification uses several IETF specifications that are
 	  not yet final specifications.  Those specifications are:
 	  <list style="symbols">
-	    <t><xref target="JWT">JSON Web Token (JWT) draft -13</xref></t>
-	    <t><xref target="JWS">JSON Web Signature (JWS) draft -18</xref></t>
-	    <t><xref target="JWE">JSON Web Encryption (JWE) draft -18</xref></t>
-	    <t><xref target="JWK">JSON Web Key (JWK) draft -18</xref></t>
-	    <t><xref target="JWA">JSON Web Algorithms draft -18</xref></t>
+	    <t><xref target="JWT">JSON Web Token (JWT) draft -25</xref></t>
+	    <t><xref target="JWS">JSON Web Signature (JWS) draft -31</xref></t>
+	    <t><xref target="JWE">JSON Web Encryption (JWE) draft -31</xref></t>
+	    <t><xref target="JWK">JSON Web Key (JWK) draft -31</xref></t>
+	    <t><xref target="JWA">JSON Web Algorithms draft -31</xref></t>
 	    
 	  </list>
 	</t>
@@ -1429,16 +1438,16 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2616"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4627"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6750"?>
 
       <reference anchor="USA15">
         <front>
@@ -1489,7 +1498,7 @@
 	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-core-1_0.html"
@@ -1516,7 +1525,7 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-discovery-1_0.html"
@@ -1531,11 +1540,11 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-algorithms" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18"
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31"
                 type="HTML" />
       </reference>
 
@@ -1555,11 +1564,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13"
+	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25"
                 type="HTML" />
       </reference>
 
@@ -1579,11 +1588,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-18"
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31"
                 type="HTML" />
       </reference>
 
@@ -1603,11 +1612,11 @@
 	    <organization>Cisco Systems, Inc.</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-encryption" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-31" type="HTML" />
       </reference>
 
       <reference anchor="JWK">
@@ -1618,17 +1627,18 @@
 	    <organization>Microsoft</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-key" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-31" type="HTML" />
       </reference>
 
     </references>
 
     <references title="Informative References">
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-dyn-reg-14.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-dyn-reg-20.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-dyn-reg-management-05.xml' ?>
 
       <reference anchor="OpenID.Session">
         <front>
@@ -1654,7 +1664,7 @@
             <organization abbrev="Google">Google</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-session-1_0.html"
@@ -1727,6 +1737,56 @@
 	that may cover technology that may be required to practice 
 	this specification.
       </t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-27
+        <list style="symbols">
+	  <t>
+	    Added errata set number to the title.
+	  </t>
+	  <t>
+	    Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-26
+        <list style="symbols">
+          <t>
+	    Updated dates for specs containing errata updates.
+	  </t>
+	  <t>
+	    Updated references to pre-final IETF specs.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-25
+        <list style="symbols">
+	  <t>
+	    Applied the following corrections for errata identified in the final specification:
+	  </t>
+	  <t>
+	    Fixed #925 - Typos (jwk vs jwks) in jwks client metadata parameter definition.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-24
+        <list style="symbols">
+	  <t>
+	    Final specification.
+	  </t>
+	</list>
+      </t>
+
     </section>
 
   </back>

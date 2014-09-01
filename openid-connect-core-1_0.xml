@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
-<rfc category="std" docName="openid-connect-core-1_0" ipr="trust200902">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="openid-connect-core-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -10,10 +20,10 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Final" ?>
+  <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 21 incorporating errata set 1</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -55,7 +65,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="27" month="August" year="2014" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -140,7 +150,7 @@
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
 	<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-	"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+	"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
 	document are to be interpreted as described in <xref
 	target="RFC2119">RFC 2119</xref>.</t>
 
@@ -170,8 +180,11 @@
 	  "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
 	  "Resource Owner", "Resource Server", "Response Type", and "Token Endpoint"
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>,
-	  the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)", and "Nested JWT"
+	  the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)",
+	  "JWT Claims Set", and "Nested JWT"
 	  defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
+	  the terms "Header Parameter" and "JOSE Header"
+	  defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
 	  the term "User Agent" defined by <xref target="RFC2616">RFC 2616</xref>,
 	  and the term "Response Mode" defined by
 	  <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.
@@ -677,7 +690,7 @@
 	<spanx style="verb">x5c</spanx>,
 	<spanx style="verb">jku</spanx>, or
 	<spanx style="verb">jwk</spanx>
-	header parameter fields.
+	Header Parameter fields.
 	Instead, references to keys used are
 	communicated in advance using Discovery and Registration parameters,
 	per <xref target="SigEnc"/>.
@@ -1003,7 +1016,7 @@
 		  OPTIONAL.
 		  String value used to associate a Client session 
 		  with an ID Token, and to mitigate replay attacks.
-		  The value is passed through unmodified from the Authorization Request to the ID Token.
+		  The value is passed through unmodified from the Authentication Request to the ID Token.
 		  Sufficient entropy MUST be present in the
 		  <spanx style="verb">nonce</spanx> values used to prevent
 		  attackers from guessing values.
@@ -1850,8 +1863,8 @@
 		  hash of the octets of the ASCII representation of the
 		  <spanx style="verb">access_token</spanx> value,
 		  where the hash algorithm used is the hash algorithm
-		  used in the <spanx style="verb">alg</spanx> parameter
-		  of the ID Token's <xref target="JWS">JWS</xref> header.
+		  used in the <spanx style="verb">alg</spanx> Header Parameter
+		  of the ID Token's JOSE Header.
 		  For instance, if the <spanx style="verb">alg</spanx> is
 		  <spanx style="verb">RS256</spanx>, hash the
 		  <spanx style="verb">access_token</spanx> value
@@ -1915,7 +1928,7 @@
 		  checking the token signature.
 		  The Client MUST validate the signature of all other ID Tokens according to
 		  <xref target="JWS">JWS</xref> using the algorithm specified in the 
-		  JWT <spanx style="verb">alg</spanx> header parameter.
+		  JWT <spanx style="verb">alg</spanx> Header Parameter.
 		  The Client MUST use the keys provided by the Issuer.
 		</t>
 
@@ -1925,7 +1938,7 @@
 		in the <spanx style="verb">id_token_signed_response_alg</spanx> parameter 
 		during Registration.</t>
 
-		<t>If the JWT <spanx style="verb">alg</spanx> header parameter
+		<t>If the JWT <spanx style="verb">alg</spanx> Header Parameter
 		uses a MAC based algorithm such as 
 		<spanx style="verb">HS256</spanx>, <spanx style="verb">HS384</spanx>,
 		or <spanx style="verb">HS512</spanx>,
@@ -2299,8 +2312,8 @@
 		<t>Hash the octets of the ASCII representation of
 		the <spanx style="verb">access_token</spanx> 
 		with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
-		<spanx style="verb">alg</spanx> header parameter
-		in the ID Token's <xref target="JWS">JWS</xref> header.
+		<spanx style="verb">alg</spanx> Header Parameter
+		of the ID Token's JOSE Header.
 		For instance, if the <spanx style="verb">alg</spanx> is
 		<spanx style="verb">RS256</spanx>,
 		the hash algorithm used is SHA-256.
@@ -2338,8 +2351,8 @@
 		  hash of the octets of the ASCII representation of the
 		  <spanx style="verb">access_token</spanx> value,
 		  where the hash algorithm used is the hash algorithm
-		  used in the <spanx style="verb">alg</spanx> header parameter
-		  of the ID Token's <xref target="JWS">JWS</xref> header.
+		  used in the <spanx style="verb">alg</spanx> Header Parameter
+		  of the ID Token's JOSE Header.
 		  For instance, if the <spanx style="verb">alg</spanx> is
 		  <spanx style="verb">RS256</spanx>, hash the
 		  <spanx style="verb">access_token</spanx> value
@@ -2373,7 +2386,7 @@
 		<t>
 		  The Client MUST validate the signature of the ID Token according to
 		  <xref target="JWS">JWS</xref> using the algorithm specified in the 
-		  <spanx style="verb">alg</spanx> parameter of the JWT header.
+		  <spanx style="verb">alg</spanx> Header Parameter of the JOSE Header.
 		</t>
 
 		<t>
@@ -2641,8 +2654,9 @@
 		<t>
 		  Follow the Authorization Code validation rules in <xref target="CodeValidation"/>
 		  when the <spanx style="verb">response_type</spanx> value used is
-		  <spanx style="verb">code&nbsp;id_token</spanx>,
-		  <spanx style="verb">code&nbsp;token</spanx>, or
+		  <spanx style="verb">code&nbsp;id_token</spanx> or
+		  <!-- <spanx style="verb">code&nbsp;token</spanx>
+		       is not included because Authorization Code validation requires an ID Token -->
 		  <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx>.
 		</t>
 	      </list>
@@ -2669,8 +2683,8 @@
 		<t>Hash the octets of the ASCII representation of
 		the <spanx style="verb">code</spanx> 
 		with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
-		<spanx style="verb">alg</spanx> header parameter
-		in the ID Token's <xref target="JWS">JWS</xref> header.
+		<spanx style="verb">alg</spanx> Header Parameter
+		of the ID Token's JOSE Header.
 		For instance, if the <spanx style="verb">alg</spanx> is
 		<spanx style="verb">RS256</spanx>,
 		the hash algorithm used is SHA-256.
@@ -2709,8 +2723,8 @@
 		  hash of the octets of the ASCII representation of the
 		  <spanx style="verb">access_token</spanx> value,
 		  where the hash algorithm used is the hash algorithm
-		  used in the <spanx style="verb">alg</spanx> header parameter
-		  of the ID Token's <xref target="JWS">JWS</xref> header.
+		  used in the <spanx style="verb">alg</spanx> Header Parameter
+		  of the ID Token's JOSE Header.
 		  For instance, if the <spanx style="verb">alg</spanx> is
 		  <spanx style="verb">RS256</spanx>, hash the
 		  <spanx style="verb">access_token</spanx> value
@@ -2732,8 +2746,8 @@
 		  hash of the octets of the ASCII representation of the
 		  <spanx style="verb">code</spanx> value,
 		  where the hash algorithm used is the hash algorithm
-		  used in the <spanx style="verb">alg</spanx> header parameter
-		  of the ID Token's <xref target="JWS">JWS</xref> header.
+		  used in the <spanx style="verb">alg</spanx> Header Parameter
+		  of the ID Token's JOSE Header.
 		  For instance, if the <spanx style="verb">alg</spanx> is
 		  <spanx style="verb">HS512</spanx>, hash the
 		  <spanx style="verb">code</spanx> value
@@ -4410,7 +4424,7 @@
 	  The Request Object MAY be signed or unsigned (plaintext).
 	  When it is plaintext, this is indicated by use of the
 	  <spanx style="verb">none</spanx> algorithm <xref target="JWA" />
-	  in the JWS header.  If signed, the Request Object
+	  in the JOSE Header.  If signed, the Request Object
 	  SHOULD contain the Claims
 	  <spanx style="verb">iss</spanx> (issuer)
 	  and <spanx style="verb">aud</spanx> (audience) as members.
@@ -4880,7 +4894,7 @@
 
 	  <t>
 	    To perform Signature Validation, 
-	    the <spanx style="verb">alg</spanx> parameter in the JWS header MUST match the value
+	    the <spanx style="verb">alg</spanx> Header Parameter in the JOSE Header MUST match the value
 	    of the <spanx style="verb">request_object_signing_alg</spanx> set during
 	    Client Registration <xref target="OpenID.Registration"/> or a value that was
 	    pre-registered by other means.
@@ -5195,19 +5209,32 @@
 	    </t>
 	    <t>
 	      The <spanx style="verb">sub</spanx> (subject) Claim
-	      value is the base64url encoded SHA-256 hash of 
-	      the concatenation of the octets of the UTF-8 representations of
-	      the base64url encoded key values in the
-	      <spanx style="verb">sub_jwk</spanx> Claim.
-	      When the <spanx style="verb">kty</spanx> value is
-	      <spanx style="verb">RSA</spanx>, the key values
-	      <spanx style="verb">n</spanx> and 
-	      <spanx style="verb">e</spanx> are concatenated in that order.
-	      When the <spanx style="verb">kty</spanx> value is
-	      <spanx style="verb">EC</spanx>, the key values
+	      value is the base64url encoded representation of
+	      the thumbprint of
+	      the key in the <spanx style="verb">sub_jwk</spanx> Claim.
+	      This thumbprint value is computed as
+	      the SHA-256 hash of
+	      the octets of the UTF-8 representation of
+	      a JWK constructed containing only the REQUIRED members to represent the key,
+	      with the member names sorted into lexicographic order,
+	      and with no white space or line breaks.
+	      For instance,
+	      when the <spanx style="verb">kty</spanx> value is
+	      <spanx style="verb">RSA</spanx>, the member names
+	      <spanx style="verb">e</spanx>,
+	      <spanx style="verb">kty</spanx>, and
+	      <spanx style="verb">n</spanx>
+	      are the ones present in the constructed JWK used
+	      in the thumbprint computation and appear in that order;
+	      when the <spanx style="verb">kty</spanx> value is
+	      <spanx style="verb">EC</spanx>, the member names
 	      <spanx style="verb">crv</spanx>,
-	      <spanx style="verb">x</spanx>, and 
-	      <spanx style="verb">y</spanx> are concatenated in that order.
+	      <spanx style="verb">kty</spanx>,
+	      <spanx style="verb">x</spanx>, and
+	      <spanx style="verb">y</spanx>
+	      are present in that order.
+	      Note that this thumbprint calculation is the same as that defined in
+	      the JWK Thumbprint <xref target="JWK.Thumbprint"/> specification.
 	    </t>
 	    <t>
 	      No Access Token is returned for accessing a UserInfo Endpoint,
@@ -5240,7 +5267,7 @@
 	    <t>
 	      The Client MUST validate the signature of the ID Token according to
 	      <xref target="JWS">JWS</xref> using the algorithm specified in the 
-	      <spanx style="verb">alg</spanx> parameter of the JWT header <xref target="JWT"/>,  
+	      <spanx style="verb">alg</spanx> Header Parameter of the JOSE Header,
 	      using the key in the <spanx style="verb">sub_jwk</spanx> Claim;
 	      the key is a bare key in JWK format
 	      (not an X.509 certificate value).
@@ -5251,20 +5278,11 @@
 	      It MAY also be <spanx style="verb">ES256</spanx>.
 	    </t>
 	    <t>
-	      The Client MUST validate that the <spanx style="verb">sub</spanx> (subject) Claim
-	      value is the base64url encoded SHA-256 hash of 
-	      the concatenation of the octets of the UTF-8 representations of
-	      the base64url encoded key values in the
-	      <spanx style="verb">sub_jwk</spanx> Claim.
-	      When the <spanx style="verb">kty</spanx> value is
-	      <spanx style="verb">RSA</spanx>, the key values
-	      <spanx style="verb">n</spanx> and 
-	      <spanx style="verb">e</spanx> are concatenated in that order.
-	      When the <spanx style="verb">kty</spanx> value is
-	      <spanx style="verb">EC</spanx>, the key values
-	      <spanx style="verb">crv</spanx>,
-	      <spanx style="verb">x</spanx>, and 
-	      <spanx style="verb">y</spanx> are concatenated in that order.
+	      The Client MUST validate that the <spanx style="verb">sub</spanx> Claim
+	      value is the base64url encoded representation of
+	      the thumbprint of
+	      the key in the <spanx style="verb">sub_jwk</spanx> Claim,
+	      as specified in <xref target="SelfIssuedResponse"/>.
 	    </t>
 	    <t>
 	      The current time MUST be before the time represented by the 
@@ -5280,7 +5298,7 @@
 	    <t>
 	      If a nonce value was sent in the Authentication Request, 
 	      a <spanx style="verb">nonce</spanx> Claim MUST be present 
-	      and its value of the checked to verify that
+	      and its value checked to verify that
 	      it is the same value as the one that was sent in the Authentication Request.
 	      The Client SHOULD check the <spanx style="verb">nonce</spanx> value
 	      for replay attacks.
@@ -5296,7 +5314,7 @@
 	  <artwork><![CDATA[
   {
    "iss": "https://self-issued.me",
-   "sub": "wBy8QvHbPzUnL0x63h13QqvUYcOur1X0cbQpPVRqX5k",
+   "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
    "aud": "https://client.example.org/cb",
    "nonce": "n-0S6_WzA2Mj",
    "exp": 1311281970,
@@ -5718,21 +5736,21 @@
 	    <t hangText="Asymmetric Signatures">
 	      <vspace/>
 	      When using RSA or ECDSA Signatures, 
-	      the <spanx style="verb">alg</spanx> header parameter value
-	      of the JWS header MUST be set to an appropriate algorithm
+	      the <spanx style="verb">alg</spanx> Header Parameter value
+	      of the JOSE Header MUST be set to an appropriate algorithm
 	      as defined in <xref target="JWA">JSON Web Algorithms</xref>.
 	      The private key used to sign the content MUST be associated with
 	      a public key used for signature verification published by the sender
 	      in its JWK Set document.
 	      If there are multiple keys in the referenced JWK Set document, a
-	      <spanx style="verb">kid</spanx> value MUST be provided in the JWS header.
+	      <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
 	      The key usage of the respective keys MUST support signing.
 	    </t>
 	    <t hangText="Symmetric Signatures">
 	      <vspace/>
 	      When using MAC-based signatures,
-	      the <spanx style="verb">alg</spanx> header parameter value
-	      of the JWS header MUST be set to a MAC algorithm,
+	      the <spanx style="verb">alg</spanx> Header Parameter value
+	      of the JOSE Header MUST be set to a MAC algorithm,
 	      as defined in <xref target="JWA">JSON Web Algorithms</xref>. 
 	      The MAC key used is
 	      the octets of the UTF-8 representation of
@@ -5752,7 +5770,7 @@
 	  <t>Rotation of signing keys can be accomplished with the following approach. The signer publishes
 	  its keys in a JWK Set at its <spanx style="verb">jwks_uri</spanx> location
 	  and includes the <spanx style="verb">kid</spanx> of the
-	  signing key in the JWS header of each message
+	  signing key in the JOSE Header of each message
 	  to indicate to the verifier which key is to be used to validate the signature. Keys can be rolled over
 	  by periodically adding new keys to the JWK Set at the <spanx style="verb">jwks_uri</spanx> location.
 	  The signer can begin using a new key at its
@@ -5781,7 +5799,7 @@
 	      a public key used for encryption published by the recipient
 	      in its JWK Set document.
 	      If there are multiple keys in the referenced JWK Set document, a
-	      <spanx style="verb">kid</spanx> value MUST be provided in the JWE header.
+	      <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
 	      Use the supported RSA encryption algorithm to encrypt a random 
 	      Content Encryption Key to be used for encrypting 
 	      the signed JWT.
@@ -5790,12 +5808,12 @@
 	    <t hangText="Asymmetric Encryption: Elliptic Curve">
 	      <vspace/>
 	      Create an ephemeral Elliptic Curve public key for the <spanx style="verb">epk</spanx>
-	      element of the JWE header.
+	      element of the JOSE Header.
 	      The other public key used for the key agreement computation MUST be
 	      a public key published by the recipient
 	      in its JWK Set document.
 	      If there are multiple keys in the referenced JWK Set document, a
-	      <spanx style="verb">kid</spanx> value MUST be provided in the JWE header.
+	      <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
 	      Use the ECDH-ES algorithm to agree upon a
 	      Content Encryption Key to be used for encrypting 
 	      the signed JWT.
@@ -5834,7 +5852,7 @@
 	    the encrypting party starts the process and thus cannot rely on
 	    a change in <spanx style="verb">kid</spanx> as a signal
 	    that keys need to change. The encrypting party
-	    still uses the <spanx style="verb">kid</spanx> header parameter in the JWE
+	    still uses the <spanx style="verb">kid</spanx> Header Parameter in the JWE
 	    to tell the decrypting party which private key to use to decrypt, however, the encrypting party
 	    needs to first select the most appropriate key from those provided in the JWK Set at
 	    the recipient's <spanx style="verb">jwks_uri</spanx> location.
@@ -6478,14 +6496,13 @@
 	    this specification uses several IETF specifications that are
 	    not yet final specifications.  Those specifications are:
 	    <list style="symbols">
-	      <t><xref target="JWT">JSON Web Token (JWT) draft -13</xref></t>
-	      <t><xref target="JWS">JSON Web Signature (JWS) draft -18</xref></t>
-	      <t><xref target="JWE">JSON Web Encryption (JWE) draft -18</xref></t>
-	      <t><xref target="JWK">JSON Web Key (JWK) draft -18</xref></t>
-	      <t><xref target="JWA">JSON Web Algorithms draft -18</xref></t>
-	      <t><xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants draft -13</xref></t>
-	      <t><xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants draft -07</xref></t>
-	      
+	      <t><xref target="JWT">JSON Web Token (JWT) draft -25</xref></t>
+	      <t><xref target="JWS">JSON Web Signature (JWS) draft -31</xref></t>
+	      <t><xref target="JWE">JSON Web Encryption (JWE) draft -31</xref></t>
+	      <t><xref target="JWK">JSON Web Key (JWK) draft -31</xref></t>
+	      <t><xref target="JWA">JSON Web Algorithms draft -31</xref></t>
+	      <t><xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants draft -17</xref></t>
+	      <t><xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants draft -10</xref></t>
 	    </list>
 	  </t>
 	  <t>
@@ -7840,23 +7857,23 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3339"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3966"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5322"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6711"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6750"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6819"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2616"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4627"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3339"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3966"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5322"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6711"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6819"?>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
 
       <reference anchor="USA15">
 	<front>
@@ -7903,7 +7920,7 @@
 	    <organization abbrev="Illumila">Illumila</organization>
 	  </author>
 
-	  <date day="25" month="February" year="2014"/>
+	  <date day="27" month="August" year="2014"/>
 	</front>
 
 	<format target="http://openid.net/specs/openid-connect-discovery-1_0.html"
@@ -7926,7 +7943,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="25" month="February" year="2014"/>
+	  <date day="27" month="August" year="2014"/>
 	</front>
 
 	<format target="http://openid.net/specs/openid-connect-registration-1_0.html"
@@ -7949,11 +7966,11 @@
 	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
 	</front>
 
 	<seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13"
+	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25"
 		type="HTML" />
       </reference>
 
@@ -7973,11 +7990,11 @@
 	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
 	</front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-18"
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31"
 		type="HTML" />
       </reference>
 
@@ -7997,11 +8014,11 @@
 	    <organization>Cisco Systems, Inc.</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
 	</front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-encryption" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-31" type="HTML" />
       </reference>
 
       <reference anchor="JWK">
@@ -8012,11 +8029,11 @@
 	    <organization>Microsoft</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
 	</front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-key" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-31" type="HTML" />
       </reference>
 
       <reference anchor="JWA">
@@ -8027,11 +8044,11 @@
 	    <organization>Microsoft</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
 	</front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-algorithms" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31" type="HTML" />
       </reference>
 
       <reference anchor="OAuth.JWT">
@@ -8050,11 +8067,11 @@
 	    <organization>Salesforce</organization>
 	  </author>
 
-	  <date day="9" month="December" year="2013"/>
+	  <date day="23" month="July" year="2014"/>
 	</front>
 
 	<seriesInfo value="draft-ietf-oauth-jwt-bearer" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-jwt-bearer-07"
+	<format target="http://tools.ietf.org/html/draft-ietf-oauth-jwt-bearer-10"
 		type="HTML" />
       </reference>
 
@@ -8078,11 +8095,11 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="9" month="December" year="2013"/>
+	  <date day="23" month="July" year="2014"/>
 	</front>
 
 	<seriesInfo value="draft-ietf-oauth-assertions" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-assertions-13"
+	<format target="http://tools.ietf.org/html/draft-ietf-oauth-assertions-17"
 		type="HTML" />
       </reference>
 
@@ -8234,7 +8251,7 @@
     </references>
     <references title="Informative References">
 
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4949"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4949"?>
 
       <reference anchor="OpenID.Basic">
 	<front>
@@ -8260,7 +8277,7 @@
 	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
-	  <date day="25" month="February" year="2014"/>
+	  <date day="27" month="August" year="2014"/>
 	</front>
 
 	<format target="http://openid.net/specs/openid-connect-basic-1_0.html"
@@ -8291,7 +8308,7 @@
 	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
-	  <date day="25" month="February" year="2014"/>
+	  <date day="27" month="August" year="2014"/>
 	</front>
 
 	<format target="http://openid.net/specs/openid-connect-implicit-1_0.html"
@@ -8326,7 +8343,7 @@
 	    <organization abbrev="Illumila">Illumila</organization>
 	  </author>
 
-	  <date day="25" month="February" year="2014"/>
+	  <date day="27" month="August" year="2014"/>
 	</front>
 
 	<format target="http://openid.net/specs/openid-connect-session-1_0.html"
@@ -8464,6 +8481,26 @@
                 type="PDF" />
       </reference>
 
+      <reference anchor="JWK.Thumbprint">
+	<front>
+	  <title>JSON Web Key (JWK) Thumbprint</title>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization>Microsoft</organization>
+	    <address>
+	      <email>mbj@microsoft.com</email>
+	      <uri>http://self-issued.info/</uri>
+	    </address>
+	  </author>
+
+	  <date day="23" month="July" year="2014" />
+	</front>
+
+	<seriesInfo value="draft-jones-jose-jwk-thumbprint" name="Internet-Draft"/>
+	<format target="http://tools.ietf.org/html/draft-jones-jose-jwk-thumbprint-01"
+		type="HTML" />
+      </reference>
+
     </references>
 
     <section anchor="AuthorizationExamples" title="Authorization Examples">
@@ -8533,7 +8570,7 @@
 	  The value of the <spanx style="verb">id_token</spanx> parameter is the ID Token,
 	  which is a signed JWT,
 	  containing three base64url encoded segments separated by period ('.') characters.
-	  The first segment represents the JWT header.
+	  The first segment represents the JOSE Header.
 	  Base64url decoding it will result in the following set of Header Parameters:
 	</t>
 	<figure>
@@ -8909,6 +8946,77 @@
 	that may cover technology that may be required to practice 
 	this specification.
       </t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-21
+        <list style="symbols">
+	  <t>
+	    Added errata set number to the title.
+	  </t>
+	  <t>
+	    Fixed #947 - Added "kty":"EC" case back to Self-Issued OpenID Provider Response.
+	  </t>
+	  <t>
+	    Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-20
+        <list style="symbols">
+	  <t>
+	    Changed the JWK Thumbprint reference from being normative to informative.
+	  </t>
+          <t>
+	    Updated dates for specs containing errata updates.
+	  </t>
+	  <t>
+	    Updated references to pre-final IETF specs.
+	  </t>
+	  <t>
+	    Replaced uses of the terms JWS Header, JWE Header, and JWT Header with
+	    the JOSE Header term that replaced them in the JOSE and JWT specifications.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-19
+        <list style="symbols">
+	  <t>
+	    Applied the following corrections for errata identified in the final specification:
+	  </t>
+	  <t>
+	    Fixed #921 - 3.1.2.1 "Authorization Request" should be "Authentication Request".
+	  </t>
+          <t>
+	    Fixed #926 - Typo in Self-Issued ID Token Validation.
+	  </t>
+	  <t>
+	    Fixed #920 - Attack identified against self-issued "sub" values.
+	  </t>
+	  <t>
+	     Authorization Code validation is not done when using the response type
+	     <spanx style="verb">code&nbsp;token</spanx> because
+	     the validation process requires an ID Token.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-18
+        <list style="symbols">
+	  <t>
+	    Final specification.
+	  </t>
+	</list>
+      </t>
+
     </section>
 
   </back>

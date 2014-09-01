@@ -74,7 +74,7 @@
       -->
 
       <t>
-        この仕様は, OpenID Connect の主要な機能である OAuth 2.0 上で End-User の情報伝達のためにクレームを用いる認証機能 を定義する.
+        この仕様は, OpenID Connect の主要な機能である OAuth 2.0 上で End-User の情報伝達のために Claim を用いる認証機能 を定義する.
         この仕様はまた, OpenID Connect を利用するための Security, Privacy Considerations を説明する.
       </t>
       <!--
@@ -108,7 +108,7 @@
       </t>
       -->
       <t>
-        OpenID Connect Core 1.0 仕様は, OpenID Connect の主要な機能である OAuth 2.0 上で End-User の情報伝達のためにクレームを用いる認証機能 を定義する.
+        OpenID Connect Core 1.0 仕様は, OpenID Connect の主要な機能である OAuth 2.0 上で End-User の情報伝達のために Claim を用いる認証機能 を定義する.
         この仕様はまた, OpenID Connect を利用するための Security, Privacy Considerations を説明する.
       </t>
       <!--
@@ -987,7 +987,7 @@
       <t>
         ID Token はその他の Claim を含んでもよい (MAY).
         解釈不可能な Claim は全て無視すること (MUST).
-        この仕様によって定義される追加のクレームのための
+        この仕様によって定義される追加の Claim のための
         <xref target="CodeIDToken" format="counter"/>,
         <xref target="HybridIDToken" format="counter"/>,
         <xref target="StandardClaims" format="counter"/> と
@@ -1061,7 +1061,7 @@
 
       <figure>
         <preamble>
-          以下は ID トークン中のクレームセット (JWT クレームセット) の一例である.
+          以下は ID トークン中の Claim Set (JWT Claim Set) の一例である.
         </preamble>
         <!--
         <preamble>
@@ -3731,8 +3731,8 @@
                   -->
                 </t>
                 <t>
-                  ID Token が <spanx style="verb">access_token</spanx> とともに Authorization Endpoint から発行された場合(<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token&nbsp;token</spanx> である場合に該当する), このクレームは必須である (REQUIRED).
-                  Access Token が発行されない場合(<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token</spanx> である場合に該当する), このクレームは使用されなくてもよい (MAY NOT).
+                  ID Token が <spanx style="verb">access_token</spanx> とともに Authorization Endpoint から発行された場合(<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token&nbsp;token</spanx> である場合に該当する), この Claim は必須である (REQUIRED).
+                  Access Token が発行されない場合(<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token</spanx> である場合に該当する), この Claim は使用されなくてもよい (MAY NOT).
                   <!--
                   If the ID Token is issued from the Authorization Endpoint with an
                   <spanx style="verb">access_token</spanx> value,
@@ -4296,7 +4296,7 @@
               <list style="hanging">
 
                 <t hangText="nonce">
-                  このフローでは <spanx style="verb">nonce</spanx> クレームの使用は必須である(REQUIRED).
+                  このフローでは <spanx style="verb">nonce</spanx> Claim の使用は必須である(REQUIRED).
                 </t>
                 <!--
                 <t hangText="nonce">
@@ -4488,6 +4488,10 @@
 
           <section anchor="HybridIDToken2" title="ID Token">
 
+          	<t>
+              Hybrid Flow を使用する場合, このセクションで指定された違いを除いて, Token Endpoint から返された ID Token の内容は <xref target="HybridIDToken"/> で述べた Authorization Endpoint から返される ID Token と同一である.
+            </t>
+            <!--
             <t>
               When using the Hybrid Flow, the contents of an ID Token
               returned from the Token Endpoint are
@@ -4495,6 +4499,16 @@
               as defined in <xref target="HybridIDToken"/>,
               with the exception of the differences specified in this section.
             </t>
+            -->
+            <t>
+              ID Token が Authorization Endpoint と Token Endpoint の両方から返される場合 (<spanx style="verb">response_type</spanx> 値が <spanx style="verb">code&nbsp;id_token</spanx> もしくは <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> である場合), <spanx style="verb">iss</spanx> Claim と <spanx style="verb">sub</spanx> Claim は両方の ID Token で同一でなければならない (MUST).
+              Authentication イベントに関する Claim については, 片方にその Claim を含めるのであれば, もう片方にも同じ Claim を含めるべきである (SHOULD).
+              End-User に関する Claim については, それらが両方に存在するのであれば, その値は同値であるべきである (SHOULD).
+              なお, プライバシー上の理由などにより, OP は Authorization Endpoint から返す End-User の Claim を, Token Endpoint から返すそれより少なくしてもよい (MAY).
+              たとえ Authorization Endpoint から返される ID Token に <spanx style="verb">at_hash</spanx> および <spanx style="verb">c_hash</spanx> Claim が含まれていたとしても, Token Endpoint から返される ID Token ではそれらの Claim は省略可能である (MAY).
+              Token Endpoint から返される ID Token と Access Token は, 既に Token Endpoint における TLS 暗号化により暗号論的に紐づけられている.
+            </t>
+            <!--
             <t>
               If an ID Token is returned from both the Authorization Endpoint
               and from the Token Endpoint,
@@ -4518,20 +4532,31 @@
               the Token Endpoint are already cryptographically bound together
               by the TLS encryption performed by the Token Endpoint.
             </t>
+            -->
           </section>
 
           <section anchor="HybridIDTValidation2" title="ID Token Validation">
 
+          	<t>
+              Hybrid Flow を使用する場合, Token Endpoint で返される ID Token の内容は,  <xref target="IDTokenValidation"/> に従い Authorization Code Flow と同じ方法で検証すること (MUST).
+            </t>
+            <!--
             <t>
               When using the Hybrid Flow, the contents of an ID Token
               returned from the Token Endpoint MUST be validated
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="IDTokenValidation"/>.
             </t>
+            -->
           </section>
 
           <section anchor="HybridAccessToken2" title="Access Token">
 
+          	<t>
+              Access Token が Authorization Endpoint と Token Endpoint の両方から返される場合 (<spanx style="verb">response_type</spanx> 値が <spanx style="verb">code&nbsp;token</spanx> もしくは <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> である場合), それぞれの値は同一としてもよく (MAY), 異なる値としてもよい (MAY).
+              2つのエンドポイントでの異なるセキュリティ特性によって異なる Access Token が返されるかもしれず, 有効期限と承認されたリソースへのアクセス権も異なる可能性があることに注意.
+            </t>
+            <!--
             <t>
               If an Access Token is returned from both the Authorization Endpoint
               and from the Token Endpoint,
@@ -4545,10 +4570,15 @@
               of the two endpoints and the lifetimes and
               the access to resources granted by them might also be different.
             </t>
+            -->
           </section>
 
           <section anchor="HybridTokenValidation2" title="Access Token Validation">
 
+          	<t>
+              Hybrid Flow を使用する場合, Token Endpoint で返される Access Token は, <xref target="CodeFlowTokenValidation"/> に従い Authorization Code Flow と同じ方法で検証すること.
+            </t>
+            <!--
             <t>
               When using the Hybrid Flow, the Access Token
               returned from the Token Endpoint
@@ -4556,6 +4586,7 @@
               in the same manner as for the Authorization Code Flow,
               as defined in <xref target="CodeFlowTokenValidation"/>.
             </t>
+            -->
           </section>
 
         </section>

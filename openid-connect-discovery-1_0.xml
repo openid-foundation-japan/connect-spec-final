@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
-<rfc category="std" docName="openid-connect-discovery-1_0" ipr="trust200902">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="openid-connect-discovery-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -10,10 +20,10 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Final" ?>
+  <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Discovery 1.0">OpenID Connect Discovery 1.0</title>
+    <title abbrev="OpenID Connect Discovery 1.0">OpenID Connect Discovery 1.0 - draft 24 incorporating errata set 1</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -46,7 +56,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="27" month="August" year="2014" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -94,7 +104,7 @@
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
 	<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-	"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+	"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
 	document are to be interpreted as described in <xref
 	target="RFC2119">RFC 2119</xref>.</t>
 
@@ -1247,12 +1257,12 @@
 	  this specification uses several IETF specifications that are
 	  not yet final specifications.  Those specifications are:
 	  <list style="symbols">
-	    <t><xref target="JWT">JSON Web Token (JWT) draft -13</xref></t>
-	    <t><xref target="JWS">JSON Web Signature (JWS) draft -18</xref></t>
-	    <t><xref target="JWE">JSON Web Encryption (JWE) draft -18</xref></t>
-	    <t><xref target="JWK">JSON Web Key (JWK) draft -18</xref></t>
-	    <t><xref target="JWA">JSON Web Algorithms draft -18</xref></t>
-	    <t><xref target="I-D.ietf-appsawg-acct-uri">The 'acct' URI Scheme draft -06</xref></t>
+	    <t><xref target="JWT">JSON Web Token (JWT) draft -25</xref></t>
+	    <t><xref target="JWS">JSON Web Signature (JWS) draft -31</xref></t>
+	    <t><xref target="JWE">JSON Web Encryption (JWE) draft -31</xref></t>
+	    <t><xref target="JWK">JSON Web Key (JWK) draft -31</xref></t>
+	    <t><xref target="JWA">JSON Web Algorithms draft -31</xref></t>
+	    <t><xref target="I-D.ietf-appsawg-acct-uri">The 'acct' URI Scheme draft -07</xref></t>
 	    
 	  </list>
 	</t>
@@ -1365,18 +1375,18 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986'?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5322"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.7033"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986'?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5322"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5785"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7033"?>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-appsawg-acct-uri-06.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-appsawg-acct-uri-07.xml' ?>
 
       <reference anchor="USA15">
         <front>
@@ -1427,7 +1437,7 @@
 	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-core-1_0.html"
@@ -1450,11 +1460,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13"
+	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25"
                 type="HTML" />
       </reference>
 
@@ -1474,11 +1484,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-18"
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31"
                 type="HTML" />
       </reference>
 
@@ -1498,11 +1508,11 @@
 	    <organization>Cisco Systems, Inc.</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-encryption" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-31" type="HTML" />
       </reference>
 
       <reference anchor="JWA">
@@ -1513,11 +1523,11 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-algorithms" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18"
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31"
                 type="HTML" />
       </reference>
 
@@ -1529,11 +1539,11 @@
 	    <organization>Microsoft</organization>
 	  </author>
 
-	  <date day="12" month="November" year="2013" />
+	  <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-key" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-31" type="HTML" />
       </reference>
 
       <reference anchor="OpenID.Registration">
@@ -1552,7 +1562,7 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-registration-1_0.html"
@@ -1614,7 +1624,7 @@
             <organization abbrev="Google">Google</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-session-1_0.html"
@@ -1722,6 +1732,44 @@
 	that may cover technology that may be required to practice 
 	this specification.
       </t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-24
+        <list style="symbols">
+	  <t>
+	    Added errata set number to the title.
+	  </t>
+	  <t>
+	    Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-23
+        <list style="symbols">
+          <t>
+	    Updated dates for specs containing errata updates.
+	  </t>
+	  <t>
+	    Updated references to pre-final IETF specs.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-22
+        <list style="symbols">
+	  <t>
+	    Final specification.
+	  </t>
+	</list>
+      </t>
+
     </section>
 
   </back>

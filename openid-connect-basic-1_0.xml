@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
-<rfc category="std" docName="openid-connect-basic-1_0" ipr="trust200902">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="openid-connect-basic-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -14,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Basic Client Guide 1.0">OpenID Connect
-    Basic Client Implementer's Guide 1.0 - draft 33</title>
+    Basic Client Implementer's Guide 1.0 - draft 35</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -56,7 +66,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="27" month="August" year="2014" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -73,7 +83,7 @@
 	that is designed to be easy to read and implement for basic
 	Web-based Relying Parties using the
 	OAuth Authorization Code Flow.
-	This specification intentionally duplicates content from the Core
+	This document intentionally duplicates content from the Core
 	specification to provide a self-contained implementer's guide for basic
 	Web-based Relying Parties using the
 	OAuth Authorization Code Flow.
@@ -95,7 +105,7 @@
 	that is designed to be easy to read and implement for basic
 	Web-based Relying Parties using the
 	OAuth 2.0 <xref target="RFC6749"/> Authorization Code Flow.
-	This specification intentionally duplicates content from the Core
+	This document intentionally duplicates content from the Core
 	specification to provide a self-contained implementer's guide for basic
 	Web-based Relying Parties using the
 	OAuth Authorization Code Flow.
@@ -145,7 +155,7 @@
 	are also referred to as Relying Parties (RPs).
       </t>
       <t>
-	This specification assumes that the Relying Party has already obtained
+	This document assumes that the Relying Party has already obtained
 	configuration information about the OpenID Provider, including its
 	Authorization Endpoint and Token Endpoint locations.
 	This information is normally obtained via Discovery,
@@ -153,7 +163,7 @@
 	or may be obtained via other mechanisms.
       </t>
       <t>
-	Likewise, this specification assumes that the Relying Party has already obtained
+	Likewise, this document assumes that the Relying Party has already obtained
 	sufficient credentials and provided information needed to use the OpenID Provider.
 	This is normally done via Dynamic Registration,
 	as described in
@@ -163,7 +173,7 @@
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-	"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+	"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
 	document are to be interpreted as described in <xref
 	target="RFC2119"/>.</t>
 
@@ -178,31 +188,34 @@
 	</t>
 	<t>
 	  All uses of <xref target="JWS">JSON Web Signature (JWS)</xref>
-	  data structures in this specification utilize
+	  data structures in this document utilize
 	  the JWS Compact Serialization;
 	  the JWS JSON Serialization is not used.
 	</t>
 	<t>
 	  When the RFC 2119 language applies to the behavior of OpenID Providers,
-	  it is in this specification for explanatory value to help Client
+	  it is in this document for explanatory value to help Client
 	  implementers understand the expected behavior of OpenID Providers.
 	</t>
       </section>
 
       <section anchor="Terminology" title="Terminology">
         <t>
-	  This specification uses the terms "Access Token", "Authorization Code",
+	  This document uses the terms "Access Token", "Authorization Code",
 	  "Authorization Endpoint", "Authorization Grant", "Authorization Server",
 	  "Client", "Client Authentication", "Client Identifier", "Client Secret",
 	  "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
 	  "Resource Owner", "Resource Server", "Response Type", and "Token Endpoint"
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>,
-	  the terms "Claim Name", "Claim Value", and "JSON Web Token (JWT)"
+	  the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)",
+	  and "JWT Claims Set"
 	  defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
+	  the terms "Header Parameter" and "JOSE Header"
+	  defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
 	  and the term "User Agent" defined by <xref target="RFC2616">RFC 2616</xref>.
 	</t>
 	<t>
-	  This specification also defines the following terms:
+	  This document also defines the following terms:
 	  <list style="hanging">
             <t hangText="Authentication">
 	      <vspace/>
@@ -312,9 +325,9 @@
 	</t>
 	<t>
 	  IMPORTANT NOTE TO READERS: The terminology definitions in
-	  this section are a normative portion of this specification,
+	  this section are a normative portion of this document,
 	  imposing requirements upon implementations.  All the
-	  capitalized words in the text of this specification, such as
+	  capitalized words in the text of this document, such as
 	  "Issuer Identifier", reference these defined terms.
 	  Whenever the reader encounters them, their definitions
 	  found in this section must be followed.
@@ -393,7 +406,7 @@
       </t>
 
       <t>
-	This specification only provides information that is sufficient for
+	This document only provides information that is sufficient for
 	basic Clients using the Code Flow.
       </t>
 
@@ -498,7 +511,7 @@
 		  <spanx style="verb">phone</spanx>,
 		  and <spanx style="verb">offline_access</spanx>
 		  are also defined.
-		  See <xref target="Scopes"/> for more about the scope values defined by this specification.
+		  See <xref target="Scopes"/> for more about the scope values defined by this document.
 		</t>
 
 		<t hangText="redirect_uri">
@@ -535,7 +548,7 @@
             </t>
 
             <t>
-	      This specification also defines the following request parameters:
+	      This document also defines the following request parameters:
 	    </t>
 
             <t>
@@ -813,7 +826,7 @@
 	    the End-User is logged in, depending upon the request parameter values used.
 	    If interaction with the End-User occurs over an HTTP channel,
 	    it MUST use TLS, as per <xref target="TLSRequirements"/>.
-	    The exact authentication methods used are out of scope for this specification.
+	    The exact authentication methods used are out of scope for this document.
 	  </t>
         </section>
 
@@ -907,16 +920,25 @@
 
           <section anchor="TokenRequest" title="Client Sends Code">
 
-            <t>
-	      The Client makes a request to the Token Endpoint using
-	      the Form Serialization, per <xref target="FormSerialization"/>, as described in 
+	    <t>
+	      A Client makes a Token Request by
+	      presenting its Authorization Grant (in the form of
+	      an Authorization Code) to the Token Endpoint
+	      using the <spanx style="verb">grant_type</spanx> value
+	      <spanx style="verb">authorization_code</spanx>, as described in 
 	      Section 4.1.3 of <xref target="RFC6749">OAuth 2.0</xref>.
-	      The Client authenticates itself by communicating its form-urlencoded
-	      Client Credentials in an Authorization header using the HTTP Basic method,
+	      The Client MUST authenticate to the Token Endpoint using the HTTP Basic method,
 	      as described in 2.3.1 of OAuth 2.0.
 	      (This method is the one identified by using the
 	      <spanx style="verb">client_secret_basic</spanx> authentication method value
 	      in <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>).
+	    </t>
+	    <t>
+	      The Client sends the parameters to the Token Endpoint
+	      using the HTTP <spanx style="verb">POST</spanx> method and the
+	      Form Serialization, per <xref target="FormSerialization"/>,
+	      as described in Section 4.1.3 of 
+	      <xref target="RFC6749">OAuth 2.0</xref>.
 	    </t>
 	    <t>
 	      Communication with the Token Endpoint MUST utilize TLS.
@@ -1121,8 +1143,8 @@
 	      hash of the octets of the ASCII representation of the
 	      <spanx style="verb">access_token</spanx> value,
 	      where the hash algorithm used is the hash algorithm
-	      used in the <spanx style="verb">alg</spanx> parameter
-	      of the ID Token's <xref target="JWS">JWS</xref> header.
+	      used in the <spanx style="verb">alg</spanx> Header Parameter
+	      of the ID Token's JOSE Header.
 	      For instance, if the <spanx style="verb">alg</spanx> is
 	      <spanx style="verb">RS256</spanx>, hash the
 	      <spanx style="verb">access_token</spanx> value
@@ -1164,7 +1186,7 @@
 	      authentication methods were used.
 	      The definition of particular values to be used in the
 	      <spanx style="verb">amr</spanx> Claim
-	      is beyond the scope of this specification.
+	      is beyond the scope of this document.
 	      Parties using this claim will need to agree upon the meanings of
 	      the values used, which may be context-specific.
 	      The <spanx style="verb">amr</spanx> value is an array of
@@ -1199,7 +1221,7 @@
 	  <spanx style="verb">x5c</spanx>,
 	  <spanx style="verb">jku</spanx>, or
 	  <spanx style="verb">jwk</spanx>
-	  header parameter fields.
+	  Header Parameter fields.
 	  Instead, keys used for ID Tokens are
 	  communicated in advance using Discovery and Registration parameters.
 	</t>
@@ -1207,7 +1229,7 @@
 	<figure>
 	  <preamble>
 	    The following is a non-normative example of
-	    the Claims from a base64url decoded ID Token payload:
+	    the set of Claims (the JWT Claims Set) base64url decoded from an ID Token:
 	  </preamble>
 
 	  <artwork><![CDATA[
@@ -1224,7 +1246,7 @@
 	<section anchor="IDTokenValidation" title="ID Token Validation">
 
 	  <t>
-	    If any of the validation procedures defined in this specification fail, any operations requiring
+	    If any of the validation procedures defined in this document fail, any operations requiring
 	    the information that failed to correctly validate MUST be aborted and
 	    the information that failed to validate MUST NOT be used.
 	  </t>
@@ -1278,7 +1300,7 @@
 	      <t>If the <spanx style="verb">acr</spanx> Claim was requested, the
 	      Client SHOULD check that the asserted Claim Value is appropriate.
 	      The meaning and processing of
-	      <spanx style="verb">acr</spanx> Claim Values is out of scope for this specification.</t>
+	      <spanx style="verb">acr</spanx> Claim Values is out of scope for this document.</t>
 
 	      <t>
 		When a <spanx style="verb">max_age</spanx> request is made,
@@ -1388,7 +1410,7 @@
         used to access OAuth 2.0 protected endpoints. For OpenID Connect, scopes
 	can be used to request that specific sets of information
 	be made available as Claim Values.
-        This specification describes only the scope values used by OpenID Connect.</t>
+        This document describes only the scope values used by OpenID Connect.</t>
 	<t>
 	  OpenID Connect allows additional scope values to be defined and used.
 	  Scope values used that are not understood by an implementation SHOULD be ignored.
@@ -1616,8 +1638,8 @@
 
 	  <c>gender</c>
 	  <c>string</c>
-	  <c>End-User's gender.  Values defined by this
-	  specification are <spanx style="verb">female</spanx> and
+	  <c>End-User's gender.  Values defined by this document
+	  are <spanx style="verb">female</spanx> and
 	  <spanx style="verb">male</spanx>.  Other values MAY be used
 	  when neither of the defined values are applicable.</c>
 
@@ -1993,7 +2015,7 @@
 	</list>
       </t>
       <t>
-	In several places, this specification uses space delimited
+	In several places, this document uses space delimited
 	lists of strings.  In all such cases, the ASCII space
 	character (0x20) MUST be the only character used for this purpose.
       </t>
@@ -2002,7 +2024,7 @@
 
     <section anchor='TLS' title='TLS Version'>
       <t>
-	Whenever Transport Layer Security (TLS) is used by this specification,
+	Whenever Transport Layer Security (TLS) is used by this document,
 	the appropriate version (or versions) of
 	TLS will vary over time, based on the widespread deployment and known security
 	vulnerabilities. At the time of this writing, TLS version 1.2 <xref target='RFC5246' />
@@ -2014,10 +2036,10 @@
 
     <section anchor="ImplementationConsiderations" title="Implementation Considerations">
       <t>
-	This specification defines features used by Relying Parties
+	This document defines features used by Relying Parties
 	using the OAuth Authorization Code Flow.
 	These Relying Parties MUST implement the features that are listed
-	in this specification as being "REQUIRED" or are described with a "MUST".
+	in this document as being "REQUIRED" or are described with a "MUST".
       </t>
 
       <section anchor="DiscoReg" title="Discovery and Registration">
@@ -2108,7 +2130,7 @@
 	  posing greater privacy risk than the Claims transfer when the user is present.
 	  Therefore, it is prudent to obtain explicit consent for
 	  offline access to resources.
-	  This specification mandates the use of the <spanx style="verb">prompt</spanx>
+	  This document mandates the use of the <spanx style="verb">prompt</spanx>
 	  parameter to obtain consent unless it is already known that the
 	  request complies with the conditions for processing the request in each jurisdiction.
 	</t>
@@ -2119,7 +2141,7 @@
 	  If the Access Token does not enable offline access and the server
 	  can differentiate whether the Client request has been made
 	  offline or online, the risk will be substantially reduced.
-	  Therefore, this specification mandates ignoring
+	  Therefore, this document mandates ignoring
 	  the offline access request when the Access Token is
 	  transmitted in the front channel.
 	  Note that differentiating between online and offline access
@@ -2160,22 +2182,22 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3339"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3966"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5322"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6711"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2616"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3339"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3966"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4627"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5322"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6711"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6750"?>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
 
       <reference anchor="USA15">
         <front>
@@ -2318,7 +2340,7 @@
 	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-core-1_0.html"
@@ -2345,7 +2367,7 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-discovery-1_0.html"
@@ -2368,7 +2390,7 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-registration-1_0.html"
@@ -2391,11 +2413,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013"/>
+          <date day="4" month="July" year="2014"/>
         </front>
 
 	<seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13"
+	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25"
 		type="HTML"/>
       </reference>
 
@@ -2415,11 +2437,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
 	<seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-18" type="HTML" />
+	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31" type="HTML" />
       </reference>
 
       <reference anchor="IANA.Language">
@@ -2462,7 +2484,7 @@
             <organization abbrev="Salesforce">Salesforce</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="27" month="August" year="2014"/>
         </front>
 
 	<format target="http://openid.net/specs/openid-connect-implicit-1_0.html"
@@ -2474,7 +2496,7 @@
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>
 	The OpenID Community would like to thank the following people for
-	their contributions to this specification:
+	their contributions to this document:
       </t>
       <t>
         <list style="empty">
@@ -2549,7 +2571,38 @@
     </section>
 
     <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
+      <t>[[ To be removed from the final document ]]</t>
+
+      <t>
+	-35
+        <list style="symbols">
+          <t>
+	    Updated dates for specs containing errata updates.
+	  </t>
+	  <t>
+	    Updated references to pre-final IETF specs.
+	  </t>
+	  <t>
+	    Replaced uses of the terms JWS Header, JWE Header, and JWT Header with
+	    the JOSE Header term that replaced them in the JOSE and JWT specifications.
+	  </t>
+	  <t>
+	    Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-34
+        <list style="symbols">
+          <t>
+	    Fixed #918 - Wording inconsistency in Token Request language.
+	  </t>
+	  <t>
+	    Changed uses of "this specification" to "this document".
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-33
