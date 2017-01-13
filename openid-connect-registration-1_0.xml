@@ -12,7 +12,7 @@
   document and not a private document, as the private="..." declaration could
   be taken to indicate.
 -->
-<rfc category="std" docName="draft-openid-connect-registration-1_0" ipr="none">
+<rfc category="std" docName="openid-connect-registration-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Registration 1.0">OpenID Connect
-    Dynamic Client Registration 1.0 - draft 27 incorporating errata set 1</title>
+    Dynamic Client Registration 1.0 - draft 29 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="27" month="August" year="2014" />
+    <date day="3" month="August" year="2015" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -162,7 +162,7 @@
 	    OAuth 2.0 Access Token optionally issued by an Authorization Server
 	    granting access to its Client Registration Endpoint.
 	    The contents
-	    of this token are service-specific and are out of scope for this 
+	    of this token are service specific and are out of scope for this 
             specification. The means by which the Authorization Server issues this
             token and the means by which the Registration Endpoint validates
             it are also out of scope.
@@ -218,7 +218,7 @@
 	  <t hangText="response_types">
 	    <vspace/>
 	    OPTIONAL.
-	    JSON array containing a list of the OAuth 2.0
+	    JSON <xref target="RFC7159"/> array containing a list of the OAuth 2.0
 	    <spanx style="verb">response_type</spanx> values that
 	    the Client is declaring that it will restrict itself to using.
 	    If omitted, the default is that the Client will use only the
@@ -379,13 +379,13 @@
 	  <t hangText="jwks_uri">
 	    <vspace/>
 	    OPTIONAL.
-	    URL for the Client's JSON Web Key Set <xref target="JWK"/> document.
+	    URL for the Client's JWK Set <xref target="JWK"/> document.
 	    If the Client signs requests to the Server,
 	    it contains the signing key(s) the Server uses to validate signatures from the Client.
 	    The JWK Set MAY also contain the Client's encryption keys(s),
 	    which are used by the Server to encrypt responses to the Client.
 	    When both signing and encryption keys are made available,
-	    a <spanx style="verb">use</spanx> (Key Use) parameter
+	    a <spanx style="verb">use</spanx> (public key use) parameter
 	    value is REQUIRED for all keys in the referenced JWK Set
 	    to indicate each key's intended usage.
 	    Although some algorithms allow the same key to be used for
@@ -399,7 +399,7 @@
 	  <t hangText="jwks">
 	    <vspace/>
 	    OPTIONAL.
-	    Client's JSON Web Key Set <xref target="JWK"/> document, passed by value.
+	    Client's JWK Set <xref target="JWK"/> document, passed by value.
 	    The semantics of the <spanx style="verb">jwks</spanx> parameter are the same
 	    as the <spanx style="verb">jwks_uri</spanx> parameter, other than that
 	    the JWK Set is passed by value, rather than by reference.
@@ -477,7 +477,8 @@
 	    algorithm <xref target="JWA" /> REQUIRED for encrypting the ID Token
 	    issued to this Client. 
 	    If <spanx style="verb">id_token_encrypted_response_alg</spanx> is specified,
-	    the default for this value is <spanx style="verb">A128CBC-HS256</spanx>.
+	    the default <spanx style="verb">id_token_encrypted_response_enc</spanx>
+	    value is <spanx style="verb">A128CBC-HS256</spanx>.
 	    When <spanx style="verb">id_token_encrypted_response_enc</spanx> is included,
 	    <spanx style="verb">id_token_encrypted_response_alg</spanx> MUST also be provided.
 	  </t>
@@ -490,7 +491,7 @@
 	    If this is specified, the response will be 
 	    <xref target="JWT">JWT</xref> serialized, and signed using JWS.
 	    The default, if omitted, is for the UserInfo Response to
-	    return the Claims as a UTF-8 encoded JSON object using the
+	    return the Claims as a UTF-8 <xref target="RFC3629"/> encoded JSON object using the
 	    <spanx style="verb">application/json</spanx> content-type.
 	  </t>
 
@@ -511,7 +512,8 @@
 	    JWE <spanx style="verb">enc</spanx>
 	    algorithm <xref target="JWA" /> REQUIRED for encrypting UserInfo Responses.
 	    If <spanx style="verb">userinfo_encrypted_response_alg</spanx> is specified,
-	    the default for this value is <spanx style="verb">A128CBC-HS256</spanx>.
+	    the default <spanx style="verb">userinfo_encrypted_response_enc</spanx>
+	    value is <spanx style="verb">A128CBC-HS256</spanx>.
 	    When <spanx style="verb">userinfo_encrypted_response_enc</spanx> is included,
 	    <spanx style="verb">userinfo_encrypted_response_alg</spanx> MUST also be provided.
 	  </t>
@@ -563,7 +565,8 @@
 	    algorithm <xref target="JWA" /> the RP is declaring that it may use for
 	    encrypting Request Objects sent to the OP.
 	    If <spanx style="verb">request_object_encryption_alg</spanx> is specified,
-	    the default for this value is <spanx style="verb">A128CBC-HS256</spanx>.
+	    the default <spanx style="verb">request_object_encryption_enc</spanx>
+	    value is <spanx style="verb">A128CBC-HS256</spanx>.
 	    When <spanx style="verb">request_object_encryption_enc</spanx> is included,
 	    <spanx style="verb">request_object_encryption_alg</spanx> MUST also be provided.
 	  </t>
@@ -674,7 +677,7 @@
 	  </t>
 	  <t>
 	    If the contents of the request file could ever change,
-	    these URI values SHOULD include the base64url encoded SHA-256 hash value of
+	    these URI values SHOULD include the base64url-encoded SHA-256 hash value of
 	    the file contents referenced by the URI as the value of the URI fragment.
 	    If the fragment value used for a URI changes, that signals the server
 	    that its cached value for that URI with the old fragment value
@@ -871,7 +874,7 @@
 	      OPTIONAL.
 	      Time at which the Client Identifier was issued.
 	      Its value is a JSON number representing the number of seconds from
-	      1970-01-01T0:0:0Z as measured in UTC until the date/time.
+	      1970-01-01T00:00:00Z as measured in UTC until the date/time.
 	    </t>
 
             <t hangText="client_secret_expires_at">
@@ -880,7 +883,7 @@
 	      Time at which the <spanx style="verb">client_secret</spanx> will expire
 	      or 0 if it will not expire.
 	      Its value is a JSON number representing the number of seconds from
-	      1970-01-01T0:0:0Z as measured in UTC until the date/time.
+	      1970-01-01T00:00:00Z as measured in UTC until the date/time.
 	    </t>
           </list></t>
 
@@ -892,7 +895,7 @@
 	  <artwork><![CDATA[
   HTTP/1.1 201 Created
   Content-Type: application/json
-  Cache-Control: no-store
+  Cache-Control: no-cache, no-store
   Pragma: no-cache
 
   {
@@ -990,7 +993,7 @@
 	    <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
-  Cache-Control: no-store
+  Cache-Control: no-cache, no-store
   Pragma: no-cache
    
   {
@@ -1011,7 +1014,7 @@
       OAuth 2.0 Bearer Token <xref target="RFC6750"/>.</t>
 
       <t>Operations on this endpoint are switched through the use of different
-      HTTP methods <xref target="RFC2616"/>.
+      HTTP methods <xref target="RFC7231"/>.
       The only method defined for use at this endpoint by this specification
       is the HTTP <spanx style="verb">GET</spanx> method.</t>
 
@@ -1107,8 +1110,9 @@
           <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-store
+  Cache-Control: no-cache, no-store
   Pragma: no-cache
+
   {
    "client_id": "s6BhdRkqt3",
    "client_secret":
@@ -1170,7 +1174,7 @@
   HTTP/1.1 401 Unauthorized
   WWW-Authenticate: Bearer error="invalid_token",
     error_description="The access token expired"
-  Cache-Control: no-store
+  Cache-Control: no-cache, no-store
   Pragma: no-cache
 ]]></artwork>
 	  </figure>
@@ -1212,7 +1216,7 @@
 
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-store
+  Cache-Control: no-cache, no-store
   Pragma: no-cache
 
   [ "https://client.example.org/callback",
@@ -1229,7 +1233,7 @@
 	values in the messages to known values. For example, the
 	member names in the Client registration response might be
 	compared to specific member names such as <spanx
-	style="verb">client_id</spanx>.  Comparing Unicode strings,
+	style="verb">client_id</spanx>.  Comparing Unicode <xref target="UNICODE"/> strings,
 	however, has significant security implications.
        </t>
       <t>
@@ -1276,45 +1280,24 @@
 	in this specification as being "REQUIRED" or are described with a "MUST".
       </t>
       <t>
-	As of the time of this writing,
-	this specification is compatible with the current version of
-	<xref target="I-D.ietf-oauth-dyn-reg">OAuth 2.0 Dynamic Client Registration Protocol</xref>, draft -20.
-	The Dynamic Client Registration work is still ongoing at the IETF
-	and changes may or may not be made there
-	that cause it to diverge from this specification
-	during the standardization process.
-      </t>
-      <t>
+	This specification is compatible with the
+	<xref target="RFC7591">OAuth 2.0 Dynamic Client Registration Protocol</xref>.
+	Implementations MAY use additional Client Metadata values defined by
+	<xref target="RFC7591"/>, such as <spanx style="verb">software_statement</spanx>,
+	should they facilitate their use cases.
 	Implementations wanting to support additional operations defined in
-	<xref target="I-D.ietf-oauth-dyn-reg-management">OAuth 2.0 Dynamic Client Registration Management Protocol</xref>, draft -05,
+	<xref target="RFC7592">OAuth 2.0 Dynamic Client Registration Management Protocol</xref>,
 	such as Update, can do so using that specification,
-	while being mindful that the specification is a work in progress, and may change.
+	while being mindful that the specification is experimental.
       </t>
 
-      <section anchor="PreFinalIETFSpecs" title="Pre-Final IETF Specifications">
+      <section anchor="CompatibilityNotes" title="Compatibility Notes">
 
 	<t>
-	  Implementers should be aware that 
-	  this specification uses several IETF specifications that are
-	  not yet final specifications.  Those specifications are:
-	  <list style="symbols">
-	    <t><xref target="JWT">JSON Web Token (JWT) draft -25</xref></t>
-	    <t><xref target="JWS">JSON Web Signature (JWS) draft -31</xref></t>
-	    <t><xref target="JWE">JSON Web Encryption (JWE) draft -31</xref></t>
-	    <t><xref target="JWK">JSON Web Key (JWK) draft -31</xref></t>
-	    <t><xref target="JWA">JSON Web Algorithms draft -31</xref></t>
-	    
-	  </list>
+	  NOTE: Potential compatibility issues that were previously described in
+	  the original version of this specification have since been addressed.
 	</t>
-	<t>
-	  While every effort will be made to prevent breaking
-	  changes to these specifications, should they occur,
-	  OpenID Connect implementations should continue to use the
-	  specifically referenced draft versions above in preference
-	  to the final versions, unless using a possible future
-	  OpenID Connect profile or specification that
-	  updates some or all of these references.
-	</t>
+
       </section>
 
       <section anchor="StatelessRegistration" title="Implementation Notes on Stateless Dynamic Client Registration">
@@ -1431,7 +1414,370 @@
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
-      <t>This document makes no requests of IANA.</t>
+      <section anchor="DynRegRegistrations" title="OAuth Dynamic Client Registration Metadata Registration">
+	<t>
+	  This specification registers the following client metadata definitions
+	  in the IANA "OAuth Dynamic Client Registration Metadata" registry
+	  <xref target="IANA.OAuth.Parameters"/>
+	  established by <xref target="RFC7591"/>:
+	</t>
+
+	<section anchor="DynRegContents" title="Registry Contents">
+	  <t> <?rfc subcompact="yes"?>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">application_type</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: Kind of the application -- "native" or "web"
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>Client Metadata Name: <spanx style="verb">sector_identifier_uri</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: URL using the <spanx style="verb">https</spanx> scheme to be used in
+		calculating Pseudonymous Identifiers by the OP
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">subject_type</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: <spanx style="verb">subject_type</spanx> requested for 
+		responses to this Client -- "pairwise" or "public"
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">id_token_signed_response_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWS <spanx style="verb">alg</spanx>
+		algorithm REQUIRED for signing the ID Token
+		issued to this Client
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">id_token_encrypted_response_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWE <spanx style="verb">alg</spanx>
+		algorithm REQUIRED for encrypting the ID Token
+		issued to this Client
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">id_token_encrypted_response_enc</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWE <spanx style="verb">enc</spanx>
+		algorithm REQUIRED for encrypting the ID Token
+		issued to this Client
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">userinfo_signed_response_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWS <spanx style="verb">alg</spanx>
+		algorithm REQUIRED for signing UserInfo Responses
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">userinfo_encrypted_response_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWE <spanx style="verb">alg</spanx> 
+		algorithm REQUIRED for encrypting UserInfo Responses
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">userinfo_encrypted_response_enc</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWE <spanx style="verb">enc</spanx>
+		algorithm REQUIRED for encrypting UserInfo Responses
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">request_object_signing_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWS <spanx style="verb">alg</spanx>
+		algorithm that MUST be used for
+		signing Request Objects sent to the OP
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">request_object_encryption_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWE <spanx style="verb">alg</spanx> 
+		algorithm the RP is declaring that it may use for
+		encrypting Request Objects sent to the OP
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">request_object_encryption_enc</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWE <spanx style="verb">enc</spanx>
+		algorithm the RP is declaring that it may use for
+		encrypting Request Objects sent to the OP
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">token_endpoint_auth_signing_alg</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: JWS <spanx style="verb">alg</spanx>
+		algorithm that MUST be used for signing
+		the JWT used to authenticate the Client
+		at the Token Endpoint for the <spanx style="verb">private_key_jwt</spanx> 
+		and <spanx style="verb">client_secret_jwt</spanx> authentication methods
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">default_max_age</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: Default Maximum Authentication Age
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">require_auth_time</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: Boolean value specifying whether the <spanx style="verb">auth_time</spanx> 
+		Claim in the ID Token is REQUIRED
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">default_acr_values</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: Default requested Authentication Context Class Reference values
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">initiate_login_uri</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: URI using the <spanx style="verb">https</spanx> scheme that a third party
+		can use to initiate a login by the RP
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	  <t>
+	    <list style="symbols">
+	      <t>
+		Client Metadata Name: <spanx style="verb">request_uris</spanx>
+	      </t>
+	      <t>
+		Client Metadata Description: Array of <spanx style="verb">request_uri</spanx> values that are
+		pre-registered by the RP for use at the OP
+	      </t>
+	      <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+	      <t>
+		Specification Document(s): <xref target="ClientMetadata"/> of this document
+	      </t>
+	    </list>
+	  </t>
+	</section>
+	<?rfc subcompact="no"?>
+      </section>
+
+      <section anchor="TEAMRegistration" title="OAuth Token Endpoint Authentication Methods Registration">
+	<t>
+	  This specification registers the following token endpoint authentication methods
+	  in the IANA "OAuth Token Endpoint Authentication Methods" registry
+	  <xref target="IANA.OAuth.Parameters"/>
+	  established by <xref target="RFC7591"/>:
+	</t>
+        <section anchor="TEAMContents" title="Registry Contents">
+          <t> <?rfc subcompact="yes"?>
+	    <list style="symbols">
+              <t>
+		Token Endpoint Authentication Method Name:
+		<spanx style="verb">client_secret_jwt</spanx>
+	      </t>
+              <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+              <t>
+		Specification Document(s): Section 9 of OpenID Connect Core 1.0 <xref target="OpenID.Core"/>
+	      </t>
+            </list>
+	  </t>
+          <t>
+	    <list style="symbols">
+              <t>
+		Token Endpoint Authentication Method Name:
+		<spanx style="verb">private_key_jwt</spanx>
+	      </t>
+              <t>
+		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	      </t>
+              <t>
+		Specification Document(s): Section 9 of OpenID Connect Core 1.0 <xref target="OpenID.Core"/>
+	      </t>
+            </list>
+	  </t>
+        </section>
+        <?rfc subcompact="no"?>
+      </section>
+
     </section>
 
   </middle>
@@ -1440,7 +1786,7 @@
     <references title="Normative References">
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2616"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3629"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4627"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
@@ -1448,33 +1794,32 @@
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7159"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7231"?>
 
-      <reference anchor="USA15">
-        <front>
-          <title>Unicode Normalization Forms</title>
+      <reference anchor="USA15" target="http://www.unicode.org/reports/tr15/">
+	<front>
+	  <title>Unicode Normalization Forms</title>
 
-          <author fullname="Mark Davis" initials="M." surname="Davis">
-            <address>
-              <email>markdavis@google.com</email>
-            </address>
-          </author>
+	  <author fullname="Mark Davis" initials="M." surname="Davis">
+	    <address>
+	      <email>markdavis@google.com</email>
+	    </address>
+	  </author>
 
-          <author fullname="Ken Whistler" initials="K." surname="Whistler">
-            <address>
-              <email>ken@unicode.org</email>
-            </address>
-          </author>
+	  <author fullname="Ken Whistler" initials="K." surname="Whistler">
+	    <address>
+	      <email>ken@unicode.org</email>
+	    </address>
+	  </author>
 
-          <author fullname="Martin D&uuml;rst" initials="M."
-                  surname="D&uuml;rst"></author>
+	  <date day="01" month="06" year="2015" />
+	</front>
 
-          <date day="03" month="09" year="2009" />
-        </front>
-
-        <seriesInfo name="Unicode Standard Annex" value="15" />
+	<seriesInfo name="Unicode Standard Annex" value="15" />
       </reference>
 
-      <reference anchor="OpenID.Core">
+      <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
         <front>
           <title>OpenID Connect Core 1.0</title>
 
@@ -1498,14 +1843,11 @@
 	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
-          <date day="27" month="August" year="2014"/>
+          <date day="3" month="August" year="2015"/>
         </front>
-
-	<format target="http://openid.net/specs/openid-connect-core-1_0.html"
-                type="HTML" />
       </reference>
 
-      <reference anchor="OpenID.Discovery">
+      <reference anchor="OpenID.Discovery" target="http://openid.net/specs/openid-connect-discovery-1_0.html">
         <front>
           <title>OpenID Connect Discovery 1.0</title>
 
@@ -1525,14 +1867,11 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="27" month="August" year="2014"/>
+          <date day="3" month="August" year="2015"/>
         </front>
-
-	<format target="http://openid.net/specs/openid-connect-discovery-1_0.html"
-                type="HTML" />
       </reference>
 
-      <reference anchor="JWA">
+      <reference anchor="JWA" target="http://tools.ietf.org/html/rfc7518">
         <front>
           <title>JSON Web Algorithms (JWA)</title>
 
@@ -1540,15 +1879,14 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="4" month="July" year="2014" />
+          <date month="May" year="2015" />
         </front>
 
-	<seriesInfo value="draft-ietf-jose-json-web-algorithms" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31"
-                type="HTML" />
+	<seriesInfo name="RFC" value="7518"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7518"/>
       </reference>
 
-      <reference anchor="JWT">
+      <reference anchor="JWT" target="http://tools.ietf.org/html/rfc7519">
         <front>
           <title>JSON Web Token (JWT)</title>
 
@@ -1564,15 +1902,14 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="4" month="July" year="2014" />
+          <date month="May" year="2015" />
         </front>
 
-	<seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25"
-                type="HTML" />
+	<seriesInfo name="RFC" value="7519"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
-      <reference anchor="JWS">
+      <reference anchor="JWS" target="http://tools.ietf.org/html/rfc7515">
         <front>
           <title>JSON Web Signature (JWS)</title>
 
@@ -1588,15 +1925,14 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="4" month="July" year="2014" />
+          <date month="May" year="2015" />
         </front>
 
-	<seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31"
-                type="HTML" />
+	<seriesInfo name="RFC" value="7515"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
       </reference>
 
-      <reference anchor="JWE">
+      <reference anchor="JWE" target="http://tools.ietf.org/html/rfc7516">
         <front>
           <title>JSON Web Encryption (JWE)</title>
 
@@ -1612,14 +1948,14 @@
 	    <organization>Cisco Systems, Inc.</organization>
 	  </author>
 
-	  <date day="4" month="July" year="2014" />
+	  <date month="May" year="2015" />
         </front>
 
-	<seriesInfo value="draft-ietf-jose-json-web-encryption" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-31" type="HTML" />
+	<seriesInfo name="RFC" value="7516"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7516"/>
       </reference>
 
-      <reference anchor="JWK">
+      <reference anchor="JWK" target="http://tools.ietf.org/html/rfc7517">
         <front>
 	  <title>JSON Web Key (JWK)</title>
 
@@ -1627,20 +1963,46 @@
 	    <organization>Microsoft</organization>
 	  </author>
 
-	  <date day="4" month="July" year="2014" />
+	  <date month="May" year="2015" />
         </front>
 
-	<seriesInfo value="draft-ietf-jose-json-web-key" name="Internet-Draft"/>
-	<format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-31" type="HTML" />
+	<seriesInfo name="RFC" value="7517"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7517"/>
+      </reference>
+
+      <reference anchor="UNICODE" target="http://www.unicode.org/versions/latest/">
+	<front>
+	  <title abbrev="Unicode">The Unicode Standard</title>
+	  <author>
+	    <organization>The Unicode Consortium</organization>
+	    <address />
+	  </author>
+	  <date />
+	</front>
+	<!--
+	  Note that this reference is to the latest version of Unicode,
+	  rather than to a specific release.  It is not expected that future changes in
+	  the UNICODE specification will impact the syntax of JSON or the UTF-8 encoding.
+	-->
+      </reference>
+
+      <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
+        <front>
+          <title>OAuth Parameters</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
       </reference>
 
     </references>
 
     <references title="Informative References">
-      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-dyn-reg-20.xml' ?>
-      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-dyn-reg-management-05.xml' ?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7591"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7592"?>
 
-      <reference anchor="OpenID.Session">
+      <reference anchor="OpenID.Session" target="http://openid.net/specs/openid-connect-session-1_0.html">
         <front>
           <title>OpenID Connect Session Management 1.0</title>
 
@@ -1664,11 +2026,8 @@
             <organization abbrev="Google">Google</organization>
           </author>
 
-          <date day="27" month="August" year="2014"/>
+          <date day="3" month="August" year="2015"/>
         </front>
-
-	<format target="http://openid.net/specs/openid-connect-session-1_0.html"
-                type="HTML" />
       </reference>
 
     </references>
@@ -1698,7 +2057,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2014 The OpenID Foundation.</t>
+      <t>Copyright (c) 2015 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
 	implementer, or other interested party a non-exclusive, royalty free, 
@@ -1743,46 +2102,38 @@
       <t>[[ To be removed from the approved errata ]]</t>
 
       <t>
-	-27
+	-29
         <list style="symbols">
 	  <t>
-	    Added errata set number to the title.
+	    Referenced completed RFCs.
 	  </t>
 	  <t>
-	    Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
+	    Added missing URLs in references.
 	  </t>
-	</list>
-      </t>
-
-      <t>
-	-26
-        <list style="symbols">
+	  <t>
+	    Fixed issue #971 - Clarified default *_encrypted_response_enc and request_object_encryption_enc values.
+	  </t>
+	  <t>
+	    Changed to use "Cache-Control: no-cache, no-store" and "Pragma: no-cache" in examples.
+	  </t>
+	  <t>
+	    Tracked terminology changes made in the referenced IETF specs since errata set 1.
+	  </t>
           <t>
-	    Updated dates for specs containing errata updates.
-	  </t>
+            Updated the RFC 2616 reference to RFC 7231.
+          </t>
 	  <t>
-	    Updated references to pre-final IETF specs.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-25
-        <list style="symbols">
-	  <t>
-	    Applied the following corrections for errata identified in the final specification:
-	  </t>
-	  <t>
-	    Fixed #925 - Typos (jwk vs jwks) in jwks client metadata parameter definition.
+	    Registered the client metadata definitions and token endpoint authentication methods
+	    not registered by RFC 7591 in the registries established by RFC 7591.
 	  </t>
 	</list>
       </t>
 
       <t>
-	-24
+	-28
         <list style="symbols">
 	  <t>
-	    Final specification.
+	    Final specification incorporating errata set 1.
 	  </t>
 	</list>
       </t>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
 <rfc category="std" docName="oauth-v2-form-post-response-mode-1_0" ipr="trust200902">
 
   <?rfc toc="yes" ?>
@@ -10,11 +10,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OAuth 2.0 Form Post Response Mode">
-      OAuth 2.0 Form Post Response Mode - draft 03
+      OAuth 2.0 Form Post Response Mode
     </title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="27" month="April" year="2015" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -76,7 +76,7 @@
 	  "Protected Resource", "Redirection URI", "Refresh Token",
 	  "Resource Owner", "Resource Server", "Response Type", and "Token Endpoint"
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>
-	  the term "User Agent" defined by <xref target="RFC2616">RFC 2616</xref>,
+	  the term "User Agent" defined by <xref target="RFC7230">RFC 7230</xref>,
 	  and the term "Response Mode" defined by
 	  <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.
 	</t>
@@ -101,8 +101,12 @@
 	    using the <spanx style="verb">application/x-www-form-urlencoded</spanx> format.
 	    The action attribute of the form MUST be the Client's Redirection URI.
 	    The method of the form attribute MUST be <spanx style="verb">POST</spanx>.
+	    Because the Authorization Response is intended to be used only once,
+	    the Authorization Server MUST instruct the User Agent (and any intermediaries)
+	    not to store or reuse the content of the response.
 	  </t>
 	  <t>
+	    <vspace blankLines="1"/>
 	    Any technique supported by the User Agent MAY be used to cause
 	    the submission of the form, and any form content necessary to support this
 	    MAY be included, such as submit controls and client-side scripting commands.
@@ -140,9 +144,9 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
 
       <reference anchor="OAuth.Responses">
         <front>
@@ -178,7 +182,7 @@
 	Below is a non-normative request/response/request example as
 	issued/received/issued by the User Agent
 	(with extra line breaks for display purposes only)
-	demonstrating an auto-submitted <spanx style="verb">form_post</spanx> encoded response:
+	demonstrating an auto-submitted <spanx style="verb">form_post</spanx> encoded response.
       </t>
 
       <figure>
@@ -206,7 +210,7 @@
 	<artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: text/html;charset=UTF-8
-  Cache-Control: no-store
+  Cache-Control: no-cache, no-store
   Pragma: no-cache
 
   <html>
@@ -277,7 +281,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2014 The OpenID Foundation.</t>
+      <t>Copyright (c) 2015 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
 	implementer, or other interested party a non-exclusive, royalty free, 
@@ -315,37 +319,6 @@
 	patents, patent applications, or other proprietary rights 
 	that may cover technology that may be required to practice 
 	this specification.
-      </t>
-    </section>
-
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
-
-      <t>
-	-03
-        <list style="symbols">
-          <t>
-	    Updated dates for final OpenID Connect specifications.
-	  </t>
-	</list>
-      </t>
-      <t>
-	-02
-        <list style="symbols">
-          <t>
-	    Applied review comments by Brian Campbell.
-	  </t>
-	</list>
-      </t>
-      <t>
-	-01
-        <list style="symbols">
-          <t>
-	    Created the initial draft by extracting the
-	    <spanx style="verb">form_post</spanx> Response Mode definition from the
-	    OAuth 2.0 Multiple Response Type Encoding Practices specification.
-	  </t>
-        </list>
       </t>
     </section>
   </back>
