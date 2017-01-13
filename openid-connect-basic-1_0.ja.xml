@@ -296,7 +296,7 @@
           "Client", "Client Authentication", "Client Identifier", "Client Secret",
           "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
           "Resource Owner", "Resource Server", "Response Type" および "Token Endpoint",
-          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", および "JWT Claims Set",
+          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", "JSON Web Token (JWT)" および "JWT Claims Set",
           <xref target="JWS">JSON Web Signature (JWS)</xref> で定義された "Header Parameter" および "JOSE Header",
           <xref target="RFC7230">RFC 7230</xref> で定義された "User Agent" という用語を用いる.
         </t>
