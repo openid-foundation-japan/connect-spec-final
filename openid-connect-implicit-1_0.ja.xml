@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
-<rfc category="std" docName="openid-connect-implicit-1_0" ipr="trust200902">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="openid-connect-implicit-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -14,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Implicit Client Guide 1.0">OpenID Connect
-    Implicit Client Implementer's Guide 1.0 - draft 15</title>
+    Implicit Client Implementer's Guide 1.0 - draft 20</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -56,7 +66,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="3" month="August" year="2015" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -79,7 +89,7 @@
         OpenID Connect Core 1.0 仕様のサブセットであり,
         OAuth 2.0 Implicit Flowを利用して Webベースの Relying Party
         を実装する際に読みやすいように構成されている.
-        本仕様は Core 仕様と重複したコンテンツを含んでいるが, それは実装者が本仕様を読むだけで OAuth Implicit Flow を利用した Relying Party を実装できるよう意図したものである.
+        本ドキュメントは Core 仕様と重複したコンテンツを含んでいるが, それは実装者が本仕様を読むだけで OAuth Implicit Flow を利用した Relying Party を実装できるよう意図したものである.
       </t>
       <!--
       <t>
@@ -88,7 +98,7 @@
         that is designed to be easy to read and implement for basic
         Web-based Relying Parties using the
         OAuth 2.0 Implicit Flow.
-        This specification intentionally duplicates content from the Core
+        This document intentionally duplicates content from the Core
         specification to provide a self-contained implementer's guide for basic
         Web-based Relying Parties using the
         OAuth Implicit Flow.
@@ -115,7 +125,7 @@
         <xref target="OpenID.Core">OpenID Connect Core 1.0</xref> 仕様のサブセットであり,
         OAuth 2.0 <xref target="RFC6749"/> Implicit Flowを利用して Webベースの Relying Party
         を実装する際に読みやすいように構成されている.
-        本仕様は Core 仕様と重複したコンテンツを含んでいるが, それは実装者が本仕様を読むだけで OAuth Implicit Flow を利用した Relying Party を実装できるよう意図したものである.
+        本ドキュメントは Core 仕様と重複したコンテンツを含んでいるが, それは実装者が本ドキュメントを読むだけで OAuth Implicit Flow を利用した Relying Party を実装できるよう意図したものである.
         本実装者ガイドと OpenID Connect Core 仕様の間に齟齬がある場合は, Core 仕様を優先する.
       </t>
       <!--
@@ -125,7 +135,7 @@
         that is designed to be easy to read and implement for basic
         Web-based Relying Parties using the
         OAuth <xref target="RFC6749"/> Implicit Flow.
-        This specification intentionally duplicates content from the Core
+        This document intentionally duplicates content from the Core
         specification to provide a self-contained implementer's guide for basic
         Web-based Relying Parties using the
         OAuth Implicit Flow.
@@ -213,7 +223,7 @@
       </t>
       <!--
       <t>
-        This specification assumes that the Relying Party has already obtained
+        This document assumes that the Relying Party has already obtained
         configuration information about the OpenID Provider, including its
         Authorization Endpoint location.
         This information is normally obtained via Discovery,
@@ -227,7 +237,7 @@
       </t>
       <!--
       <t>
-        Likewise, this specification assumes that the Relying Party has already obtained
+        Likewise, this document assumes that the Relying Party has already obtained
         sufficient credentials and provided information needed to use the OpenID Provider.
         This is normally done via Dynamic Registration,
         as described in
@@ -268,7 +278,7 @@
         <!--
         <t>
           All uses of <xref target="JWS">JSON Web Signature (JWS)</xref>
-          data structures in this specification utilize
+          data structures in this document utilize
           the JWS Compact Serialization;
           the JWS JSON Serialization is not used.
         </t>
@@ -279,7 +289,7 @@
         <!--
         <t>
           When the RFC 2119 language applies to the behavior of OpenID Providers,
-          it is in this specification for explanatory value to help Client
+          it is in this document for explanatory value to help Client
           implementers understand the expected behavior of OpenID Providers.
         </t>
         -->
@@ -292,21 +302,25 @@
           "Authorization Endpoint", "Authorization Grant", "Authorization Server",
           "Client", "Client Identifier", "Client Secret",
           "Protected Resource", "Redirection URI", "Refresh Token",
-          "Resource Owner", "Resource Server", "Response Type", および "Token Endpoint",
-          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", および "JSON Web Token (JWT)",
-          <xref target="RFC2616">RFC 2616</xref> で定義された "User Agent" という用語を用いる.
+          "Resource Owner", "Resource Server", "Response Type", および "Token Endpoint"
+          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", "JSON Web Token (JWT)" および "JWT Claims Set",
+          <xref target="JWS">JSON Web Signature (JWS)</xref> で定義された "Header Parameter" および "JOSE Header",
+          <xref target="RFC7230">RFC 7230</xref> で定義された "User Agent" という用語を用いる.
         </t>
         <!--
         <t>
-          This specification uses the terms "Access Token", "Authorization Code",
+          This document uses the terms "Access Token", "Authorization Code",
           "Authorization Endpoint", "Authorization Grant", "Authorization Server",
           "Client", "Client Identifier", "Client Secret",
           "Protected Resource", "Redirection URI", "Refresh Token",
           "Resource Owner", "Resource Server", "Response Type", and "Token Endpoint"
           defined by <xref target="RFC6749">OAuth 2.0</xref>,
-          the terms "Claim Name", "Claim Value", and "JSON Web Token (JWT)"
+          the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)",
+          and "JWT Claims Set"
           defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
-          and the term "User Agent" defined by <xref target="RFC2616">RFC 2616</xref>.
+          the terms "Header Parameter" and "JOSE Header"
+          defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
+          and the term "User Agent" defined by <xref target="RFC7230">RFC 7230</xref>.
         </t>
         -->
         <t>
@@ -427,7 +441,7 @@
             <t hangText="Issuer Identifier">
               <vspace/>
               Verifiable Identifier for an Issuer.
-              An Issuer Identifier is a case sensitive URL
+              An Issuer Identifier is a case-sensitive URL
               using the <spanx style="verb">https</spanx> scheme that
               contains scheme, host, and optionally, port number and path
               components and no query or fragment components.
@@ -557,16 +571,16 @@
         </t>
         <t>
           IMPORTANT NOTE TO READERS:
-          上記の用語定義は本仕様が定めるところであり, 本仕様の実装においてはこれらの定義に従うこと.
-          "Issuer Identifier" をはじめとして, 本仕様で大文字表記されている用語はすべて上記の定義に従う.
-          仕様書読者は必ずこれらの用語定義に従うこと.
+          上記の用語定義は本ドキュメントが定めるところであり, 本ドキュメントの実装においてはこれらの定義に従うこと.
+          "Issuer Identifier" をはじめとして, 本ドキュメントで大文字表記されている用語はすべて上記の定義に従う.
+          本ドキュメント読者は必ずこれらの用語定義に従うこと.
         </t>
         <!--
         <t>
           IMPORTANT NOTE TO READERS: The terminology definitions in
-          this section are a normative portion of this specification,
+          this section are a normative portion of this document,
           imposing requirements upon implementations.  All the
-          capitalized words in the text of this specification, such as
+          capitalized words in the text of this document, such as
           "Issuer Identifier", reference these defined terms.
           Whenever the reader encounters them, their definitions
           found in this section must be followed.
@@ -580,8 +594,7 @@
           OpenID Connect プロトコルは, おおまかに言って以下のステップに従う.
         </t>
         <!--
-        <t>The OpenID Connect protocol, in abstract, follows the following
-        steps.</t>
+        <t>document</t>
         -->
 
         <t>
@@ -683,7 +696,7 @@
         It enables Clients to obtain an ID Token optionally an Access Token with only
         one round trip to the Authorization Server, possibly minimizing latency,
         while still enabling Clients to later get tokens from the Token Endpoint
-        - especially a Refresh Token.
+        -- especially a Refresh Token.
       </t>
       -->
 
@@ -692,7 +705,7 @@
       </t>
       <!--
       <t>
-        This specification only provides information that is sufficient for
+        This document only provides information that is sufficient for
         basic Clients using the Implicit Flow.
       </t>
       -->
@@ -775,13 +788,13 @@
           -->
 
           <t>
-            Client は <xref target="RFC2616">RFC 2616</xref> に定義される HTTP <spanx style="verb">GET</spanx> もしくは HTTP <spanx style="verb">POST</spanx> を利用できる (MAY).
+            Client は <xref target="RFC7231">RFC 7231</xref> に定義される HTTP <spanx style="verb">GET</spanx> もしくは HTTP <spanx style="verb">POST</spanx> を利用できる (MAY).
           </t>
           <!--
           <t>Clients MAY construct the request using the HTTP
           <spanx style="verb">GET</spanx> or the HTTP
           <spanx style="verb">POST</spanx> method as defined in
-          <xref target="RFC2616">RFC 2616</xref>.</t>
+          <xref target="RFC7231">RFC 7231</xref>.</t>
           -->
 
           <t>
@@ -846,7 +859,7 @@
                   <vspace/>
                   REQUIRED.
                   This value consists of <spanx style="verb">id_token</spanx> and
-                  <spanx style="verb">token</spanx>, as a space delimited list.
+                  <spanx style="verb">token</spanx>, as a space-delimited list.
                   This requests that both an Access Token and an ID Token be returned
                   from the Authorization Endpoint, as specified in
                   <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.
@@ -891,7 +904,7 @@
                   <spanx style="verb">phone</spanx>,
                   and <spanx style="verb">offline_access</spanx>
                   are also defined.
-                  See <xref target="Scopes"/> for more about the scope values defined by this specification.
+                  See <xref target="Scopes"/> for more about the scope values defined by this document.
                 </t>
                 -->
 
@@ -945,11 +958,11 @@
             </t>
 
             <t>
-              本仕様は上記に加えて以下のリクエストパラメータを定義する.
+              本ドキュメントは上記に加えて以下のリクエストパラメータを定義する.
             </t>
             <!--
             <t>
-              This specification also defines the following request parameters:
+              This document also defines the following request parameters:
             </t>
             -->
 
@@ -987,11 +1000,11 @@
                 <t hangText="display">
                   <vspace/>
                   OPTIONAL.
-                  Authorization Server が認証および同意のためのユーザーインタフェースを End-User にどのように表示するかを指定するための ASCII 値.
+                  Authorization Server が認証および同意のためのユーザーインタフェースを End-User にどのように表示するかを指定するための ASCII　<xref target="RFC20"/> 値.
                   以下の値が定義されている.
                   <!--
                   OPTIONAL.
-                  ASCII string value that specifies
+                  ASCII <xref target="RFC20"/> string value that specifies
                   how the Authorization Server displays the authentication and
                   consent user interface pages to the End-User.
                   The defined values are:
@@ -1071,7 +1084,7 @@
                   以下の値が定義されている.
                   <!--
                   OPTIONAL.
-                  Space delimited, case sensitive list of ASCII string values
+                  Space-delimited, case-sensitive list of ASCII string values
                   that specifies whether the Authorization Server prompts
                   the End-User for reauthentication and consent.
                   The defined values are:
@@ -1407,7 +1420,7 @@
           <t>
             Authorization Server は, リクエストパラメータ値に基づき, End-User をログインさせたり既にログイン済みであることを検証する.
             End-User とのインタラクションが HTTP で行われる場合は, <xref target="TLSRequirements"/> に基づきTLS を用いること (MUST).
-            認証手段の詳細については, 本仕様の定めるところではない.
+            認証手段の詳細については, 本ドキュメントの定めるところではない.
           </t>
           <!--
           <t>
@@ -1415,7 +1428,7 @@
             the End-User is logged in, depending upon the request parameter values used.
             If interaction with the End-User occurs over an HTTP channel,
             it MUST use TLS, as per <xref target="TLSRequirements"/>.
-            The exact authentication methods used are out of scope for this specification.
+            The exact authentication methods used are out of scope for this document.
           </t>
           -->
         </section>
@@ -1742,7 +1755,7 @@
               <vspace/>
               REQUIRED.
               Issuer Identifier for the Issuer of the response.
-              The <spanx style="verb">iss</spanx> value is a case sensitive URL
+              The <spanx style="verb">iss</spanx> value is a case-sensitive URL
               using the <spanx style="verb">https</spanx> scheme that
               contains scheme, host, and optionally, port number and path
               components and no query or fragment components.
@@ -1768,7 +1781,7 @@
               e.g., <spanx style="verb">24400320</spanx>
               or <spanx style="verb">AItOawmwtWwcT0k51BayewNvutrJUqsvl6qs7A4</spanx>.
               It MUST NOT exceed 255 ASCII characters in length.
-              The <spanx style="verb">sub</spanx> value is a case sensitive string.
+              The <spanx style="verb">sub</spanx> value is a case-sensitive string.
             </t>
             -->
 
@@ -1790,10 +1803,10 @@
               It MAY also contain identifiers for other audiences.
               In the general case,
               the <spanx style="verb">aud</spanx> value is an array of
-              case sensitive strings.
+              case-sensitive strings.
               In the common special case when there is one audience,
               the <spanx style="verb">aud</spanx> value MAY be a single
-              case sensitive string.
+              case-sensitive string.
             </t>
             -->
 
@@ -1804,7 +1817,7 @@
               この有効期限以降に該当 ID Token を受け入れたり処理してはならない (MUST NOT).
               ある ID Token が有効期限内であるためには, この値が示す時刻より現在時刻が前でなければならない (MUST).
               実装者は, 通常数分以内で, 時計のズレを考慮して多少の猶予期間を設けてもよい (MAY).
-              この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
+              この値は UTC 1970-01-01T00:00:00Z から該当時刻までの秒数を示す JSON <xref target="RFC7159"/> 数値である.
               詳細は <xref target="RFC3339">RFC 3339</xref> を参照のこと.
             </t>
             <!--
@@ -1817,8 +1830,8 @@
               expiration date/time listed in the value. Implementers MAY
               provide for some small leeway, usually no more than a few
               minutes, to account for clock skew.
-              Its value is a JSON number representing the number of seconds from
-              1970-01-01T0:0:0Z as measured in UTC until the date/time.
+              Its value is a JSON <xref target="RFC7159"/> number representing the number of seconds from
+              1970-01-01T00:00:00Z as measured in UTC until the date/time.
               See <xref target="RFC3339">RFC 3339</xref>
               for details regarding date/times in general and UTC in
               particular.
@@ -1829,7 +1842,7 @@
               <vspace/>
               REQUIRED.
               JWT 発行時刻.
-              この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
+              この値は UTC 1970-01-01T00:00:00Z から該当時刻までの秒数を示す JSON 数値である.
             </t>
             <!--
             <t hangText="iat">
@@ -1837,14 +1850,14 @@
               REQUIRED.
               Time at which the JWT was issued.
               Its value is a JSON number representing the number of seconds from
-              1970-01-01T0:0:0Z as measured in UTC until the date/time.
+              1970-01-01T00:00:00Z as measured in UTC until the date/time.
             </t>
             -->
 
             <t hangText="auth_time">
               <vspace/>
               End-User の認証が発生した時刻.
-              この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
+              この値は UTC 1970-01-01T00:00:00Z から該当時刻までの秒数を示す JSON 数値である.
               リクエストに <spanx style="verb">max_age</spanx> が含まれていた場合, この Cliam は必須である (REQUIRED).
               その他の場合は任意 (OPTIONAL).
             </t>
@@ -1853,7 +1866,7 @@
               <vspace/>
               Time when the End-User authentication occurred.
               Its value is a JSON number representing the number of seconds from
-              1970-01-01T0:0:0Z as measured in UTC until the date/time.
+              1970-01-01T00:00:00Z as measured in UTC until the date/time.
               When a <spanx style="verb">max_age</spanx> request is made
               then this Claim is REQUIRED; otherwise, its inclusion is OPTIONAL.
             </t>
@@ -1884,7 +1897,7 @@
               MUST include a <spanx style="verb">nonce</spanx> Claim in the
               ID Token with the Claim Value
               being the nonce value sent in the Authentication Request.
-              The <spanx style="verb">nonce</spanx> value is a case sensitive string.
+              The <spanx style="verb">nonce</spanx> value is a case-sensitive string.
             </t>
             -->
 
@@ -1893,7 +1906,7 @@
               REQUIRED.
               Access Token のハッシュ値.
               Implicit Flow 内で ID Token が <spanx style="verb">access_token</spanx> とともに発行された場合 (この項で説明しているOpenID Connectのサブセットではこのケースに該当する), この Claim は必須である (REQUIRED).
-              この値は, <spanx style="verb">access_token</spanx> の ASCII バイト列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
+              この値は, <spanx style="verb">access_token</spanx> の ASCII バイト列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の JOSE Header にある <spanx style="verb">alg</spanx> Header Parameter で用いられるハッシュアルゴリズムと同じものを用いる.
               例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
               <spanx style="verb">at_hash</spanx> は大文字小文字を区別する文字列である.
             </t>
@@ -1909,13 +1922,13 @@
               hash of the octets of the ASCII representation of the
               <spanx style="verb">access_token</spanx> value,
               where the hash algorithm used is the hash algorithm
-              used in the <spanx style="verb">alg</spanx> parameter
-              of the ID Token's <xref target="JWS">JWS</xref> header.
+              used in the <spanx style="verb">alg</spanx> Header Parameter
+              of the ID Token's JOSE Header.
               For instance, if the <spanx style="verb">alg</spanx> is
               <spanx style="verb">RS256</spanx>, hash the
               <spanx style="verb">access_token</spanx> value
-              with SHA-256, then take the left-most 128 bits and base64url encode them.
-              The <spanx style="verb">at_hash</spanx> value is a case sensitive string.
+              with SHA-256, then take the left-most 128 bits and base64url-encode them.
+              The <spanx style="verb">at_hash</spanx> value is a case-sensitive string.
             </t>
             -->
 
@@ -1953,8 +1966,8 @@
               registered names MUST NOT be used with a different meaning than
               that which is registered.
               Parties using this claim will need to agree upon the meanings of
-              the values used, which may be context-specific.
-              The <spanx style="verb">acr</spanx> value is a case sensitive string.
+              the values used, which may be context specific.
+              The <spanx style="verb">acr</spanx> value is a case-sensitive string.
             </t>
             -->
 
@@ -1964,7 +1977,7 @@
               Authentication Methods References.
               認証時に用いられた認証方式を示す識別子文字列の JSON 配列.
               例として, パスワードと OTP 認証が両方行われたことを示すといったケースが考えられる.
-              <spanx style="verb">amr</spanx> Claim にどのような値を用いるかは本仕様の定めるところではない.
+              <spanx style="verb">amr</spanx> Claim にどのような値を用いるかは本ドキュメントの定めるところではない.
               この値の意味するところはコンテキストによって異なる可能性があるため, この Claim を利用する場合は, 関係者間で値の意味するところについて合意しておくこと.
               <spanx style="verb">amr</spanx> は大文字小文字を区別する文字列である.
             </t>
@@ -1979,11 +1992,11 @@
               authentication methods were used.
               The definition of particular values to be used in the
               <spanx style="verb">amr</spanx> Claim
-              is beyond the scope of this specification.
+              is beyond the scope of this document.
               Parties using this claim will need to agree upon the meanings of
-              the values used, which may be context-specific.
+              the values used, which may be context specific.
               The <spanx style="verb">amr</spanx> value is an array of
-              case sensitive strings.
+              case-sensitive strings.
             </t>
             -->
 
@@ -2008,7 +2021,7 @@
               and that audience is different than the authorized party.
               It MAY be included even when the authorized party is the same
               as the sole audience.
-              The <spanx style="verb">azp</spanx> value is a case sensitive string
+              The <spanx style="verb">azp</spanx> value is a case-sensitive string
               containing a StringOrURI value.
             </t>
             -->
@@ -2086,11 +2099,13 @@
 
         <figure>
           <preamble>
-            以下は Base64URL デコードされた ID Token の例である.
+            以下は Base64URL デコードされた ID Token に含まれる Claims (the JWT Claims Set) の例である.
           </preamble>
           <!--
-          <preamble>The following is a non-normative example of a base64url decoded
-          ID Token:</preamble>
+          <preamble>
+            The following is a non-normative example of
+            the set of Claims (the JWT Claims Set) base64url-decoded from an ID Token:
+          </preamble>
           -->
 
           <artwork><![CDATA[
@@ -2109,11 +2124,11 @@
         <section anchor="IDTokenValidation" title="ID Token Validation">
 
           <t>
-            本仕様の定めるバリデーションが1つでも失敗した場合, バリデーションが失敗した情報を必要とする処理を全て中止し (MUST), バリデーションが失敗した情報を利用してはならない (MUST NOT).
+            本ドキュメントの定めるバリデーションが1つでも失敗した場合, バリデーションが失敗した情報を必要とする処理を全て中止し (MUST), バリデーションが失敗した情報を利用してはならない (MUST NOT).
           </t>
           <!--
           <t>
-            If any of the validation procedures defined in this specification fail, any operations requiring
+            If any of the validation procedures defined in this document fail, any operations requiring
             the information that failed to correctly validate MUST be aborted and
             the information that failed to validate MUST NOT be used.
           </t>
@@ -2178,14 +2193,14 @@
               -->
 
               <t>
-                Client は ID Token の署名を, JWT ヘッダ中の <spanx style="verb">alg</spanx> パラメータで指定されたアルゴリズムを使い, <xref target="JWS">JWS</xref> に従って検証しなければならない (MUST).
+                Client は ID Token の署名を, JOSE Header 中の <spanx style="verb">alg</spanx> Header Parameter で指定されたアルゴリズムを使い, <xref target="JWS">JWS</xref> に従って検証しなければならない (MUST).
                 Client は Issuer によって提供された鍵を使わなければならない (MUST).
               </t>
               <!--
               <t>
                 The Client MUST validate the signature of the ID Token according to
                 <xref target="JWS">JWS</xref> using the algorithm specified in the
-                <spanx style="verb">alg</spanx> parameter of the JWT header.
+                <spanx style="verb">alg</spanx> Header Parameter of the JOSE Header.
                 The Client MUST use the keys provided by the Issuer.
               </t>
               -->
@@ -2244,13 +2259,13 @@
 
               <t>
                 <spanx style="verb">acr</spanx> Claim が要求されたならば, Client は主張された Claim の値が適切かどうかをチェックすべきである (SHOULD).
-                <spanx style="verb">acr</spanx> Claim の値と意味はこの仕様の対象外である.
+                <spanx style="verb">acr</spanx> Claim の値と意味は本ドキュメントの対象外である.
               </t>
               <!--
               <t>If the <spanx style="verb">acr</spanx> Claim was requested, the
               Client SHOULD check that the asserted Claim Value is appropriate.
               The meaning and processing of
-              <spanx style="verb">acr</spanx> Claim Values is out of scope for this specification.</t>
+              <spanx style="verb">acr</spanx> Claim Values is out of scope for this document.</t>
               -->
 
               <t>
@@ -2284,15 +2299,15 @@
             <list style="numbers">
               <t>
                 <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値を求める.
-                このとき用いるハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> ヘッダーパラメータに対応する <xref target="JWA">JWA</xref> で定められたものである.
+                このとき用いるハッシュアルゴリズムは ID Token の JOSE Header にある <spanx style="verb">alg</spanx> Header Parameter に対応する <xref target="JWA">JWA</xref> で定められたものである.
                 例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, ハッシュアルゴリズムは SHA-256である.
               </t>
               <!--
               <t>Hash the octets of the ASCII representation of
               the <spanx style="verb">access_token</spanx>
               with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
-              <spanx style="verb">alg</spanx>
-              parameter in the ID Token's <xref target="JWS">JWS</xref> header.
+              <spanx style="verb">alg</spanx> Header Parameter
+              of the ID Token's JOSE Header.
               For instance, if the <spanx style="verb">alg</spanx> is
               <spanx style="verb">RS256</spanx>,
               the hash algorithm used is SHA-256.
@@ -2303,7 +2318,7 @@
                 ハッシュ値の左半分を Base64URL エンコードする.
               </t>
               <!--
-              <t>Take the left-most half of the hash and base64url encode it.</t>
+              <t>Take the left-most half of the hash and base64url-encode it.</t>
               -->
 
               <t>
@@ -2396,13 +2411,13 @@
         <section anchor="UserInfoResponse" title="Successful UserInfo Response">
           <t>
             UserInfo Claim は JSON オブジェクトのメンバーとして返される (MUST).
-            レスポンスボディは UTF-8 エンコードされる (SHOULD).
+            レスポンスボディは UTF-8 <xref target="RFC3629"/> エンコードされる (SHOULD).
             <xref target="StandardClaims"/> に定義されている Claim に加え, そこに明記されていない Claim も返却可能である.
           </t>
           <!--
           <t>
             The UserInfo Claims MUST be returned as the members of a JSON object.
-            The response body SHOULD be encoded using UTF-8.
+            The response body SHOULD be encoded using UTF-8 <xref target="RFC3629"/>.
             The Claims defined in <xref target="StandardClaims"/> can be returned,
             as can additional Claims not specified there.
           </t>
@@ -2474,7 +2489,7 @@
           OpenID Connect Client は <xref target="RFC6749">OAuth 2.0</xref> Section 3.3 に従い, Access Token に要求されるアクセス権限を <spanx style="verb">scope</spanx> 値を通じて指定する.
           Access Tokens に紐づく scope は, そのトークンを使って OAuth 2.0 で保護されたエンドポイントにアクセスした際にどのようなリソースが得られるかを規定する.
           OpenID Connect では, scope は Claim Value として取得可能な情報セットを指定する為に利用できる.
-          本仕様では OpenID Connect で用いられる scope についてのみ述べる.
+          本ドキュメントでは OpenID Connect で用いられる scope についてのみ述べる.
         </t>
         <!--
         <t>OpenID Connect Clients use <spanx style="verb">scope</spanx> values as defined in 3.3 of
@@ -2484,7 +2499,7 @@
         used to access OAuth 2.0 protected endpoints. For OpenID Connect, scopes
         can be used to request that specific sets of information
         be made available as Claim Values.
-        This specification describes only the scope values used by OpenID Connect.</t>
+        This document describes only the scope values used by OpenID Connect.</t>
         -->
         <t>
           OpenID Connect は, ここで述べる scope 値以外の値を定義および利用することを制限しない.
@@ -2622,8 +2637,10 @@
           複数の scope 値は, スペース区切りの大文字小文字を区別した ASCII scope 値のリストによって指定することができる (MAY).
         </t>
         <!--
-        <t>Multiple scope values MAY be used by creating a space delimited, case
-        sensitive list of ASCII scope values.</t>
+        <t>
+          Multiple scope values MAY be used by creating a space-delimited,
+          case-sensitive list of ASCII scope values.
+        </t>
         -->
 
         <t>
@@ -2879,7 +2896,7 @@
             this  means that the OP took affirmative steps
             to ensure that this e-mail address was controlled by the End-User
             at the time the verification was performed.
-            The means by which an e-mail address is verified is context-specific,
+            The means by which an e-mail address is verified is context specific,
             and dependent upon the trust framework or contractual agreements
             within which the parties are operating.
           </c>
@@ -2889,12 +2906,12 @@
           <c>string</c>
           <c>
             End-User の性別.
-            本仕様では <spanx style="verb">female</spanx>, <spanx style="verb">male</spanx> を定義する.
+            本ドキュメントでは <spanx style="verb">female</spanx>, <spanx style="verb">male</spanx> を定義する.
             定義済の値に適切なものがない場合, その他の値を利用してもよい (MAY).
           </c>
           <!--
-          <c>End-User's gender.  Values defined by this
-          specification are <spanx style="verb">female</spanx> and
+          <c>End-User's gender.  Values defined by this document
+          are <spanx style="verb">female</spanx> and
           <spanx style="verb">male</spanx>.  Other values MAY be used
           when neither of the defined values are applicable.</c>
           -->
@@ -2993,7 +3010,7 @@
             this  means that the OP took affirmative steps
             to ensure that this phone number was controlled by the End-User
             at the time the verification was performed.
-            The means by which a phone number is verified is context-specific,
+            The means by which a phone number is verified is context specific,
             and dependent upon the trust framework or contractual agreements
             within which the parties are operating.
             When true, the <spanx style="verb">phone_number</spanx>
@@ -3021,13 +3038,13 @@
           <c>number</c>
           <c>
             End-User に関する情報の最終更新日時.
-            この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
+            この値は UTC 1970-01-01T00:00:00Z から該当時刻までの秒数を示す JSON 数値である.
           </c>
           <!--
           <c>
             Time the End-User's information was last updated.
             Its value is a JSON number representing the number of seconds from
-            1970-01-01T0:0:0Z as measured in UTC until the date/time.
+            1970-01-01T00:00:00Z as measured in UTC until the date/time.
           </c>
           -->
         </texttable>
@@ -3196,13 +3213,13 @@
             Since Claim Names are case sensitive, it is strongly RECOMMENDED
             that language tag values used in Claim Names be spelled using the
             character case with which they are registered in the
-            <xref target="IANA.Language">IANA Language Subtag Registry</xref>.
+            IANA "Language Subtag Registry" <xref target="IANA.Language"/>.
             In particular, normally language names are spelled with lowercase characters,
             region names are spelled with uppercase characters, and
             scripts are spelled with mixed case characters.
             However, since BCP47 language tag values are case insensitive,
             implementations SHOULD interpret the language tag values supplied
-            in a case insensitive manner.
+            in a case-insensitive manner.
           </t>
           -->
           <t>
@@ -3642,68 +3659,85 @@
         response, the response parameters will be returned in the URL fragment component.
         </t>
         -->
-        <t><list style="numbers">
-          <t>
-            <spanx style="verb">iss</spanx> (issuer) Claim の値が
-            <spanx style="verb">https://self-issued.me</spanx> である.
-          </t>
-          <!--
-          <t>
-            The <spanx style="verb">iss</spanx> (issuer) Claim Value is
-            <spanx style="verb">https://self-issued.me</spanx>.
-          </t>
-          -->
-          <t>
-            <spanx style="verb">sub_jwk</spanx> Claim が存在し, その値が ID Token の署名を検証するための公開鍵となっている.
-          </t>
-          <!--
-          <t>
-            A <spanx style="verb">sub_jwk</spanx> Claim is present, with its value being
-            the public key used to check the signature of the ID Token.
-          </t>
-          -->
-          <t>
-            <spanx style="verb">sub</spanx> (subject) Claim の値は
-            <spanx style="verb">sub_jwk</spanx> Claim の中の Base64URL エンコードされたキー値の UTF-8 表現のオクテットを結合したものの SHA-256 ハッシュを Base64URL エンコードしたものである.
-            <spanx style="verb">kty</spanx> の値が
-            <spanx style="verb">RSA</spanx> である時, キーの値は
-            <spanx style="verb">n</spanx> と,
-            <spanx style="verb">e</spanx> が順に結合されたものである.
-            <spanx style="verb">kty</spanx> の値が
-            <spanx style="verb">EC</spanx> である時, キーの値は
-            <spanx style="verb">crv</spanx> と,
-            <spanx style="verb">x</spanx> と,
-            <spanx style="verb">y</spanx> が順に結合されたものである.
-          </t>
-          <!--
-          <t>
-            The <spanx style="verb">sub</spanx> (subject) Claim
-            value is the base64url encoded SHA-256 hash of
-            the concatenation of the octets of the UTF-8 representations of
-            the base64url encoded key values in the
-            <spanx style="verb">sub_jwk</spanx> Claim.
-            When the <spanx style="verb">kty</spanx> value is
-            <spanx style="verb">RSA</spanx>, the key values
-            <spanx style="verb">n</spanx> and
-            <spanx style="verb">e</spanx> are concatenated in that order.
-            When the <spanx style="verb">kty</spanx> value is
-            <spanx style="verb">EC</spanx>, the key values
-            <spanx style="verb">crv</spanx>,
-            <spanx style="verb">x</spanx>, and
-            <spanx style="verb">y</spanx> are concatenated in that order.
-          </t>
-          -->
-          <t>
-            UserInfo エンドポイントへアクセスするための Access Token は返されないため,
-            すべての Claim は ID Token の中で返されなければならない (MUST).
-          </t>
-          <!--
-          <t>
-            No Access Token is returned for accessing a UserInfo Endpoint,
-            so all Claims returned MUST be in the ID Token.
-          </t>
-          -->
-        </list></t>
+        <t>
+          <list style="numbers">
+            <t>
+              <spanx style="verb">iss</spanx> (issuer) Claim の値が
+              <spanx style="verb">https://self-issued.me</spanx> である.
+            </t>
+            <!--
+            <t>
+              The <spanx style="verb">iss</spanx> (issuer) Claim Value is
+              <spanx style="verb">https://self-issued.me</spanx>.
+            </t>
+            -->
+            <t>
+              <spanx style="verb">sub_jwk</spanx> Claim が存在し, その値が ID Token の署名を検証するための公開鍵となっている.
+            </t>
+            <!--
+            <t>
+              A <spanx style="verb">sub_jwk</spanx> Claim is present, with its value being
+              the public key used to check the signature of the ID Token.
+            </t>
+            -->
+            <t>
+              <spanx style="verb">sub</spanx> (subject) Claim の値は
+              <spanx style="verb">sub_jwk</spanx> Claim に含まれる鍵の Thumbprint の Base64URL エンコード値である.
+              この Thumbprint は, JWK のメンバーのうち REQUIRED なもののみをそのメンバー名の辞書順にソートし, 空白や改行なしで結合した UTF-8 表現のオクテットを生成し, その SHA-256 ハッシュを計算することで求める.
+              <spanx style="verb">kty</spanx> の値が
+              <spanx style="verb">RSA</spanx> である時, キーの値は
+              <spanx style="verb">n</spanx> と,
+              <spanx style="verb">e</spanx> が順に結合されたものである.
+              <spanx style="verb">kty</spanx> の値が
+              <spanx style="verb">EC</spanx> である時, キーの値は
+              <spanx style="verb">crv</spanx> と,
+              <spanx style="verb">x</spanx> と,
+              <spanx style="verb">y</spanx> が順に結合されたものである.
+              これは JWK Thumbprint <xref target="JWK.Thumbprint"/> に定義されている.
+            </t>
+            <!--
+            <t>
+              The <spanx style="verb">sub</spanx> (subject) Claim
+              value is the base64url-encoded representation of
+              the thumbprint of
+              the key in the <spanx style="verb">sub_jwk</spanx> Claim.
+              This thumbprint value is computed as
+              the SHA-256 hash of
+              the octets of the UTF-8 representation of
+              a JWK constructed containing only the REQUIRED members to represent the key,
+              with the member names sorted into lexicographic order,
+              and with no whitespace or line breaks.
+              For instance,
+              when the <spanx style="verb">kty</spanx> value is
+              <spanx style="verb">RSA</spanx>, the member names
+              <spanx style="verb">e</spanx>,
+              <spanx style="verb">kty</spanx>, and
+              <spanx style="verb">n</spanx>
+              are the ones present in the constructed JWK used
+              in the thumbprint computation and appear in that order;
+              when the <spanx style="verb">kty</spanx> value is
+              <spanx style="verb">EC</spanx>, the member names
+              <spanx style="verb">crv</spanx>,
+              <spanx style="verb">kty</spanx>,
+              <spanx style="verb">x</spanx>, and
+              <spanx style="verb">y</spanx>
+              are present in that order.
+              Note that this thumbprint calculation is the same as that defined in
+              the JWK Thumbprint <xref target="JWK.Thumbprint"/> specification.
+            </t>
+            -->
+            <t>
+              UserInfo エンドポイントへアクセスするための Access Token は返されないため,
+              すべての Claim は ID Token の中で返されなければならない (MUST).
+            </t>
+            <!--
+            <t>
+              No Access Token is returned for accessing a UserInfo Endpoint,
+              so all Claims returned MUST be in the ID Token.
+            </t>
+            -->
+          </list>
+        </t>
       </section>
 
       <section anchor="SelfIssuedValidation" title="Self-Issued ID Token Validation">
@@ -3719,7 +3753,7 @@
         <t>
           <list style="numbers">
             <t>
-              Client は, <spanx style="verb">iss</spanx> (issuer) Claim の値が <spanx style="verb">https://self-isued.me</spanx> であることを検証しなければならない (MUST).
+              Client は, <spanx style="verb">iss</spanx> (issuer) Claim の値が <spanx style="verb">https://self-issued.me</spanx> であることを検証しなければならない (MUST).
               もし <spanx style="verb">iss</spanx> が別の値を含んでいた場合,
               その ID Token は Self-Issued ではないので,
               <xref target="IDTokenValidation"/>
@@ -3727,7 +3761,7 @@
             </t>
             <!--
             <t>
-              The Client MUST validate that the value of the <spanx style="verb">iss</spanx> (issuer) Claim is <spanx style="verb">https://self-isued.me</spanx>.
+              The Client MUST validate that the value of the <spanx style="verb">iss</spanx> (issuer) Claim is <spanx style="verb">https://self-issued.me</spanx>.
               If <spanx style="verb">iss</spanx> contains a different value,
               the ID Token is not Self-Issued, and instead
               it MUST be validated according to
@@ -3746,17 +3780,17 @@
             </t>
             -->
             <t>
-              Client は, JWT ヘッダ <xref target="JWT"/> の <spanx style="verb">alg</spanx> パラメータに指定されたアルゴリズムを使い <xref target="JWS">JWS</xref> に沿って ID Token の署名を検証しなければならない (MUST).
+              Client は, JOSE Header の <spanx style="verb">alg</spanx> Header Parameter に指定されたアルゴリズムを使い <xref target="JWS">JWS</xref> に沿って ID Token の署名を検証しなければならない (MUST).
               その際, <spanx style="verb">sub_jwk</spanx> Claim の中の鍵を使用する;
-              鍵は JWK <xref target="JWK"/> フォーマットの鍵である (X.509 証明書ではない).
+              鍵は JWK フォーマットの鍵である (X.509 証明書ではない).
             </t>
             <!--
             <t>
               The Client MUST validate the signature of the ID Token according to
               <xref target="JWS">JWS</xref> using the algorithm specified in the
-              <spanx style="verb">alg</spanx> parameter of the JWT header <xref target="JWT"/>,
+              <spanx style="verb">alg</spanx> Header Parameter of the JOSE Header,
               using the key in the <spanx style="verb">sub_jwk</spanx> Claim;
-              the key is a bare key in JWK <xref target="JWK"/> format
+              the key is a bare key in JWK format
               (not an X.509 certificate value).
             </t>
             -->
@@ -3772,34 +3806,15 @@
             </t>
             -->
             <t>
-              Client は <spanx style="verb">sub</spanx> (subject) Claim の値が
-              Base64URL エンコードされた <spanx style="verb">sub_jwk</spanx> Claim の中のキーの値が Base64URL エンコードされた UTF-8 表現のオクテットを結合したものの SHA-256 ハッシュであることを検証しなくてはならない (MUST).
-              <spanx style="verb">kty</spanx> の値が
-              <spanx style="verb">RSA</spanx> である時, キーの値は
-              <spanx style="verb">n</spanx> と
-              <spanx style="verb">e</spanx> が順に結合されたものである.
-              <spanx style="verb">kty</spanx> の値が
-              <spanx style="verb">EC</spanx> である時, キーの値は
-              <spanx style="verb">crv</spanx> と,
-              <spanx style="verb">x</spanx> と,
-              <spanx style="verb">y</spanx> が順に結合されたものである.
+              Client
             </t>
             <!--
             <t>
-              The Client MUST validate that the <spanx style="verb">sub</spanx> (subject) Claim
-              value is the base64url encoded SHA-256 hash of
-              the concatenation of the octets of the UTF-8 representations of
-              the base64url encoded key values in the
-              <spanx style="verb">sub_jwk</spanx> Claim.
-              When the <spanx style="verb">kty</spanx> value is
-              <spanx style="verb">RSA</spanx>, the key values
-              <spanx style="verb">n</spanx> and
-              <spanx style="verb">e</spanx> are concatenated in that order.
-              When the <spanx style="verb">kty</spanx> value is
-              <spanx style="verb">EC</spanx>, the key values
-              <spanx style="verb">crv</spanx>,
-              <spanx style="verb">x</spanx>, and
-              <spanx style="verb">y</spanx> are concatenated in that order.
+              The Client MUST validate that the <spanx style="verb">sub</spanx> Claim
+              value is the base64url-encoded representation of
+              the thumbprint of
+              the key in the <spanx style="verb">sub_jwk</spanx> Claim,
+              as specified in <xref target="SelfIssuedResponse"/>.
             </t>
             -->
             <t>
@@ -3837,7 +3852,7 @@
             <t>
               If a nonce value was sent in the Authentication Request,
               a <spanx style="verb">nonce</spanx> Claim MUST be present
-              and its value of the checked to verify that
+              and its value checked to verify that
               it is the same value as the one that was sent in the Authentication Request.
               The Client SHOULD check the <spanx style="verb">nonce</spanx> value
               for replay attacks.
@@ -3977,7 +3992,7 @@
       <t>
         いくつかの OpenID Connect メッセージを処理する際にはメッセージの中の値を既知の値を比較することが求められる.
         例えば, UserInfo エンドポイントから返された Claim Name は <spanx style="verb">sub</spanx> などの特定の Claim Name と比較される.
-        よって Unicode 文字列比較処理はセキュリティ上重要な意味を持つ.
+        よって Unicode <xref target="UNICODE"/> 文字列比較処理はセキュリティ上重要な意味を持つ.
       </t>
       <!--
       <t>
@@ -3985,7 +4000,7 @@
         values in the messages to known values. For example, the Claim
         Names returned by the UserInfo Endpoint might be compared to
         specific Claim Names such as <spanx
-        style="verb">sub</spanx>.  Comparing Unicode strings,
+        style="verb">sub</spanx>.  Comparing Unicode <xref target="UNICODE"/> strings,
         however, has significant security implications.
       </t>
       -->
@@ -4027,13 +4042,13 @@
         </list>
       </t>
       <t>
-        いくつかの箇所において, 本仕様はスペースで区切られた文字列のリストを使用している.
+        いくつかの箇所において, 本ドキュメントはスペースで区切られた文字列のリストを使用している.
         そのようないかなる場合においても, この目的では ASCII のスペース文字 (0x20)
         のみを使用しなければならない (MUST).
       </t>
       <!--
       <t>
-        In several places, this specification uses space delimited
+        In several places, this document uses space-delimited
         lists of strings.  In all such cases, the ASCII space
         character (0x20) MUST be the only character used for this purpose.
       </t>
@@ -4043,13 +4058,13 @@
 
     <section anchor='TLS' title='TLS Version'>
       <t>
-        本仕様では Transport Layer Security (TLS) が用いられるが, 実際に広く使われているかどうかや既知のセキュリティ脆弱性に依存して, TLS の適切なバージョンはその時々で異なりうる.
-        本仕様執筆時には, TLS バージョン 1.2 <xref target='RFC5246' />　が最新であるが, 実装が限定されており, すぐに各実装で利用可能とはいえないかもしれない.
+        本ドキュメントでは Transport Layer Security (TLS) が用いられるが, 実際に広く使われているかどうかや既知のセキュリティ脆弱性に依存して, TLS の適切なバージョンはその時々で異なりうる.
+        本ドキュメント執筆時には, TLS バージョン 1.2 <xref target='RFC5246' />　が最新であるが, 実装が限定されており, すぐに各実装で利用可能とはいえないかもしれない.
         TLS バージョン 1.0 <xref target='RFC2246' /> は現在もっとも広く利用されているバージョンで, 最も広範な相互運用性を提供するであろう.
       </t>
       <!--
       <t>
-        Whenever Transport Layer Security (TLS) is used by this specification,
+        Whenever Transport Layer Security (TLS) is used by this document,
         the appropriate version (or versions) of
         TLS will vary over time, based on the widespread deployment and known security
         vulnerabilities. At the time of this writing, TLS version 1.2 <xref target='RFC5246' />
@@ -4062,15 +4077,15 @@
 
     <section anchor="ImplementationConsiderations" title="Implementation Considerations">
       <t>
-        本仕様書では Relying Party が, OAuth Implicit Flow で利用する機能を定義する.
-        Relying Parties は本仕様書内で "REQUIRED" であると記載されている, もしくは "MUST" 付きで説明されている機能を実装しなければならない (MUST).
+        本ドキュメントでは Relying Party が, OAuth Implicit Flow で利用する機能を定義する.
+        Relying Parties は本ドキュメント内で "REQUIRED" であると記載されている, もしくは "MUST" 付きで説明されている機能を実装しなければならない (MUST).
       </t>
       <!--
       <t>
-        This specification defines features used by Relying Parties
+        This document defines features used by Relying Parties
         using the OAuth Implicit Flow.
         These Relying Parties MUST implement the features that are listed
-        in this specification as being "REQUIRED" or are described with a "MUST".
+        in this document as being "REQUIRED" or are described with a "MUST".
       </t>
       -->
 
@@ -4222,24 +4237,27 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3339"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3966"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5322"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6711"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3339"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3629"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3966"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4627"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5322"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6711"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7159"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7231"?>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
 
-      <reference anchor="USA15">
+      <reference anchor="USA15" target="http://www.unicode.org/reports/tr15/">
         <front>
           <title>Unicode Normalization Forms</title>
 
@@ -4255,16 +4273,13 @@
             </address>
           </author>
 
-          <author fullname="Martin D&uuml;rst" initials="M." surname="D&uuml;rst">
-          </author>
-
-          <date day="03" month="09" year="2009" />
+          <date day="01" month="06" year="2015" />
         </front>
 
         <seriesInfo name="Unicode Standard Annex" value="15" />
       </reference>
 
-      <reference anchor="ISO29115">
+      <reference anchor="ISO29115" target="http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=45138">
         <front>
           <title>ISO/IEC 29115:2013 --
           Information technology - Security techniques - Entity authentication
@@ -4278,11 +4293,10 @@
         </front>
 
         <seriesInfo name="ISO/IEC" value="29115" />
-        <format target="http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=45138"
-                type="HTML" />
+
       </reference>
 
-      <reference anchor="ISO639-1">
+      <reference anchor="ISO639-1" target="http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=22109">
         <front>
           <title>ISO 639-1:2002. Codes for the representation of names of
           languages -- Part 1: Alpha-2 code</title>
@@ -4296,7 +4310,7 @@
         </front>
       </reference>
 
-      <reference anchor="ISO3166-1">
+      <reference anchor="ISO3166-1" target="http://www.w3.org/WAI/ER/IG/ert/iso639.htm">
         <front>
           <title>ISO 3166-1:1997. Codes for the representation of names of
           countries and their subdivisions -- Part 1: Country codes</title>
@@ -4308,12 +4322,9 @@
 
           <date year="1997" />
         </front>
-
-        <format target="http://www.w3.org/WAI/ER/IG/ert/iso639.htm"
-                type="HTML" />
       </reference>
 
-      <reference anchor="ISO8601-2004">
+      <reference anchor="ISO8601-2004" target="http://www.iso.org/iso/catalogue_detail?csnumber=40874">
         <front>
           <title>ISO 8601:2004. Data elements and interchange formats - Information interchange -
           Representation of dates and times</title>
@@ -4327,7 +4338,7 @@
         </front>
       </reference>
 
-      <reference anchor="E.164">
+      <reference anchor="E.164" target="http://www.itu.int/rec/T-REC-E.164-201011-I/en">
         <front>
           <title>E.164: The international public telecommunication numbering plan</title>
 
@@ -4337,12 +4348,9 @@
 
           <date year="2010" />
         </front>
-
-        <format target="http://www.itu.int/rec/T-REC-E.164-201011-I/en"
-                type="HTML" />
       </reference>
 
-      <reference anchor="zoneinfo">
+      <reference anchor="zoneinfo" target="http://www.twinsun.com/tz/tz-link.htm">
         <front>
           <title>The tz database</title>
 
@@ -4352,11 +4360,9 @@
 
           <date month="June" year="2011" />
         </front>
-
-        <format target="http://www.twinsun.com/tz/tz-link.htm" type="HTML" />
       </reference>
 
-      <reference anchor="OpenID.Core">
+      <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
         <front>
           <title>OpenID Connect Core 1.0</title>
 
@@ -4380,14 +4386,11 @@
             <organization abbrev="Salesforce">Salesforce</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="3" month="August" year="2015"/>
         </front>
-
-        <format target="http://openid.net/specs/openid-connect-core-1_0.html"
-                type="HTML" />
       </reference>
 
-      <reference anchor="OpenID.Discovery">
+      <reference anchor="OpenID.Discovery" target="http://openid.net/specs/openid-connect-discovery-1_0.html">
         <front>
           <title>OpenID Connect Discovery 1.0</title>
 
@@ -4407,14 +4410,11 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="3" month="August" year="2015"/>
         </front>
-
-        <format target="http://openid.net/specs/openid-connect-discovery-1_0.html"
-                type="HTML" />
       </reference>
 
-      <reference anchor="OpenID.Registration">
+      <reference anchor="OpenID.Registration" target="http://openid.net/specs/openid-connect-registration-1_0.html">
         <front>
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
@@ -4430,14 +4430,11 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="3" month="August" year="2015"/>
         </front>
-
-        <format target="http://openid.net/specs/openid-connect-registration-1_0.html"
-                type="HTML" />
       </reference>
 
-      <reference anchor="JWT">
+      <reference anchor="JWT" target="http://tools.ietf.org/html/rfc7519">
         <front>
           <title>JSON Web Token (JWT)</title>
 
@@ -4453,15 +4450,14 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date month="May" year="2015" />
         </front>
 
-        <seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13"
-                type="HTML" />
+        <seriesInfo name="RFC" value="7519"/>
+        <seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
-      <reference anchor="JWS">
+      <reference anchor="JWS" target="http://tools.ietf.org/html/rfc7515">
         <front>
           <title>JSON Web Signature (JWS)</title>
 
@@ -4477,14 +4473,14 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date month="May" year="2015" />
         </front>
 
-        <seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-18" type="HTML" />
+        <seriesInfo name="RFC" value="7515"/>
+        <seriesInfo name="DOI" value="10.17487/RFC7515"/>
       </reference>
 
-      <reference anchor="JWK">
+      <reference anchor="JWK" target="http://tools.ietf.org/html/rfc7517">
         <front>
           <title>JSON Web Key (JWK)</title>
 
@@ -4492,14 +4488,14 @@
             <organization>Microsoft</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date month="May" year="2015" />
         </front>
 
-        <seriesInfo value="draft-ietf-jose-json-web-key" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18" type="HTML" />
+        <seriesInfo name="RFC" value="7517"/>
+        <seriesInfo name="DOI" value="10.17487/RFC7517"/>
       </reference>
 
-      <reference anchor="JWA">
+      <reference anchor="JWA" target="http://tools.ietf.org/html/rfc7518">
         <front>
           <title>JSON Web Algorithms (JWA)</title>
 
@@ -4507,14 +4503,14 @@
             <organization>Microsoft</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date month="May" year="2015" />
         </front>
 
-        <seriesInfo value="draft-ietf-jose-json-web-algorithms" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18" type="HTML" />
+        <seriesInfo name="RFC" value="7518"/>
+        <seriesInfo name="DOI" value="10.17487/RFC7518"/>
       </reference>
 
-      <reference anchor="OAuth.Responses">
+      <reference anchor="OAuth.Responses" target="http://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
         <front>
           <title>OAuth 2.0 Multiple Response Type Encoding Practices</title>
 
@@ -4536,28 +4532,51 @@
 
           <date day="25" month="February" year="2014" />
         </front>
-
-        <format target="http://openid.net/specs/oauth-v2-multiple-response-types-1_0.html"
-                type="HTML" />
       </reference>
 
-      <reference anchor="IANA.Language">
+      <reference anchor="IANA.Language" target="http://www.iana.org/assignments/language-subtag-registry">
         <front>
           <title>Language Subtag Registry</title>
           <author>
-            <organization>Internet Assigned Numbers Authority (IANA)</organization>
+            <organization>IANA</organization>
           </author>
-          <date year="2005"/>
+          <date/>
         </front>
+      </reference>
 
-        <format target="http://www.iana.org/assignments/language-subtag-registry"
-                type="TXT" />
+      <reference anchor="RFC20" target="http://www.rfc-editor.org/info/rfc20">
+        <front>
+          <title>ASCII format for Network Interchange</title>
+          <author fullname="Vint Cerf" surname="Cerf" initials="V.">
+            <organization>University California Los Angeles (UCLA)</organization>
+          </author>
+          <date month="October" year="1969"/>
+        </front>
+        <seriesInfo name="STD" value="80"/>
+        <seriesInfo name="RFC" value="20"/>
+        <seriesInfo name="DOI" value="10.17487/RFC0020"/>
+      </reference>
+
+      <reference anchor="UNICODE" target="http://www.unicode.org/versions/latest/">
+        <front>
+          <title abbrev="Unicode">The Unicode Standard</title>
+          <author>
+            <organization>The Unicode Consortium</organization>
+            <address />
+          </author>
+          <date />
+        </front>
+        <!--
+          Note that this reference is to the latest version of Unicode,
+          rather than to a specific release.  It is not expected that future changes in
+          the UNICODE specification will impact the syntax of JSON or the UTF-8 encoding.
+        -->
       </reference>
 
     </references>
     <references title="Informative References">
 
-      <reference anchor="OpenID.Basic">
+      <reference anchor="OpenID.Basic" target="http://openid.net/specs/openid-connect-basic-1_0.html">
         <front>
           <title>OpenID Connect Basic Client Implementer's Guide 1.0</title>
 
@@ -4581,11 +4600,34 @@
             <organization abbrev="Salesforce">Salesforce</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="3" month="August" year="2015"/>
+        </front>
+      </reference>
+
+      <reference anchor="JWK.Thumbprint" target="http://tools.ietf.org/html/draft-ietf-jose-jwk-thumbprint-08">
+        <front>
+          <title>JSON Web Key (JWK) Thumbprint</title>
+
+          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+            <organization>Microsoft</organization>
+            <address>
+              <email>mbj@microsoft.com</email>
+              <uri>http://self-issued.info/</uri>
+            </address>
+          </author>
+
+          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+            <organization abbrev="NRI">Nomura Research Institute</organization>
+            <address>
+              <email>n-sakimura@nri.co.jp</email>
+              <uri>http://nat.sakimura.org/</uri>
+            </address>
+          </author>
+
+          <date day="9" month="July" year="2015" />
         </front>
 
-        <format target="http://openid.net/specs/openid-connect-basic-1_0.html"
-                type="HTML" />
+        <seriesInfo value="draft-ietf-jose-jwk-thumbprint" name="Internet-Draft"/>
       </reference>
 
     </references>
@@ -4623,7 +4665,7 @@
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>
         The OpenID Community would like to thank the following people for
-        their contributions to this specification:
+        their contributions to this document:
       </t>
       <t>
         <list style="empty">
@@ -4656,7 +4698,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2014 The OpenID Foundation.</t>
+      <t>Copyright (c) 2015 The OpenID Foundation.</t>
       <t>
         The OpenID Foundation (OIDF) grants to any Contributor, developer,
         implementer, or other interested party a non-exclusive, royalty free,
@@ -4698,7 +4740,83 @@
     </section>
 
     <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
+      <t>[[ To be removed from the final document ]]</t>
+
+      <t>
+        -20
+        <list style="symbols">
+          <t>
+            Referenced completed RFCs.
+          </t>
+          <t>
+            Added missing URLs in references.
+          </t>
+          <t>
+            Corrected a typo in the spelling of self-issued.me.
+          </t>
+          <t>
+            Tracked terminology changes made in the referenced IETF specs since errata set 1.
+          </t>
+          <t>
+            Updated the RFC 2616 references to RFC 7230 or RFC 7231, as appropriate.
+          </t>
+        </list>
+      </t>
+
+      <t>
+        -19
+        <list style="symbols">
+          <t>
+            Referenced specification versions incorporating errata set 1.
+          </t>
+        </list>
+      </t>
+
+      <t>
+        -18
+        <list style="symbols">
+          <t>
+            Fixed #947 - Added "kty":"EC" case back to Self-Issued OpenID Provider Response.
+          </t>
+          <t>
+            Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
+          </t>
+        </list>
+      </t>
+
+      <t>
+        -17
+        <list style="symbols">
+          <t>
+            Changed the JWK Thumbprint reference from being normative to informative.
+          </t>
+          <t>
+            Updated dates for specs containing errata updates.
+          </t>
+          <t>
+            Updated references to pre-final IETF specs.
+          </t>
+          <t>
+            Replaced uses of the terms JWS Header, JWE Header, and JWT Header with
+            the JOSE Header term that replaced them in the JOSE and JWT specifications.
+          </t>
+        </list>
+      </t>
+
+      <t>
+        -16
+        <list style="symbols">
+          <t>
+            Fixed #926 - Typo in Self-Issued ID Token Validation.
+          </t>
+          <t>
+            Fixed #920 - Attack identified against self-issued "sub" values.
+          </t>
+          <t>
+            Changed uses of "this specification" to "this document".
+          </t>
+        </list>
+      </t>
 
       <t>
         -15
