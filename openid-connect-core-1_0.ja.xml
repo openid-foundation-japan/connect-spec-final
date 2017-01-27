@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
-"http://xml.resource.org/authoring/rfc2629.dtd">
-<rfc category="std" docName="openid-connect-core-1_0" ipr="trust200902">
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="openid-connect-core-1_0" ipr="none">
 
   <?rfc toc="yes" ?>
   <?rfc tocdepth="5" ?>
@@ -13,7 +23,7 @@
   <?rfc private="Final" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 incorporating errata set 1</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
@@ -55,7 +65,7 @@
       </address>
     </author>
 
-    <date day="25" month="February" year="2014" />
+    <date day="8" month="November" year="2014" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -195,11 +205,11 @@
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
         <t>
-          本ドキュメント中の "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", および "OPTIONAL" の意味するところは, <xref target="RFC2119"/> の定める通りである.
+          本ドキュメント中の "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", および "OPTIONAL" の意味するところは, <xref target="RFC2119"/> の定める通りである.
         </t>
         <!--
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
         document are to be interpreted as described in <xref
         target="RFC2119">RFC 2119</xref>.</t>
         -->
@@ -242,8 +252,9 @@
           "Authorization Endpoint", "Authorization Grant", "Authorization Server",
           "Client", "Client Authentication", "Client Identifier", "Client Secret",
           "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
-          "Resource Owner", "Resource Server", "Response Type", および "Token Endpoint",
-          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", "JSON Web Token (JWT)", および "Nested JWT" ,
+          "Resource Owner", "Resource Server", "Response Type", および "Token Endpoint"
+          <xref target="JWT">JSON Web Token (JWT)</xref> で定義された "Claim Name", "Claim Value", "JSON Web Token (JWT)", "JWT Claims Set", および "Nested JWT",
+          <xref target="JWS">JSON Web Signature (JWS)</xref> で定義された "Header Parameter" および "JOSE Header",
           <xref target="RFC2616">RFC 2616</xref> で定義された "User Agent",
           <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> で定義された "Response Mode" という用語を用いる.
         </t>
@@ -255,8 +266,11 @@
           "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
           "Resource Owner", "Resource Server", "Response Type", and "Token Endpoint"
           defined by <xref target="RFC6749">OAuth 2.0</xref>,
-          the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)", and "Nested JWT"
+          the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)",
+          "JWT Claims Set", and "Nested JWT"
           defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
+          the terms "Header Parameter" and "JOSE Header"
+          defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
           the term "User Agent" defined by <xref target="RFC2616">RFC 2616</xref>,
           and the term "Response Mode" defined by
           <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref>.
@@ -761,6 +775,7 @@
             レスポンスを返した Issuer の Issuer Identifier.
             <spanx style="verb">iss</spanx> 値は, <spanx style="verb">https</spanx> スキーマで始まる大文字小文字を区別する URL であり, スキーマ, ホスト, そして任意でポート番号とパスを含む. クエリーとフラグメントは含まない.
             <!--
+            REQUIRED.
             Issuer Identifier for the Issuer of the response.
             The <spanx style="verb">iss</spanx> value is a case sensitive URL
             using the <spanx style="verb">https</spanx> scheme that
@@ -778,6 +793,7 @@
             この値は ASCII で255文字を超えてはならない (MUST NOT).
             <spanx style="verb">sub</spanx> 値は大文字小文字を区別する.
             <!--
+            REQUIRED.
             Subject Identifier.  A locally unique and never
             reassigned identifier within the Issuer for the End-User,
             which is intended to be consumed by the Client,
@@ -796,6 +812,7 @@
             他のオーディエンスの識別子を含んでもよい (MAY).
             一般的には <spanx style="verb">aud</spanx> は大文字小文字を区別した文字列の配列であるが, オーディエンスが単体の場合は <spanx style="verb">aud</spanx> 値を大文字小文字を区別した単一文字列としてもよい (MAY).
             <!--
+            REQUIRED.
             Audience(s) that this ID Token is intended for.
             It MUST contain the OAuth 2.0 <spanx style="verb">client_id</spanx>
             of the Relying Party as an audience value.
@@ -819,6 +836,7 @@
             この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
             詳細は <xref target="RFC3339">RFC 3339</xref> を参照のこと.
             <!--
+            REQUIRED.
             Expiration time on or after which the ID Token MUST NOT be
             accepted for processing. The processing of this parameter
             requires that the current date/time MUST be before the
@@ -839,6 +857,7 @@
             JWT 発行時刻.
             この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
             <!--
+            REQUIRED.
             Time at which the JWT was issued.
             Its value is a JSON number representing the number of seconds from
             1970-01-01T0:0:0Z as measured in UTC until the date/time.
@@ -868,7 +887,6 @@
 
           <t hangText="nonce">
             <vspace/>
-            OPTIONAL.
             Client セッションと ID Token を紐づける文字列値.
             リプレイアタック防止のために用いられる.
             Authentication Request で指定されたままの値を ID Token に含める.
@@ -909,6 +927,7 @@
             この値の意味するところはコンテキストによって異なる可能性があるため, この Claim を利用する場合は, 関係者間で値の意味するところについて合意しておくこと.
             <spanx style="verb">acr</spanx> は大文字小文字を区別する文字列である.
             <!--
+            OPTIONAL.
             Authentication Context Class Reference.
             String specifying an Authentication Context Class Reference value
             that identifies the Authentication Context Class that the
@@ -944,6 +963,7 @@
             この値の意味するところはコンテキストによって異なる可能性があるため, この Claim を利用する場合は, 関係者間で値の意味するところについて合意しておくこと.
             <spanx style="verb">amr</spanx> は大文字小文字を区別する文字列である.
             <!--
+            OPTIONAL.
             Authentication Methods References.
             JSON array of strings that are identifiers for authentication methods
             used in the authentication.
@@ -968,6 +988,7 @@
             オーディエンスと <spanx style="verb">azp</spanx> 値が同値である場合にも, この Claim を含んでもよい (MAY).
             <spanx style="verb">azp</spanx> は大文字小文字を区別する文字列である.
             <!--
+            OPTIONAL.
             Authorized party - the party to which the ID Token was issued.
             If present, it MUST contain the OAuth 2.0
             Client ID of this party.
@@ -1052,7 +1073,7 @@
         <spanx style="verb">x5c</spanx>,
         <spanx style="verb">jku</spanx>, or
         <spanx style="verb">jwk</spanx>
-        header parameter fields.
+        Header Parameter fields.
         Instead, references to keys used are
         communicated in advance using Discovery and Registration parameters,
         per <xref target="SigEnc"/>.
@@ -1448,6 +1469,7 @@
                   使用された scope 値で, 実装によって理解されないものは無視されるべきである (SHOULD).
                   本仕様によって定義される追加の scope 値については <xref target="ScopeClaims" format="counter"/> と <xref target="OfflineAccess" format="counter"/> セクションを参照すること.
                   <!--
+                  REQUIRED.
                   OpenID Connect requests MUST contain the <spanx style="verb">openid</spanx> scope value.
                   If the <spanx style="verb">openid</spanx> scope value is not present,
                   the behavior is entirely unspecified.
@@ -1466,6 +1488,7 @@
                   この値により, どのエンドポイントからどのようなパラメータが返されるのかなどが決定される.
                   Authorization Code Flow を使用する場合, この値は <spanx style="verb">code</spanx> となる.
                   <!--
+                  REQUIRED.
                   OAuth 2.0 Response Type value that determines
                   the authorization processing flow to be used,
                   including what parameters are returned from the endpoints used.
@@ -1479,6 +1502,7 @@
                   REQUIRED.
                   Authorization Server における OAuth 2.0 Client Identifier の値.
                   <!--
+                  REQUIRED.
                   OAuth 2.0 Client Identifier
                   valid at the Authorization Server.
                   -->
@@ -1494,6 +1518,7 @@
                   Client Type 等の定義については OAuth 2.0 の Section 2.1 を参照のこと.
                   Redirection URI には, ネイティブアプリケーションにコールバックを送る目的などで, 上記以外のスキーマを利用することもできる.
                   <!--
+                  REQUIRED.
                   Redirection URI to which the response will be sent.
                   This URI MUST exactly match one of the Redirection URI values
                   for the Client pre-registered at the OpenID Provider,
@@ -1518,6 +1543,7 @@
                   リクエストとコールバックの間で維持されるランダムな値.
                   一般的に Cross-Site Request Forgery (CSRF, XSRF) 対策の目的で利用される, ブラウザ Cookie と紐づく暗号論的にセキュアな値を取る.
                   <!--
+                  RECOMMENDED.
                   Opaque value used
                   to maintain state between the request and the callback.
                   Typically, Cross-Site Request Forgery (CSRF, XSRF)
@@ -1548,6 +1574,7 @@
                   Authorization Endpoint からパラメータを返す手段を Authorization Server に通知する.
                   要求される Response Mode が Response Type で指定されるデフォルトの場合, このパラメータの使用は推奨されない (NOT RECOMMENDED).
                   <!--
+                  OPTIONAL.
                   Informs the Authorization Server of the mechanism to be used
                   for returning parameters from the Authorization Endpoint.
                   This use of this parameter is NOT RECOMMENDED when the Response Mode
@@ -1572,13 +1599,14 @@
                   <vspace/>
                   OPTIONAL.
                   Client セッションと ID Token を紐づける文字列であり, リプレイアタック対策に用いられる.
-                  この値は Authorization Request で指定され, そのままの値で ID Token に含まれる.
+                  この値は Authentication Request で指定され, そのままの値で ID Token に含まれる.
                   <spanx style="verb">nonce</spanx> 値には, 推測不可能なように十分なエントロピーを持たせること (MUST).
                   実装の注意事項については <xref target="NonceNotes"/> を参照すること.
                   <!--
+                  OPTIONAL.
                   String value used to associate a Client session
                   with an ID Token, and to mitigate replay attacks.
-                  The value is passed through unmodified from the Authorization Request to the ID Token.
+                  The value is passed through unmodified from the Authentication Request to the ID Token.
                   Sufficient entropy MUST be present in the
                   <spanx style="verb">nonce</spanx> values used to prevent
                   attackers from guessing values.
@@ -1592,6 +1620,7 @@
                   Authorization Server が認証および同意のためのユーザーインタフェースを End-User にどのように表示するかを指定するための ASCII 値.
                   以下の値が定義されている.
                   <!--
+                  OPTIONAL.
                   ASCII string value that specifies
                   how the Authorization Server displays the authentication and
                   consent user interface pages to the End-User.
@@ -1659,6 +1688,7 @@
                   Authorization Server が End-User に再認証および同意を再度要求するかどうか指定するための, スペース区切りの ASCII 文字列のリスト.
                   以下の値が定義されている.
                   <!--
+                  OPTIONAL.
                   Space delimited, case sensitive list of ASCII string values
                   that specifies whether the Authorization Server prompts
                   the End-User for reauthentication and consent.
@@ -1757,6 +1787,7 @@
                   (<spanx style="verb">max_age</spanx> リクエストパラメータは OpenID 2.0 <xref target="OpenID.PAPE">PAPE</xref> の <spanx style="verb">max_auth_age</spanx> リクエストパラメータに相当する)
                   <spanx style="verb">max_age</spanx> が指定された場合, 発行される ID Token は <spanx style="verb">auth_time</spanx> Claim を含まねばならない (MUST).
                   <!--
+                  OPTIONAL.
                   Maximum Authentication Age.
                   Specifies the allowable elapsed time in seconds
                   since the last time the End-User was actively
@@ -1779,6 +1810,7 @@
                   例えば "fr-CA fr en" という値が指定された場合, カナダで用いられるフランス語が第一選好となり, 次いで地域指定のないフランス語, そして英語と続く.
                   要求されたロケールがサポートされていない場合でも, OpenID Provider はエラーとするべきではない (SHOULD NOT).
                   <!--
+                  OPTIONAL.
                   End-User's preferred languages and scripts for the user interface,
                   represented as a space-separated list of
                   <xref target="RFC5646">BCP47</xref> language tag values,
@@ -1803,6 +1835,7 @@
                   ただしサーバーはその場合可能な限りサクセスレスポンスを返すこと.
                   <spanx style="verb">id_token_hint</spanx> 利用時は, ID Token の audience に Authorization Server 自身が含まれている必要はない.
                   <!--
+                  OPTIONAL.
                   ID Token previously issued by the Authorization Server
                   being passed as a hint about the End-User's current or past
                   authenticated session with the Client.
@@ -1845,6 +1878,7 @@
                   この値は <spanx style="verb">phone_number</spanx> Claim に指定されるフォーマットに従った電話番号でもよい (MAY).
                   このパラメータを利用するか否かは OP の判断にゆだねる.
                   <!--
+                  OPTIONAL.
                   Hint to the Authorization Server
                   about the login identifier the End-User might use to log in (if necessary).
                   This hint can be used by an RP if it first asks the End-User for their e-mail
@@ -1865,6 +1899,7 @@
                   認証処理が満たした Authentication Context Class は, <xref target="IDToken"/> に示す <spanx style="verb">acr</spanx> Claim Value として返される.
                   <spanx style="verb">acr</spanx> Claim はこのパラメータを用いることで Voluntary Claim としてリクエストされることになる.
                   <!--
+                  OPTIONAL.
                   Requested Authentication Context Class Reference values.
                   Space-separated string that specifies the <spanx style="verb">acr</spanx>
                   values that the Authorization Server is being requested to use
@@ -2742,7 +2777,7 @@
               </list>
             </t>
             <t>
-              トークン, 鍵, その他のセンシティブ情報を含む全ての Token Response には, 以下の HTTP レスポンスヘッダーを指定しなければならない.
+              トークン, 鍵, その他のセンシティブ情報を含む全ての Token Response には, 以下の HTTP レスポンスヘッダーを指定しなければならない (MUST).
             </t>
             <!--
             <t>
@@ -2909,17 +2944,18 @@
                   <vspace/>
                   OPTIONAL.
                   Access Token のハッシュ値.
-                  この値は, <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
-                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
+                  この値は, <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値の左半分を base64url エンコードしたものであり, ハッシュアルゴリズムは ID Token の JOSE Header にある <spanx style="verb">alg</spanx> Header Parameter で用いられるハッシュアルゴリズムと同じものを用いる.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを base64url エンコードする.
                   <spanx style="verb">at_hash</spanx> は大文字小文字を区別する文字列である.
                   <!--
+                  OPTIONAL.
                   Access Token hash value.
                   Its value is the base64url encoding of the left-most half of the
                   hash of the octets of the ASCII representation of the
                   <spanx style="verb">access_token</spanx> value,
                   where the hash algorithm used is the hash algorithm
-                  used in the <spanx style="verb">alg</spanx> parameter
-                  of the ID Token's <xref target="JWS">JWS</xref> header.
+                  used in the <spanx style="verb">alg</spanx> Header Parameter
+                  of the ID Token's JOSE Header.
                   For instance, if the <spanx style="verb">alg</spanx> is
                   <spanx style="verb">RS256</spanx>, hash the
                   <spanx style="verb">access_token</spanx> value
@@ -3013,7 +3049,7 @@
 
                 <t>
                   (このフローの中で) ID Token を Client と Token Endpoint の間の直接通信により受け取ったならば, トークンの署名確認の代わりに TLS Server の確認を issuer の確認のために利用してもよい (MAY).
-                  Client は <xref target="JWS">JWS</xref> に従い, JWT <spanx style="verb">alg</spanx> ヘッダパラメータを用いて全ての ID Token の署名を確認しなければならない (MUST).
+                  Client は <xref target="JWS">JWS</xref> に従い, JWT <spanx style="verb">alg</spanx> Header Parameter を用いて全ての ID Token の署名を確認しなければならない (MUST).
                   Client は Issuer から提供された鍵を利用しなければならない (MUST).
                 </t>
                 <!--
@@ -3025,7 +3061,7 @@
                   checking the token signature.
                   The Client MUST validate the signature of all other ID Tokens according to
                   <xref target="JWS">JWS</xref> using the algorithm specified in the
-                  JWT <spanx style="verb">alg</spanx> header parameter.
+                  JWT <spanx style="verb">alg</spanx> Header Parameter.
                   The Client MUST use the keys provided by the Issuer.
                 </t>
                 -->
@@ -3042,11 +3078,11 @@
                 -->
 
                 <t>
-                  JWT <spanx style="verb">alg</spanx> ヘッダパラメータが <spanx style="verb">HS256</spanx>, <spanx style="verb">HS384</spanx> および <spanx style="verb">HS512</spanx> のような MAC ベースのアルゴリズムを利用するならば, <spanx style="verb">aud</spanx> (audience) Claim に含まれる <spanx style="verb">client_id</spanx> に対応する <spanx style="verb">client_secret</spanx> の UTF-8 表現バイト列が署名の確認に用いられる.
+                  JWT <spanx style="verb">alg</spanx> Header Parameter が <spanx style="verb">HS256</spanx>, <spanx style="verb">HS384</spanx> および <spanx style="verb">HS512</spanx> のような MAC ベースのアルゴリズムを利用するならば, <spanx style="verb">aud</spanx> (audience) Claim に含まれる <spanx style="verb">client_id</spanx> に対応する <spanx style="verb">client_secret</spanx> の UTF-8 表現バイト列が署名の確認に用いられる.
                   MAC ベースのアルゴリズムについて, <spanx style="verb">aud</spanx> が複数の値を持つとき, もしくは <spanx style="verb">aud</spanx> の値と異なる <spanx style="verb">azp</spanx> の値があるときの振る舞いは規定されない.
                 </t>
                 <!--
-                <t>If the JWT <spanx style="verb">alg</spanx> header parameter
+                <t>If the JWT <spanx style="verb">alg</spanx> Header Parameter
                 uses a MAC based algorithm such as
                 <spanx style="verb">HS256</spanx>, <spanx style="verb">HS384</spanx>,
                 or <spanx style="verb">HS512</spanx>,
@@ -3076,12 +3112,10 @@
                   許容できる範囲は Client の仕様である.
                 </t>
                 <!--
-                <t>
-                  The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
-                  were issued too far away from the current time, limiting the amount of
-                  time that nonces need to be stored to prevent attacks.
-                  The acceptable range is Client specific.
-                </t>
+                <t>The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
+                were issued too far away from the current time, limiting the amount of
+                time that nonces need to be stored to prevent attacks.
+                The acceptable range is Client specific.</t>
                 -->
 
                 <t>
@@ -3152,8 +3186,8 @@
 
       <section anchor="ImplicitFlowAuth" title="Authentication using the Implicit Flow">
         <t>
-          この章では Authorization Code Flow での認証フローについて述べる.
-          Authorization Code Flow を利用する場合, Token Endpoint は使用されず, 全てのトークンは Authorization Endpoint から返される.
+          この章では Implicit Flow での認証フローについて述べる.
+          Implicit Flow を利用する場合, Token Endpoint は使用されず, 全てのトークンは Authorization Endpoint から返される.
         </t>
         <!--
         <t>
@@ -3181,7 +3215,7 @@
 
         <section anchor="ImplicitFlowSteps" title="Implicit Flow Steps">
           <t>
-            Authorization Code Flow の流れは以下通りである.
+            Implicit Flow の流れは以下通りである.
           </t>
           <!--
           <t>The Implicit Flow follows the following steps:</t>
@@ -3271,10 +3305,11 @@
                   REQUIRED.
                   使用する認証処理フローを決定する OAuth 2.0 Response Type 値.
                   この値により, どのエンドポイントからどのようなパラメータが返されるのかなどが決定される.
-                  Implicit Code Flow を使用する場合, この値は <spanx style="verb">id_token&nbsp;token</spanx> ないしは <spanx style="verb">id_token</spanx> となる.
+                  Implicit Flow を使用する場合, この値は <spanx style="verb">id_token&nbsp;token</spanx> ないしは <spanx style="verb">id_token</spanx> となる.
                   これらの値の意味するところは <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> を参照すること.
                   <spanx style="verb">id_token</spanx> を利用する場合, Access Token は返されない.
                   <!--
+                  REQUIRED.
                   OAuth 2.0 Response Type value that determines
                   the authorization processing flow to be used,
                   including what parameters are returned from the endpoints used.
@@ -3330,6 +3365,7 @@
                   <spanx style="verb">nonce</spanx> 値には, 推測不可能なように十分なエントロピーを持たせること (MUST).
                   実装の注意事項については <xref target="NonceNotes"/> を参照すること.
                   <!--
+                  REQUIRED.
                   String value used to associate a Client session
                   with an ID Token, and to mitigate replay attacks.
                   The value is passed through unmodified from the Authentication Request to the ID Token.
@@ -3504,6 +3540,7 @@
                   OPTIONAL.
                   Access Token の有効期限である, レスポンスが生成されてからの秒数.
                   <!--
+                  OPTIONAL.
                   Expiration time of the Access Token in seconds
                   since the response was generated.
                   -->
@@ -3640,7 +3677,7 @@
 
           <section anchor="ImplicitTokenValidation" title="Access Token Validation">
             <t>
-              Authorization Endpoint から ID Token とともに発行された Access Token を確認するため, Client は次のことを行うべき (SHOULD).
+              Authorization Endpoint から ID Token とともに発行された Access Token を確認するため, Client は次のことを行うべきである (SHOULD).
             </t>
             <!--
             <t>To validate an Access Token issued from the Authorization Endpoint with an ID Token,
@@ -3650,14 +3687,15 @@
             <t>
               <list style="numbers">
                 <t>
-                  ID Token の <xref target="JWS">JWS</xref> ヘッダ中の <spanx style="verb">alg</spanx> ヘッダパラメータのために <xref target="JWA">JWA</xref> にて指定されているハッシュアルゴリズムにて <spanx style="verb">access_token</spanx> の ASCII バイト列をハッシュする.
+                  ID Token の JOSE Header 中の <spanx style="verb">alg</spanx> Header Parameter のために <xref target="JWA">JWA</xref> にて指定されているハッシュアルゴリズムにて <spanx style="verb">access_token</spanx> の ASCII バイト列をハッシュする.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, ハッシュアルゴリズムは SHA-256 となる.
                 </t>
                 <!--
                 <t>Hash the octets of the ASCII representation of
                 the <spanx style="verb">access_token</spanx>
                 with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
-                <spanx style="verb">alg</spanx> header parameter
-                in the ID Token's <xref target="JWS">JWS</xref> header.
+                <spanx style="verb">alg</spanx> Header Parameter
+                of the ID Token's JOSE Header.
                 For instance, if the <spanx style="verb">alg</spanx> is
                 <spanx style="verb">RS256</spanx>,
                 the hash algorithm used is SHA-256.
@@ -3665,7 +3703,7 @@
                 -->
 
                 <t>
-                  ハッシュの左半分を取り出し, それを Base64 URL エンコードする.
+                  ハッシュの左半分を取り出し, それを base64url エンコードする.
                 </t>
                 <!--
                 <t>Take the left-most half of the hash and base64url encode it.</t>
@@ -3712,8 +3750,8 @@
                 <t hangText="at_hash">
                   <vspace/>
                   Access Token のハッシュ値.
-                  この値は, <spanx style="verb">access_token</spanx> の ASCII バイト列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
-                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
+                  この値は, <spanx style="verb">access_token</spanx> の ASCII バイト列のハッシュ値の左半分を base64url エンコードしたものであり, ハッシュアルゴリズムは ID Token の JOSE Header にある <spanx style="verb">alg</spanx> Header Parameter で用いられるハッシュアルゴリズムと同じものを用いる.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを base64url エンコードする.
                   <spanx style="verb">at_hash</spanx> は大文字小文字を区別する文字列である.
                   <!--
                   Access Token hash value.
@@ -3721,8 +3759,8 @@
                   hash of the octets of the ASCII representation of the
                   <spanx style="verb">access_token</spanx> value,
                   where the hash algorithm used is the hash algorithm
-                  used in the <spanx style="verb">alg</spanx> header parameter
-                  of the ID Token's <xref target="JWS">JWS</xref> header.
+                  used in the <spanx style="verb">alg</spanx> Header Parameter
+                  of the ID Token's JOSE Header.
                   For instance, if the <spanx style="verb">alg</spanx> is
                   <spanx style="verb">RS256</spanx>, hash the
                   <spanx style="verb">access_token</spanx> value
@@ -3764,13 +3802,13 @@
             <t>
               <list style="numbers">
                 <t>
-                  Clientは ID Token の署名を, JWT ヘッダ中の <spanx style="verb">alg</spanx> パラメータで指定されたアルゴリズムを使い, <xref target="JWS">JWS</xref> に従って検証しなければならない (MUST).
+                  Clientは ID Token の署名を, JOSE Header 中の <spanx style="verb">alg</spanx> Header Parameter で指定されたアルゴリズムを使い, <xref target="JWS">JWS</xref> に従って検証しなければならない (MUST).
                 </t>
                 <!--
                 <t>
                   The Client MUST validate the signature of the ID Token according to
                   <xref target="JWS">JWS</xref> using the algorithm specified in the
-                  <spanx style="verb">alg</spanx> parameter of the JWT header.
+                  <spanx style="verb">alg</spanx> Header Parameter of the JOSE Header.
                 </t>
                 -->
 
@@ -3930,6 +3968,7 @@
                   <spanx style="verb">code&nbsp;token</spanx>, <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> のいずれかになる.
                   これらの値の意味するところは <xref target="OAuth.Responses">OAuth 2.0 Multiple Response Type Encoding Practices</xref> を参照すること.
                   <!--
+                  REQUIRED.
                   OAuth 2.0 Response Type value that determines
                   the authorization processing flow to be used,
                   including what parameters are returned from the endpoints used.
@@ -4016,7 +4055,7 @@
           <section anchor="HybridAuthResponse" title="Successful Authentication Response">
 
             <t>
-              Hybrid Flow では, このセクションで指定される違いを除いて, Authorization Code Flow と同様の方法で Authorization Responses を構築する.
+              Hybrid Flow では, このセクションで指定される違いを除いて, Implicit Flow と同様の方法で Authorization Responses を構築する.
               (<xref target="ImplicitAuthResponse"/> 参照)
             </t>
             <!--
@@ -4060,6 +4099,7 @@
                   <spanx style="verb">code&nbsp;id_token</spanx> か
                   <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> の場合に返される.
                   <!--
+                  ID Token.
                   This is returned
                   when the <spanx style="verb">response_type</spanx> value used is
                   <spanx style="verb">code&nbsp;id_token</spanx> or
@@ -4072,6 +4112,7 @@
                   Authorization Code.
                   Hybrid Flow では常に返される.
                   <!--
+                  Authorization Code.
                   This is always returned when using the Hybrid Flow.
                   -->
                 </t>
@@ -4198,14 +4239,15 @@
                 </t>
                 -->
                 <t>
-                  使用される <spanx style="verb">response_type</spanx> の値が, <spanx style="verb">code&nbsp;id_token</spanx>, <spanx style="verb">code&nbsp;token</spanx>, または <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> の場合, Authorization Code の検証ルールは, <xref target="CodeValidation"/> に従うこと.
+                  使用される <spanx style="verb">response_type</spanx> の値が, <spanx style="verb">code&nbsp;id_token</spanx> または <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx> の場合, Authorization Code の検証ルールは, <xref target="CodeValidation"/> に従うこと.
                 </t>
                 <!--
                 <t>
                   Follow the Authorization Code validation rules in <xref target="CodeValidation"/>
                   when the <spanx style="verb">response_type</spanx> value used is
-                  <spanx style="verb">code&nbsp;id_token</spanx>,
-                  <spanx style="verb">code&nbsp;token</spanx>, or
+                  <spanx style="verb">code&nbsp;id_token</spanx> or
+                  <!-- <spanx style="verb">code&nbsp;token</spanx>
+                       is not included because Authorization Code validation requires an ID Token --><!--
                   <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx>.
                 </t>
                 -->
@@ -4243,16 +4285,16 @@
               <list style="numbers">
                 <t>
                   <spanx style="verb">code</spanx> の ASCII オクテットのハッシュ値を計算する.
-                  ハッシュアルゴリズムは, ID Token の <xref target="JWS">JWS</xref> ヘッダに含まれる <spanx style="verb">alg</spanx> ヘッダパラメータで利用されるものを利用する.
-                  各 <spanx style="verb">alg</spanx> ヘッダパラメータに対応するハッシュアルゴリズムは <xref target="JWA">JWA</xref> で定義されている.
+                  ハッシュアルゴリズムは, ID Token の JOSE Header に含まれる <spanx style="verb">alg</spanx> Header Parameter で利用されるものを利用する.
+                  各 <spanx style="verb">alg</spanx> Header Parameter に対応するハッシュアルゴリズムは <xref target="JWA">JWA</xref> で定義されている.
                   たとえば, <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, 使用されるハッシュアルゴリズムは SHA-256 である.
                 </t>
                 <!--
                 <t>Hash the octets of the ASCII representation of
                 the <spanx style="verb">code</spanx>
                 with the hash algorithm specified in <xref target="JWA">JWA</xref> for the
-                <spanx style="verb">alg</spanx> header parameter
-                in the ID Token's <xref target="JWS">JWS</xref> header.
+                <spanx style="verb">alg</spanx> Header Parameter
+                of the ID Token's JOSE Header.
                 For instance, if the <spanx style="verb">alg</spanx> is
                 <spanx style="verb">RS256</spanx>,
                 the hash algorithm used is SHA-256.
@@ -4260,7 +4302,7 @@
                 -->
 
                 <t>
-                  ハッシュの左半分を取得し, base64urlエンコードする.
+                  ハッシュの左半分を取得し, base64url エンコードする.
                 </t>
                 <!--
                 <t>Take the left-most half of the hash and base64url encode it.</t>
@@ -4296,7 +4338,7 @@
               <list style="hanging">
 
                 <t hangText="nonce">
-                  このフローでは <spanx style="verb">nonce</spanx> Claim の使用は必須である(REQUIRED).
+                  このフローでは <spanx style="verb">nonce</spanx> Claim の使用は必須である (REQUIRED).
                 </t>
                 <!--
                 <t hangText="nonce">
@@ -4308,8 +4350,8 @@
 
                 <t hangText="at_hash">
                   Access Token のハッシュ値.
-                  この値は, <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
-                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
+                  この値は, <spanx style="verb">access_token</spanx> の ASCII オクテット列のハッシュ値の左半分を base64url エンコードしたものであり, ハッシュアルゴリズムは ID Token の JOSE Header にある <spanx style="verb">alg</spanx> Header Parameter で用いられるハッシュアルゴリズムと同じものを用いる.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">access_token</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを base64url エンコードする.
                   <spanx style="verb">at_hash</spanx> は大文字小文字を区別する文字列である.
                 </t>
                 <!--
@@ -4320,8 +4362,8 @@
                   hash of the octets of the ASCII representation of the
                   <spanx style="verb">access_token</spanx> value,
                   where the hash algorithm used is the hash algorithm
-                  used in the <spanx style="verb">alg</spanx> header parameter
-                  of the ID Token's <xref target="JWS">JWS</xref> header.
+                  used in the <spanx style="verb">alg</spanx> Header Parameter
+                  of the ID Token's JOSE Header.
                   For instance, if the <spanx style="verb">alg</spanx> is
                   <spanx style="verb">RS256</spanx>, hash the
                   <spanx style="verb">access_token</spanx> value
@@ -4345,8 +4387,8 @@
 
                 <t hangText="c_hash">
                   Code のハッシュ値.
-                  この値は, <spanx style="verb">code</spanx> の ASCII オクテット列のハッシュ値の左半分を Basd64URL エンコードしたものであり, ハッシュアルゴリズムは ID Token の <xref target="JWS">JWS</xref> ヘッダーにある <spanx style="verb">alg</spanx> で用いられるハッシュアルゴリズムと同じものを用いる.
-                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">code</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを Base64URL エンコードする.
+                  この値は, <spanx style="verb">code</spanx> の ASCII オクテット列のハッシュ値の左半分を base64url エンコードしたものであり, ハッシュアルゴリズムは ID Token の JOSE Header にある <spanx style="verb">alg</spanx> Header Parameter で用いられるハッシュアルゴリズムと同じものを用いる.
+                  例えば <spanx style="verb">alg</spanx> が <spanx style="verb">RS256</spanx> であれば, <spanx style="verb">code</spanx> の SHA-256 ハッシュ値を計算し, その左半分の128ビットを base64url エンコードする.
                   <spanx style="verb">c_hash</spanx> は大文字小文字を区別する文字列である.
                 </t>
                 <!--
@@ -4357,8 +4399,8 @@
                   hash of the octets of the ASCII representation of the
                   <spanx style="verb">code</spanx> value,
                   where the hash algorithm used is the hash algorithm
-                  used in the <spanx style="verb">alg</spanx> header parameter
-                  of the ID Token's <xref target="JWS">JWS</xref> header.
+                  used in the <spanx style="verb">alg</spanx> Header Parameter
+                  of the ID Token's JOSE Header.
                   For instance, if the <spanx style="verb">alg</spanx> is
                   <spanx style="verb">HS512</spanx>, hash the
                   <spanx style="verb">code</spanx> value
@@ -6108,7 +6150,7 @@
           The Request Object MAY be signed or unsigned (plaintext).
           When it is plaintext, this is indicated by use of the
           <spanx style="verb">none</spanx> algorithm <xref target="JWA" />
-          in the JWS header.  If signed, the Request Object
+          in the JOSE Header.  If signed, the Request Object
           SHOULD contain the Claims
           <spanx style="verb">iss</spanx> (issuer)
           and <spanx style="verb">aud</spanx> (audience) as members.
@@ -6578,7 +6620,7 @@
 
           <t>
             To perform Signature Validation,
-            the <spanx style="verb">alg</spanx> parameter in the JWS header MUST match the value
+            the <spanx style="verb">alg</spanx> Header Parameter in the JOSE Header MUST match the value
             of the <spanx style="verb">request_object_signing_alg</spanx> set during
             Client Registration <xref target="OpenID.Registration"/> or a value that was
             pre-registered by other means.
@@ -6893,19 +6935,32 @@
             </t>
             <t>
               The <spanx style="verb">sub</spanx> (subject) Claim
-              value is the base64url encoded SHA-256 hash of
-              the concatenation of the octets of the UTF-8 representations of
-              the base64url encoded key values in the
-              <spanx style="verb">sub_jwk</spanx> Claim.
-              When the <spanx style="verb">kty</spanx> value is
-              <spanx style="verb">RSA</spanx>, the key values
-              <spanx style="verb">n</spanx> and
-              <spanx style="verb">e</spanx> are concatenated in that order.
-              When the <spanx style="verb">kty</spanx> value is
-              <spanx style="verb">EC</spanx>, the key values
+              value is the base64url encoded representation of
+              the thumbprint of
+              the key in the <spanx style="verb">sub_jwk</spanx> Claim.
+              This thumbprint value is computed as
+              the SHA-256 hash of
+              the octets of the UTF-8 representation of
+              a JWK constructed containing only the REQUIRED members to represent the key,
+              with the member names sorted into lexicographic order,
+              and with no white space or line breaks.
+              For instance,
+              when the <spanx style="verb">kty</spanx> value is
+              <spanx style="verb">RSA</spanx>, the member names
+              <spanx style="verb">e</spanx>,
+              <spanx style="verb">kty</spanx>, and
+              <spanx style="verb">n</spanx>
+              are the ones present in the constructed JWK used
+              in the thumbprint computation and appear in that order;
+              when the <spanx style="verb">kty</spanx> value is
+              <spanx style="verb">EC</spanx>, the member names
               <spanx style="verb">crv</spanx>,
+              <spanx style="verb">kty</spanx>,
               <spanx style="verb">x</spanx>, and
-              <spanx style="verb">y</spanx> are concatenated in that order.
+              <spanx style="verb">y</spanx>
+              are present in that order.
+              Note that this thumbprint calculation is the same as that defined in
+              the JWK Thumbprint <xref target="JWK.Thumbprint"/> specification.
             </t>
             <t>
               No Access Token is returned for accessing a UserInfo Endpoint,
@@ -6938,7 +6993,7 @@
             <t>
               The Client MUST validate the signature of the ID Token according to
               <xref target="JWS">JWS</xref> using the algorithm specified in the
-              <spanx style="verb">alg</spanx> parameter of the JWT header <xref target="JWT"/>,
+              <spanx style="verb">alg</spanx> Header Parameter of the JOSE Header,
               using the key in the <spanx style="verb">sub_jwk</spanx> Claim;
               the key is a bare key in JWK format
               (not an X.509 certificate value).
@@ -6949,20 +7004,11 @@
               It MAY also be <spanx style="verb">ES256</spanx>.
             </t>
             <t>
-              The Client MUST validate that the <spanx style="verb">sub</spanx> (subject) Claim
-              value is the base64url encoded SHA-256 hash of
-              the concatenation of the octets of the UTF-8 representations of
-              the base64url encoded key values in the
-              <spanx style="verb">sub_jwk</spanx> Claim.
-              When the <spanx style="verb">kty</spanx> value is
-              <spanx style="verb">RSA</spanx>, the key values
-              <spanx style="verb">n</spanx> and
-              <spanx style="verb">e</spanx> are concatenated in that order.
-              When the <spanx style="verb">kty</spanx> value is
-              <spanx style="verb">EC</spanx>, the key values
-              <spanx style="verb">crv</spanx>,
-              <spanx style="verb">x</spanx>, and
-              <spanx style="verb">y</spanx> are concatenated in that order.
+              The Client MUST validate that the <spanx style="verb">sub</spanx> Claim
+              value is the base64url encoded representation of
+              the thumbprint of
+              the key in the <spanx style="verb">sub_jwk</spanx> Claim,
+              as specified in <xref target="SelfIssuedResponse"/>.
             </t>
             <t>
               The current time MUST be before the time represented by the
@@ -6978,7 +7024,7 @@
             <t>
               If a nonce value was sent in the Authentication Request,
               a <spanx style="verb">nonce</spanx> Claim MUST be present
-              and its value of the checked to verify that
+              and its value checked to verify that
               it is the same value as the one that was sent in the Authentication Request.
               The Client SHOULD check the <spanx style="verb">nonce</spanx> value
               for replay attacks.
@@ -6994,7 +7040,7 @@
           <artwork><![CDATA[
   {
    "iss": "https://self-issued.me",
-   "sub": "wBy8QvHbPzUnL0x63h13QqvUYcOur1X0cbQpPVRqX5k",
+   "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
    "aud": "https://client.example.org/cb",
    "nonce": "n-0S6_WzA2Mj",
    "exp": 1311281970,
@@ -7162,7 +7208,7 @@
             <vspace/>
             Clients that have received a <spanx style='verb'>client_secret</spanx> value
             from the Authorization Server authenticate with the Authorization Server
-            in accordance with Section 3.2.1 of <xref
+            in accordance with Section 2.3.1 of <xref
             target="RFC6749">OAuth 2.0</xref> using the HTTP Basic authentication scheme.
           </t>
 
@@ -7170,7 +7216,7 @@
             <vspace/>
             Clients that have received a <spanx style='verb'>client_secret</spanx> value
             from the Authorization Server, authenticate with the Authorization Server
-            in accordance with Section 3.2.1 of <xref
+            in accordance with Section 2.3.1 of <xref
             target="RFC6749">OAuth 2.0</xref> by including the Client Credentials in the request body.
           </t>
 
@@ -7416,21 +7462,21 @@
             <t hangText="Asymmetric Signatures">
               <vspace/>
               When using RSA or ECDSA Signatures,
-              the <spanx style="verb">alg</spanx> header parameter value
-              of the JWS header MUST be set to an appropriate algorithm
+              the <spanx style="verb">alg</spanx> Header Parameter value
+              of the JOSE Header MUST be set to an appropriate algorithm
               as defined in <xref target="JWA">JSON Web Algorithms</xref>.
               The private key used to sign the content MUST be associated with
               a public key used for signature verification published by the sender
               in its JWK Set document.
               If there are multiple keys in the referenced JWK Set document, a
-              <spanx style="verb">kid</spanx> value MUST be provided in the JWS header.
+              <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
               The key usage of the respective keys MUST support signing.
             </t>
             <t hangText="Symmetric Signatures">
               <vspace/>
               When using MAC-based signatures,
-              the <spanx style="verb">alg</spanx> header parameter value
-              of the JWS header MUST be set to a MAC algorithm,
+              the <spanx style="verb">alg</spanx> Header Parameter value
+              of the JOSE Header MUST be set to a MAC algorithm,
               as defined in <xref target="JWA">JSON Web Algorithms</xref>.
               The MAC key used is
               the octets of the UTF-8 representation of
@@ -7450,7 +7496,7 @@
           <t>Rotation of signing keys can be accomplished with the following approach. The signer publishes
           its keys in a JWK Set at its <spanx style="verb">jwks_uri</spanx> location
           and includes the <spanx style="verb">kid</spanx> of the
-          signing key in the JWS header of each message
+          signing key in the JOSE Header of each message
           to indicate to the verifier which key is to be used to validate the signature. Keys can be rolled over
           by periodically adding new keys to the JWK Set at the <spanx style="verb">jwks_uri</spanx> location.
           The signer can begin using a new key at its
@@ -7479,7 +7525,7 @@
               a public key used for encryption published by the recipient
               in its JWK Set document.
               If there are multiple keys in the referenced JWK Set document, a
-              <spanx style="verb">kid</spanx> value MUST be provided in the JWE header.
+              <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
               Use the supported RSA encryption algorithm to encrypt a random
               Content Encryption Key to be used for encrypting
               the signed JWT.
@@ -7488,12 +7534,12 @@
             <t hangText="Asymmetric Encryption: Elliptic Curve">
               <vspace/>
               Create an ephemeral Elliptic Curve public key for the <spanx style="verb">epk</spanx>
-              element of the JWE header.
+              element of the JOSE Header.
               The other public key used for the key agreement computation MUST be
               a public key published by the recipient
               in its JWK Set document.
               If there are multiple keys in the referenced JWK Set document, a
-              <spanx style="verb">kid</spanx> value MUST be provided in the JWE header.
+              <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
               Use the ECDH-ES algorithm to agree upon a
               Content Encryption Key to be used for encrypting
               the signed JWT.
@@ -7532,7 +7578,7 @@
             the encrypting party starts the process and thus cannot rely on
             a change in <spanx style="verb">kid</spanx> as a signal
             that keys need to change. The encrypting party
-            still uses the <spanx style="verb">kid</spanx> header parameter in the JWE
+            still uses the <spanx style="verb">kid</spanx> Header Parameter in the JWE
             to tell the decrypting party which private key to use to decrypt, however, the encrypting party
             needs to first select the most appropriate key from those provided in the JWK Set at
             the recipient's <spanx style="verb">jwks_uri</spanx> location.
@@ -8176,14 +8222,13 @@
             this specification uses several IETF specifications that are
             not yet final specifications.  Those specifications are:
             <list style="symbols">
-              <t><xref target="JWT">JSON Web Token (JWT) draft -13</xref></t>
-              <t><xref target="JWS">JSON Web Signature (JWS) draft -18</xref></t>
-              <t><xref target="JWE">JSON Web Encryption (JWE) draft -18</xref></t>
-              <t><xref target="JWK">JSON Web Key (JWK) draft -18</xref></t>
-              <t><xref target="JWA">JSON Web Algorithms draft -18</xref></t>
-              <t><xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants draft -13</xref></t>
-              <t><xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants draft -07</xref></t>
-
+              <t><xref target="JWT">JSON Web Token (JWT) draft -25</xref></t>
+              <t><xref target="JWS">JSON Web Signature (JWS) draft -31</xref></t>
+              <t><xref target="JWE">JSON Web Encryption (JWE) draft -31</xref></t>
+              <t><xref target="JWK">JSON Web Key (JWK) draft -31</xref></t>
+              <t><xref target="JWA">JSON Web Algorithms draft -31</xref></t>
+              <t><xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants draft -17</xref></t>
+              <t><xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants draft -10</xref></t>
             </list>
           </t>
           <t>
@@ -9538,23 +9583,23 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3339"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3966"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5322"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6711"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6750"?>
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6819"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2616"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4627"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3339"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3966"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5322"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6711"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6750"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6819"?>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
 
       <reference anchor="USA15">
         <front>
@@ -9601,7 +9646,7 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="8" month="November" year="2014"/>
         </front>
 
         <format target="http://openid.net/specs/openid-connect-discovery-1_0.html"
@@ -9624,7 +9669,7 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="8" month="November" year="2014"/>
         </front>
 
         <format target="http://openid.net/specs/openid-connect-registration-1_0.html"
@@ -9647,11 +9692,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
         <seriesInfo value="draft-ietf-oauth-json-web-token" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13"
+        <format target="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25"
                 type="HTML" />
       </reference>
 
@@ -9671,11 +9716,11 @@
             <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
         <seriesInfo value="draft-ietf-jose-json-web-signature" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-18"
+        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31"
                 type="HTML" />
       </reference>
 
@@ -9695,11 +9740,11 @@
             <organization>Cisco Systems, Inc.</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
         <seriesInfo value="draft-ietf-jose-json-web-encryption" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-18" type="HTML" />
+        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-31" type="HTML" />
       </reference>
 
       <reference anchor="JWK">
@@ -9710,11 +9755,11 @@
             <organization>Microsoft</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
         <seriesInfo value="draft-ietf-jose-json-web-key" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18" type="HTML" />
+        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-31" type="HTML" />
       </reference>
 
       <reference anchor="JWA">
@@ -9725,11 +9770,11 @@
             <organization>Microsoft</organization>
           </author>
 
-          <date day="12" month="November" year="2013" />
+          <date day="4" month="July" year="2014" />
         </front>
 
         <seriesInfo value="draft-ietf-jose-json-web-algorithms" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18" type="HTML" />
+        <format target="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31" type="HTML" />
       </reference>
 
       <reference anchor="OAuth.JWT">
@@ -9748,11 +9793,11 @@
             <organization>Salesforce</organization>
           </author>
 
-          <date day="9" month="December" year="2013"/>
+          <date day="23" month="July" year="2014"/>
         </front>
 
         <seriesInfo value="draft-ietf-oauth-jwt-bearer" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-oauth-jwt-bearer-07"
+        <format target="http://tools.ietf.org/html/draft-ietf-oauth-jwt-bearer-10"
                 type="HTML" />
       </reference>
 
@@ -9776,11 +9821,11 @@
             <organization abbrev="Microsoft">Microsoft</organization>
           </author>
 
-          <date day="9" month="December" year="2013"/>
+          <date day="23" month="July" year="2014"/>
         </front>
 
         <seriesInfo value="draft-ietf-oauth-assertions" name="Internet-Draft"/>
-        <format target="http://tools.ietf.org/html/draft-ietf-oauth-assertions-13"
+        <format target="http://tools.ietf.org/html/draft-ietf-oauth-assertions-17"
                 type="HTML" />
       </reference>
 
@@ -9932,7 +9977,7 @@
     </references>
     <references title="Informative References">
 
-      <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4949"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4949"?>
 
       <reference anchor="OpenID.Basic">
         <front>
@@ -9958,7 +10003,7 @@
             <organization abbrev="Salesforce">Salesforce</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="8" month="November" year="2014"/>
         </front>
 
         <format target="http://openid.net/specs/openid-connect-basic-1_0.html"
@@ -9989,7 +10034,7 @@
             <organization abbrev="Salesforce">Salesforce</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="8" month="November" year="2014"/>
         </front>
 
         <format target="http://openid.net/specs/openid-connect-implicit-1_0.html"
@@ -10024,7 +10069,7 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="25" month="February" year="2014"/>
+          <date day="8" month="November" year="2014"/>
         </front>
 
         <format target="http://openid.net/specs/openid-connect-session-1_0.html"
@@ -10162,6 +10207,26 @@
                 type="PDF" />
       </reference>
 
+      <reference anchor="JWK.Thumbprint">
+        <front>
+          <title>JSON Web Key (JWK) Thumbprint</title>
+
+          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+            <organization>Microsoft</organization>
+            <address>
+              <email>mbj@microsoft.com</email>
+              <uri>http://self-issued.info/</uri>
+            </address>
+          </author>
+
+          <date day="23" month="July" year="2014" />
+        </front>
+
+        <seriesInfo value="draft-jones-jose-jwk-thumbprint" name="Internet-Draft"/>
+        <format target="http://tools.ietf.org/html/draft-jones-jose-jwk-thumbprint-01"
+                type="HTML" />
+      </reference>
+
     </references>
 
     <section anchor="AuthorizationExamples" title="Authorization Examples">
@@ -10231,7 +10296,7 @@
           The value of the <spanx style="verb">id_token</spanx> parameter is the ID Token,
           which is a signed JWT,
           containing three base64url encoded segments separated by period ('.') characters.
-          The first segment represents the JWT header.
+          The first segment represents the JOSE Header.
           Base64url decoding it will result in the following set of Header Parameters:
         </t>
         <figure>
