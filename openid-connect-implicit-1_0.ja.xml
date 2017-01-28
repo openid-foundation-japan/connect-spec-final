@@ -3806,7 +3806,8 @@
             </t>
             -->
             <t>
-              Client
+              Client は <spanx style="verb">sub</spanx> Claim が <spanx style="verb">sub_jwk</spanx> Claim に含まれる鍵の Thumbprint の Base64URL エンコード値であることを検証しなければならない (MUST).
+              <xref target="SelfIssuedResponse"/> 参照.
             </t>
             <!--
             <t>

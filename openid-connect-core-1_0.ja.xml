@@ -2025,7 +2025,7 @@
                   Authorization Server は, 異なるユーザの ID Token や Access Token を応答してはならない (MUST NOT) .
                   このような要求は,  <spanx style="verb">id_token_hint</spanx> パラメータを用いるか,
                   もしくは実装が <spanx style="verb">claims</spanx> パラメータをサポートしていれば,
-                  <xref target="IndividualClaimsRequests"/> に記述されているように特定の Claim 値を要求することによって実現することができる.
+                  <xref target="IndividualClaimsRequests"/> に記述されているように特定の Claim Value を要求することによって実現することができる.
                 </t>
               </list>
             </t>
@@ -4246,8 +4246,8 @@
                   Follow the Authorization Code validation rules in <xref target="CodeValidation"/>
                   when the <spanx style="verb">response_type</spanx> value used is
                   <spanx style="verb">code&nbsp;id_token</spanx> or
-                  <!-- <spanx style="verb">code&nbsp;token</spanx>
-                       is not included because Authorization Code validation requires an ID Token --><!--
+                  < !-- <spanx style="verb">code&nbsp;token</spanx>
+                       is not included because Authorization Code validation requires an ID Token -- >
                   <spanx style="verb">code&nbsp;id_token&nbsp;token</spanx>.
                 </t>
                 -->
@@ -4638,6 +4638,13 @@
 
     <section anchor="ThirdPartyInitiatedLogin" title="Initiating Login from a Third Party">
       <t>
+        場合によっては, ログインフローは Relying Party ではなく OpenID Provider やその他の Party によって開始されることもある.
+        その場合, ログインフローを開始する主体は, ユーザーを RP のログイン開始エンドポイントにリダイレクトさせ, RP に特定の OP に Authentication Request を送るよう要求する.
+        このログイン開始エンドポイントは RP のデフォルトのランディングページではなく deep link でもよい.
+        <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> をサポートする RP は <spanx style="verb">initiate_login_uri</spanx> Registration パラメータを使ってこのエンドポイントを登録することができる.
+      </t>
+      <!--
+      <t>
         In some cases, the login flow is initiated by an OpenID Provider
         or another party, rather than the Relying Party.
         In this case, the initiator redirects to the RP at its login initiation endpoint,
@@ -4649,61 +4656,106 @@
         register this endpoint value using the
         <spanx style="verb">initiate_login_uri</spanx> Registration parameter.
       </t>
+      -->
+      <t>
+        ログインリクエストを開始する Party は, 以下のパラメーターを付与してユーザーを RP のログイン開始エンドポイントにリダイレクトさせることでフローを開始する:
+      </t>
+      <!--
       <t>
         The party initiating the login request does so by redirecting
         to the login initiation endpoint at the RP, passing the following parameters:
       </t>
+      -->
       <t>
         <list style="hanging">
           <t hangText="iss">
             <vspace/>
             REQUIRED.
+            RP が Authentication Request を送信する OP を示す Issuer Identifier.
+            その値は <spanx style="verb">https</spanx> スキームを用いた URL でなければならない (MUST).
+            <!--
+            REQUIRED.
             Issuer Identifier for the OP that the RP is to send
             the Authentication Request to.
             Its value MUST be a URL using the <spanx style="verb">https</spanx> scheme.
+            -->
           </t>
           <t hangText="login_hint">
             <vspace/>
+            OPTIONAL.
+            Authorization Server に対して, ログインさせたい End-User を示す, ログイン識別子に関するヒント情報.
+            Client がこの文字列値パラメーターを受け取った場合, それを Authentication Request に <spanx style="verb">login_hint</spanx> パラメーター値として含めなければならない (MUST).
+            <!--
             OPTIONAL.
             Hint to the Authorization Server
             about the login identifier the End-User might use to log in.
             If the client receives a value for this string-valued parameter,
             it MUST include it in the Authentication Request
             as the <spanx style="verb">login_hint</spanx> parameter value.
+            -->
           </t>
           <t hangText="target_link_uri">
             <vspace/>
+            OPTIONAL.
+            認証後, RP がリダイレクトするよう要求された URL.
+            RP は外部サイトへのオープンリダイレクターとして使用されることを防ぐために <spanx style="verb">target_link_uri</spanx> の値を検証しなければならない(MUST).
+            <!--
             OPTIONAL.
             URL that the RP is requested to redirect to after authentication.
             RPs MUST verify the value of the
             <spanx style="verb">target_link_uri</spanx> to prevent being used as
             an open redirector to external sites.
+            -->
           </t>
 
         </list>
       </t>
+      <t>
+        パラメーターは HTTP <spanx style="verb">GET</spanx> メソッドを用いたクエリパラメーターとして渡す, もしくは User Agent で自動送信される HTML フォーム値として HTTP <spanx style="verb">POST</spanx> メソッドで渡すことができる.
+      </t>
+      <!--
       <t>
         The parameters can either be passed as query parameters using
         the HTTP <spanx style="verb">GET</spanx> method
         or be passed as HTML form values that are auto-submitted in the User Agent,
         and thus are transmitted via the HTTP <spanx style="verb">POST</spanx> method.
       </t>
+      -->
 
+      <t>
+        拡張によって他のパラメーターが定義される場合, それらが送られてもよい (MAY).
+        Client は, 理解できないパラメーターが送られた場合, それらを無視しなければならない (MUST).
+      </t>
+      <!--
       <t>
         Other parameters MAY be sent, if defined by extensions.
         Any parameters used that are not understood MUST be ignored by the Client.
       </t>
+      -->
 
+      <t>
+        Clients は, Clickjacking などの攻撃を通じて End-User が 3rd-party サイトに無意識にログインさせられるような攻撃を防ぐため, フレームバスティングやその他の技術を採用すべきである (SHOULD).
+        詳細は <xref target="RFC6819"/> の Section 4.4.1.9 を参照.
+      </t>
+      <!--
       <t>
         Clients SHOULD employ frame busting and other techniques to prevent
         End-Users from being logged in by third party sites without their knowledge
         through attacks such as Clickjacking.
         Refer to Section 4.4.1.9 of <xref target="RFC6819"/> for more details.
       </t>
+      -->
 
     </section>
 
     <section anchor="Claims" title="Claims">
+      <t>
+        この章では, Client が End-User と Authentication イベントについての Claims をどのように取得するかについて定義する.
+        また同時に Basic Profile Claims の標準セットも定義する.
+        特定の scope 値を用いて事前に定義された Claims のセットを要求することもできるし, <spanx style="verb">claims</spanx> リクエストパラメーターを用いて個々の Claims を要求することもできる.
+        これらの Claims は, OpenID Provider から直接取得することもできるし, 分散されたデータソースから個別に取得することもできる.
+      </t>
+      <!--
       <t>
         This section specifies how the Client can obtain Claims about the End-User
         and the Authentication event.
@@ -4714,13 +4766,20 @@
         The Claims can come directly from the OpenID Provider
         or from distributed sources as well.
       </t>
+      -->
 
       <section anchor="StandardClaims" title="Standard Claims">
+        <t>
+          ここでは標準 Claims のセットを定義する.
+          これらは <xref target="UserInfoResponse"/> に示す UserInfo Response, あるいは <xref target="IDToken"/> に示す ID Token のどちらかに含めて返却するように要求できる.
+        </t>
+        <!--
         <t>This specification defines a set of standard Claims.
         They can be requested to be returned either in the
         UserInfo Response, per <xref target="UserInfoResponse"/>,
         or in the ID Token, per <xref target="IDToken"/>.
         </t>
+        -->
 
         <texttable anchor="ClaimTable" title="Registered Member Definitions">
           <ttcol align="left">Member</ttcol>
@@ -4731,52 +4790,96 @@
 
           <c>sub</c>
           <c>string</c>
+          <c>Subject - Issuer における End-User の識別子</c>
+          <!--
           <c>Subject - Identifier for the End-User at the Issuer.</c>
+          -->
 
           <c>name</c>
           <c>string</c>
+          <c>
+            End-User の表示用フルネーム.
+            肩書きや称号 (suffix) 等が含まれることもある.
+            氏名等の表示順は End-User の locale や選好に従う.
+          </c>
+          <!--
           <c>
             End-User's full name in displayable form including all name parts,
             possibly including titles and suffixes,
             ordered according to the End-User's locale and preferences.
           </c>
+          -->
 
           <c>given_name</c>
           <c>string</c>
+          <c>
+            End-User の名 (given name / first name).
+            複数の given name を持つ文化圏もあることに注意.
+            全ての given name が含まれる可能性があり, その場合はスペース区切りで表記される.
+          </c>
+          <!--
           <c>
             Given name(s) or first name(s) of the End-User.
             Note that in some cultures, people can have multiple given names;
             all can be present, with the names being separated by space characters.
           </c>
+          -->
 
           <c>family_name</c>
           <c>string</c>
+          <c>
+            End-User の姓 (surname / last name).
+            複数の family name を持つ文化圏や family name を持たない文化圏もあることに注意.
+            全ての family name が含まれる可能性があり, その場合はスペース区切りで表記される.
+          </c>
+          <!--
           <c>
             Surname(s) or last name(s) of the End-User.
             Note that in some cultures, people can have multiple family names
             or no family name;
             all can be present, with the names being separated by space characters.
           </c>
+          -->
 
           <c>middle_name</c>
           <c>string</c>
+          <c>
+            End-User の middle name.
+            複数の middle name を持つ文化圏もあることに注意.
+            全ての middle name が含まれる可能性があり, その場合はスペース区切りで表記される.
+            また middle name を使用しない文化圏もある.
+          </c>
+          <!--
           <c>
             Middle name(s) of the End-User.
             Note that in some cultures, people can have multiple middle names;
             all can be present, with the names being separated by space characters.
             Also note that in some cultures, middle names are not used.
           </c>
+          -->
 
           <c>nickname</c>
           <c>string</c>
+          <c>
+            End-User のニックネーム. これは <spanx style="verb">given_name</spanx> と同じこともあれば異なることもある.
+            例えば, <spanx style="verb">nickname</spanx> が <spanx style="verb">Mike</spanx>, <spanx style="verb">given_name</spanx> が <spanx style="verb">Michael</spanx> として返されることがある.
+          </c>
+          <!--
           <c>Casual name of the End-User that may or may not be the same as the
           <spanx style="verb">given_name</spanx>. For instance, a <spanx
           style="verb">nickname</spanx> value of <spanx style="verb">Mike</spanx>
           might be returned alongside a <spanx style="verb">given_name</spanx>
           value of <spanx style="verb">Michael</spanx>.</c>
+          -->
 
           <c>preferred_username</c>
           <c>string</c>
+          <c>
+            <spanx style="verb">janedoe</spanx> や <spanx style="verb">j.doe</spanx> といった, End-User の選好する簡略名.
+            これは <spanx style="verb">@</spanx> や <spanx style="verb">/</spanx> や空白文字といった特殊文字を含むあらゆる valid な JSON 文字列でありうる (MAY).
+            <xref target="ClaimStability"></xref> にあるように, RP はこの値がユニークであるという前提で扱ってはならない (MUST NOT).
+          </c>
+          <!--
           <c>Shorthand name by which the End-User wishes to be referred to at the RP, such as
           <spanx style="verb">janedoe</spanx> or <spanx style="verb">j.doe</spanx>.
           This value MAY be any valid JSON string including
@@ -4785,16 +4888,29 @@
           The RP MUST NOT rely upon this value being unique,
           as discussed in <xref target="ClaimStability"></xref>.
           </c>
+          -->
 
           <c>profile</c>
           <c>string</c>
           <c>
+            End-User のプロフィールページの URL.
+            この Web ページに掲載されるコンテンツはこの End-User に関するものであるべきである (SHOULD).
+          </c>
+          <!--
+          <c>
             URL of the End-User's profile page.
             The contents of this Web page SHOULD be about the End-User.
           </c>
+          -->
 
           <c>picture</c>
           <c>string</c>
+          <c>
+            End-User のプロフィール画像の URL.
+            この URL は画像ファイル (PNG, JPEG, GIF 画像ファイル等) を参照すること (MUST).
+            またこの画像は End-User が撮影した任意の写真ではなく, End-User に言及する際の表示に適切なプロフィール画像とするべきである (SHOULD).
+          </c>
+          <!--
           <c>
             URL of the End-User's profile picture.
             This URL MUST refer to an image file
@@ -4805,17 +4921,30 @@
             suitable for displaying when describing the End-User,
             rather than an arbitrary photo taken by the End-User.
           </c>
+          -->
 
           <c>website</c>
           <c>string</c>
+          <c>
+            End-User の Web ページやブログの URL.
+            この Web ページは End-User 自身や End-User が所属する組織が発信する情報を含むべきである (SHOULD).
+          </c>
+          <!--
           <c>
             URL of the End-User's Web page or blog.
             This Web page SHOULD contain information published by the End-User
             or an organization that the End-User is affiliated with.
           </c>
+          -->
 
           <c>email</c>
           <c>string</c>
+          <c>
+            End-User の選好する Email アドレス.
+            <xref target="RFC5322">RFC 5322</xref> の addr-spec シンタックスに従うこと.
+            <xref target="ClaimStability"></xref> にあるように, RP はこの値がユニークであるという前提で扱ってはならない (MUST NOT).
+          </c>
+          <!--
           <c>
             End-User's preferred e-mail address.
             Its value MUST conform to the <xref target="RFC5322">RFC 5322</xref>
@@ -4823,9 +4952,16 @@
             The RP MUST NOT rely upon this value being unique,
             as discussed in <xref target="ClaimStability"></xref>.
           </c>
+          -->
 
           <c>email_verified</c>
           <c>boolean</c>
+          <c>
+            End-User の Email アドレスが検証済であれば true, さもなければ false.
+            Claim Value が <spanx style="verb">true</spanx> の場合, これは OP が検証を行った時点において該当 Email アドレスが End-User のコントロール下にあるという確認処理を行ったことを示す.
+            Email アドレスの検証の詳細についてはコンテキストに依存し, 関係者間でのトラストフレームワークや契約上の同意事項等などによって異なる.
+          </c>
+          <!--
           <c>
             True if the End-User's e-mail address has been verified; otherwise false.
             When this Claim Value is <spanx style="verb">true</spanx>,
@@ -4836,16 +4972,32 @@
             and dependent upon the trust framework or contractual agreements
             within which the parties are operating.
           </c>
+          -->
 
           <c>gender</c>
           <c>string</c>
+          <c>
+            End-User の性別.
+            本仕様では <spanx style="verb">female</spanx>, <spanx style="verb">male</spanx> を定義する.
+            定義済の値に適切なものがない場合, その他の値を利用してもよい (MAY).
+          </c>
+          <!--
           <c> End-User's gender.  Values defined by this
           specification are <spanx style="verb">female</spanx> and
           <spanx style="verb">male</spanx>.  Other values MAY be used
           when neither of the defined values are applicable.</c>
+          -->
 
           <c>birthdate</c>
           <c>string</c>
+          <c>
+            End-User の誕生日.
+            <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx> 形式で表現される.
+            生年を <spanx style="verb">0000</spanx> とすることで生年を省略することもできる (MAY).
+            生年のみを提示する場合は <spanx style="verb">YYYY</spanx> 形式としても良い.
+            利用するプラットフォームの日付関連の関数の実装によって, 生年のみを提供した場合の月日の扱いは様々であるため, 実装者はこの点を考慮にいれて日付を処理すべきである.
+          </c>
+          <!--
           <c>End-User's birthday, represented as an
           <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx>
           format. The year MAY be <spanx style="verb">0000</spanx>, indicating that it is omitted.
@@ -4853,16 +5005,32 @@
           depending on the underlying platform's date related function, providing just year can
           result in varying month and day, so the implementers need to take this factor into account
           to correctly process the dates. </c>
+          -->
 
           <c>zoneinfo</c>
           <c>string</c>
+          <c>
+            End-User のタイムゾーンを示す zoneinfo <xref target="zoneinfo"/> に登録された文字列.
+            例えば, <spanx style="verb">Europe/Paris</spanx> や <spanx style="verb">America/Los_Angeles</spanx>.
+          </c>
+          <!--
           <c>String from zoneinfo <xref target="zoneinfo"/> time zone
           database representing the End-User's time zone.
           For example, <spanx style="verb">Europe/Paris</spanx> or
           <spanx style="verb">America/Los_Angeles</spanx>.</c>
+          -->
 
           <c>locale</c>
           <c>string</c>
+          <c>
+            End-User の locale.
+            <xref target="RFC5646">BCP47</xref> 言語タグ表現.
+            これは通常 <xref target="ISO639-1">ISO 639-1 Alpha-2</xref> 言語コードを小文字表記, <xref target="ISO3166-1">ISO 3166-1 Alpha-2</xref> 国コードを大文字表記し, ダッシュでつなげたものである.
+            (<spanx style="verb">en-US</spanx>, <spanx style="verb">fr-CA</spanx> 等)
+            実装によってはダッシュの代わりにアンダースコアを区切り文字に用いる場合もあるため, 互換性の観点からは注意すること. (<spanx style="verb">en_US</spanx> 等)
+            Relying Party はダッシュ区切りに加えてアンダースコア区切りのシンタックスを受け入れてもよい (MAY).
+          </c>
+          <!--
           <c>End-User's locale, represented as a
           <xref target="RFC5646">BCP47</xref> language tag.
           This is typically an <xref target="ISO639-1">ISO 639-1 Alpha-2</xref>
@@ -4874,9 +5042,18 @@
           as the separator rather than a dash, for example,
           <spanx style="verb">en_US</spanx>; Relying Parties MAY choose to
           accept this locale syntax as well.</c>
+          -->
 
           <c>phone_number</c>
           <c>string</c>
+          <c>
+            End-User の選好する電話番号.
+            この Claim のフォーマットとしては <xref target="E.164">E.164</xref> を推奨する (RECOMMENDED).
+            (<spanx style="verb">+1 (425) 555-1212</spanx>, <spanx style="verb">+56 (2) 687 2400</spanx> 等)
+            電話番号が拡張を含む場合, その拡張は <xref target="RFC3966">RFC 3966</xref> 拡張シンタックスで表記することを推奨する (RECOMMENDED).
+            (<spanx style="verb">+1 (604) 555-1234;ext=5678</spanx> 等)
+          </c>
+          <!--
           <c>
             End-User's preferred telephone number. <xref target="E.164">E.164</xref>
             is RECOMMENDED as the format of this Claim,
@@ -4887,9 +5064,17 @@
             <xref target="RFC3966">RFC 3966</xref> extension syntax,
             for example, <spanx style="verb">+1 (604) 555-1234;ext=5678</spanx>.
           </c>
+          -->
 
           <c>phone_number_verified</c>
           <c>boolean</c>
+          <c>
+            End-User の電話番号が検証済であれば ture, さもなければ false.
+            Claim Value が <spanx style="verb">true</spanx> の場合, これは OP が検証を行った時点において該当電話番号が End-User のコントロール下にあるという確認処理を行ったことを示す.
+            電話番号の検証の詳細についてはコンテキストに依存し, 関係者間でのトラストフレームワークや契約上の同意事項等などによって異なる.
+            また true の場合, <spanx style="verb">phone_number</spanx> Claim は E.164 形式でなければならず (MUST), すべての拡張は RFC 3966 形式でなければならない (MUST).
+          </c>
+          <!--
           <c>
             True if the End-User's phone number has been verified; otherwise false.
             When this Claim Value is <spanx style="verb">true</spanx>,
@@ -4903,26 +5088,45 @@
             Claim MUST be in E.164 format
             and any extensions MUST be represented in RFC 3966 format.
           </c>
+          -->
 
           <c>address</c>
           <c>JSON object</c>
+          <c>
+            End-User の選好する郵送先住所.
+            <spanx style="verb">address</spanx> メンバーは <xref target="AddressClaim"/> に定義されたメンバーを含む JSON <xref target="RFC4627"/> 構造である.
+          </c>
+          <!--
           <c>
             End-User's preferred postal address.
             The value of the <spanx style="verb">address</spanx> member is
             a JSON <xref target="RFC4627"/> structure containing some or all of
             the members defined in <xref target="AddressClaim"/>.
           </c>
+          -->
 
           <c>updated_at</c>
           <c>number</c>
+          <c>
+            End-User に関する情報の最終更新日時.
+            この値は UTC 1970-01-01T0:0:0Z から該当時刻までの秒数を示す JSON 数値である.
+          </c>
+          <!--
           <c>
             Time the End-User's information was last updated.
             Its value is a JSON number representing the number of seconds from
             1970-01-01T0:0:0Z as measured in UTC until the date/time.
           </c>
+          -->
         </texttable>
 
         <section anchor="AddressClaim" title="Address Claim">
+          <t>
+            Address Claim は物理的な郵送先住所である.
+            End-User の登録済情報とプライバシー設定に基づいて, <spanx style="verb">address</spanx> の一部のみを返却することもある (MAY).
+            例えば <spanx style="verb">country</spanx> と <spanx style="verb">region</spanx> を返し, それ以外の詳細なアドレス情報を省略するなどが考えられる.
+          </t>
+          <!--
           <t>
             The Address Claim represents a physical mailing address.
             Implementations MAY return only a subset of the
@@ -4933,6 +5137,12 @@
             style="verb">region</spanx> might be returned without returning
             more fine-grained address information.
           </t>
+          -->
+          <t>
+            住所全体を <spanx style="verb">formatted</spanx> サブフィールドに1文字列として入れてもよいし (MAY), 他のサブフィールドに個別の要素として各住所要素を指定するだけでもよいし (MAY), 両方を含めてもよい (MAY).
+            もし両方を含める場合, <spanx style="verb">formatted</spanx> 住所は住所の各要素の連結方法を示すものとし, 両方が同じ住所を示すこと (SHOULD).
+          </t>
+          <!--
           <t>
             Implementations MAY return just the full address
             as a single string in the formatted sub-field,
@@ -4944,6 +5154,48 @@
             with the formatted address indicating how the
             component fields are combined.
           </t>
+          -->
+
+          <t>
+            <list style="hanging">
+              <t hangText="formatted">
+                <vspace/>
+                表示や宛名ラベルで使用するために整形された完全な郵送先住所.
+                このフィールドは改行で区切られた複数の行を含んでもよい (MAY).
+                改行は, 復帰/行送りのペア ("\r\n") か,
+                または単一の行送り文字 ("\n") によって表現される.
+              </t>
+
+              <t hangText="street_address">
+                <vspace/>
+                家番号, ストリート名, 私書箱, 複数行からなる拡張された住所情報を含むことができる (MAY) 完全な住所を示す要素.
+                このフィールドは改行で区切られた複数の行を含んでもよい (MAY).
+                改行は, 復帰/行送りのペア ("\r\n") か,
+                または単一の行送り文字 ("\n") によって表現される.
+              </t>
+
+              <t hangText="locality">
+                <vspace/>
+                市町村などを表す city, locality を示す要素.
+              </t>
+
+              <t hangText="region">
+                <vspace/>
+                都道府県などを表す state, province, prefecture, region を示す要素.
+              </t>
+
+              <t hangText="postal_code">
+                <vspace/>
+                郵便番号を表す ZIP code, postal code を示す要素.
+              </t>
+
+              <t hangText="country">
+                <vspace/>
+                国名を示す要素.
+              </t>
+            </list>
+          </t>
+          <!--
           <t>
             <list style="hanging">
               <t hangText="formatted">
@@ -4991,28 +5243,50 @@
               </t>
             </list>
           </t>
+          -->
         </section>
 
         <section anchor="AdditionalClaims" title="Additional Claims">
+          <t>
+            当仕様では標準 Claim として小さなセットの Claim のみを定義しているが,
+            その他の Claim を標準 Claim と同時に使用してもよい (MAY).
+            このような Claim を用いる際は,
+            <xref target="JWT">JSON Web Token (JWT)</xref> 仕様に記載の通り,
+            衝突耐性のある名称を Claim Name に用いることを推奨する (RECOMMENDED).
+            あるいは, JWT 仕様に記載の通り, 名前衝突が発生する可能性が低い場合は,
+            Private Claim Name を安全に利用できるだろう.
+            もしくは, JWT 仕様に記載の通り, 追加の Claim が広く一般的に適用可能であれば,
+            Registered Claim Name として登録も可能だろう.
+          </t>
+          <!--
           <t>
             While this specification defines only a small set of Claims as
             standard Claims, other Claims MAY be used in conjunction
             with the standard Claims.
             When using such Claims, it is RECOMMENDED that
             collision-resistant names be used for the Claim Names,
-            as described in <!-- Section 4.2 (Public Claim Names) of --> the
+            as described in <!-- Section 4.2 (Public Claim Names) of --><!-- the
             <xref target="JWT">JSON Web Token (JWT)</xref> specification.
             Alternatively, Private Claim Names can be safely used
             when naming conflicts are unlikely to arise,
-            as described in <!-- Section 4.3 of --> the JWT specification.
+            as described in <!-- Section 4.3 of --><!-- the JWT specification.
             Or, if specific additional Claims will have broad and general applicability,
             they can be registered with Registered Claim Names,
-            per <!-- Sections 4.1 and 10.1 of --> the JWT specification.
+            per <!-- Sections 4.1 and 10.1 of --><!-- the JWT specification.
           </t>
+          -->
         </section>
       </section>
 
       <section anchor="ClaimsLanguagesAndScripts" title="Claims Languages and Scripts">
+        <t>
+          Human-readable な Claim Value およびそれらへの参照は, 複数言語および複数文字種で表現することができる (MAY).
+          言語および文字種の指定には <xref target="RFC5646">BCP47</xref> 言語タグを <spanx style="verb">#</spanx> を区切り文字としてメンバー名に付与する.
+          例えば <spanx style="verb">family_name#ja-Kana-JP</spanx> は日本語のカタカナ表記の Family Name を示す.
+          カタカナ表記の氏名は, 漢字表記 (<spanx style="verb">family_name#ja-Hani-JP</spanx>) の氏名の発音を示したりインデックス目的等で用いられることが多い.
+          他にも <spanx style="verb">website</spanx> が言語指定のない Web サイト, <spanx style="verb">website#de</spanx> がドイツ語の Web サイトを参照していることを示すといった例も挙げられる.
+        </t>
+        <!--
         <t>
           Human-readable Claim Values and Claim Values that reference human-readable values
           MAY be represented in multiple languages and scripts.
@@ -5028,6 +5302,13 @@
           referencing a Web site in an unspecified language and a Web site
           in German.
         </t>
+        -->
+        <t>
+          Claim Name は大文字小文字を区別するため, Claim Name 内の言語タグは <xref target="IANA.Language">IANA Language Subtag Registry</xref> に登録されたままの表記とすることを強く推奨する (RECOMMENDED).
+          一般的に言語名は小文字, 地域名は大文字, 文字種は大文字小文字混合で表記されることが多い.
+          しかしながら BCP47 言語タグ値は大文字小文字を区別しないため, 実装は言語タグを大文字小文字区別なく処理できるべきである (SHOULD).
+        </t>
+        <!--
         <t>
           Since Claim Names are case sensitive, it is strongly RECOMMENDED
           that language tag values used in Claim Names be spelled using the
@@ -5040,6 +5321,15 @@
           implementations SHOULD interpret the language tag values supplied
           in a case insensitive manner.
         </t>
+        -->
+        <t>
+          BCP47 で推奨されるように, Claim の言語タグ値は必要な時にのみ指定すべきである (SHOULD).
+          例えばほとんどの場合 <spanx style="verb">fr-CA</spanx> や <spanx style="verb">fr-FR</spanx> でなく <spanx style="verb">fr</spanx> で十分である.
+          可能であれば OP は要求された Claim locale と自身が持つ Claim のマッチングを試みるべきである (SHOULD).
+          例えば Client が <spanx style="verb">de</spanx> (ドイツ語) の Claim を要求してきており, OP が <spanx style="verb">de-CH</spanx> (スイスのドイツ語) 表記の Claim は持つが地域指定無しの一般的ドイツ語表記の Claim を持たない場合, OP はスイスのドイツ語の値を返すのが適切である.
+          (Client をできるかぎりシンプルに保つため, ここでは言語タグのマッチングが内包する複雑性をわざと OP に寄せている)
+        </t>
+        <!--
         <t>
           Per the recommendations in BCP47, language tag values for Claims
           SHOULD only be as specific as necessary.
@@ -5055,6 +5345,22 @@
           (This intentionally moves as much of the complexity of language tag
           matching to the OP as possible, to simplify Clients.)
         </t>
+        -->
+        <t>
+          返却される Claim の好ましい言語および文字種の指定を可能とするため,
+          OpenID Connect では, 以下の Authorization Request パラメータを定義している:
+
+          <list style="hanging">
+
+            <t hangText="claims_locales">
+              OPTIONAL.
+              返却される Claim に関して, End-User が好む言語および文字種.
+              スペース区切りの <xref target="RFC5646">BCP47</xref> 言語タグ値のリストとして表現され, 順序は選好順となる.
+              要求されたロケールがサポートされていない場合でも, OpenID Provider はエラーとするべきではない (SHOULD NOT).
+            </t>
+          </list>
+        </t>
+        <!--
         <t>
           OpenID Connect defines the following Authorization Request parameter
           to enable specify the preferred languages and scripts to be used
@@ -5074,6 +5380,12 @@
             </t>
           </list>
         </t>
+        -->
+        <t>
+          OP が <spanx style="verb">claims_locales</spanx> やその他の手段により End-User と Client が単一言語および文字種表記の Claim を要求していると特定した場合, 該当言語および文字種表記の Claim を返却する際には言語タグを付けずに返すことを推奨する (RECOMMENDED).
+          また Client は言語タグ付きの Claim を処理可能なよう実装することを推奨する (RECOMMENDED).
+        </t>
+        <!--
         <t>
           When the OP determines, either through the
           <spanx style="verb">claims_locales</spanx> parameter,
@@ -5084,11 +5396,18 @@
           It is also RECOMMENDED that Clients be written in a manner
           that they can handle and utilize Claims using language tags.
         </t>
+        -->
 
       </section>
 
       <section anchor="UserInfo" title="UserInfo Endpoint">
 
+        <t>
+          UserInfo Endpoint は, 認証された End-User に関する Claim を返す OAuth 2.0 Protected Resource である.
+          要求された End-User の Claim を取得するため, Clientは OpenID Connect Authentication を通して得られた Access Token を用いて UserInfo Endpoint に要求する.
+          これらの Claim は通常, Claim の名前と値のペアのコレクションを含んだ JSON オブジェクトで表現される.
+        </t>
+        <!--
         <t>
           The UserInfo Endpoint is an OAuth 2.0 Protected Resource that
           returns Claims about the authenticated End-User.
@@ -5098,27 +5417,54 @@
           These Claims are normally represented by a JSON object that contains
           a collection of name and value pairs for the Claims.
         </t>
+        -->
+        <t>
+          UserInfo Endpoint にアクセスする際には TLS は必須である (MUST).
+          TLS 利用についての詳細は <xref target="TLSRequirements"/> 参照.
+        </t>
+        <!--
         <t>
           Communication with the UserInfo Endpoint MUST utilize TLS.
           See <xref target="TLSRequirements"/> for more information on using TLS.
         </t>
+        -->
 
+        <t>
+          UserInfo Endpoint は <xref target="RFC2616">RFC 2616</xref> で定義された HTTP <spanx style="verb">GET</spanx> メソッドと HTTP <spanx style="verb">POST</spanx> メソッドをサポートしなければならない (MUST).
+        </t>
+        <!--
         <t>
           The UserInfo Endpoint MUST support the use of the
           HTTP <spanx style="verb">GET</spanx> and
           HTTP <spanx style="verb">POST</spanx> methods
           defined in <xref target="RFC2616">RFC 2616</xref>.
         </t>
+        -->
 
+        <t>
+          UserInfo Endpoint は <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> の Access Token を受け入れなければいけない (MUST).
+        </t>
+        <!--
         <t>The UserInfo Endpoint MUST accept Access Tokens as
         <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>.</t>
+        -->
 
+        <t>
+          UserInfo Endpoint は Java Scipt Clientが Endpoint にアクセスできるように <xref target="CORS">Cross Origin Resource Sharing (CORS)</xref> や 必要に応じて他の方法をサポートすべきである (SHOULD).
+        </t>
+        <!--
         <t>The UserInfo Endpoint SHOULD support the use of
         <xref target="CORS">Cross Origin Resource Sharing (CORS)</xref> and
         or other methods as appropriate to enable Java Script Clients to access the endpoint.</t>
+        -->
 
         <section anchor="UserInfoRequest" title="UserInfo Request">
 
+          <t>
+            Clientは HTTP <spanx style="verb">GET</spanx> か HTTP <spanx style="verb">POST</spanx> のいずれかを用いて UserInfo Request を送信する.
+            OpenID Connect Authentication Request で得られた Access Token は <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> の Section 2 に従って, Bearer Token として送信されなければいけない (MUST).
+          </t>
+          <!--
           <t>
             The Client sends the UserInfo Request using either
             HTTP <spanx style="verb">GET</spanx> or HTTP <spanx style="verb">POST</spanx>.
@@ -5126,17 +5472,28 @@
             from an OpenID Connect Authentication Request MUST be sent as a Bearer Token,
             per Section 2 of <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>.
           </t>
+          -->
+          <t>
+            このリクエストでは, HTTP <spanx style="verb">GET</spanx> メソッドを用いて, Access Token を <spanx style="verb">Authorization</spanx> ヘッダフィールドに含めて送信すべきである (SHOULD).
+          </t>
+          <!--
           <t>
             It is RECOMMENDED that the request use the
             HTTP <spanx style="verb">GET</spanx> method and
             the Access Token be sent using the
             <spanx style="verb">Authorization</spanx> header field.
           </t>
+          -->
 
           <figure>
             <preamble>
+              以下に UserInfo Request の一例を示す:
+            </preamble>
+            <!--
+            <preamble>
               The following is a non-normative example of a UserInfo Request:
             </preamble>
+            -->
 
             <artwork><![CDATA[
   GET /userinfo HTTP/1.1
@@ -5148,24 +5505,51 @@
 
         <section anchor="UserInfoResponse" title="Successful UserInfo Response">
           <t>
+            Client の登録時に署名または暗号化されたレスポンスが要求されていない限り, UserInfo Claim は JSON オブジェクトのメンバーとして返される (MUST).
+            <xref target="StandardClaims"/> に定義されている Claim に加え, そこに明記されていない Claim も返却可能である.
+          </t>
+          <!--
+          <t>
             The UserInfo Claims MUST be returned as the members of a JSON object
             unless a signed or encrypted response was requested during Client Registration.
             The Claims defined in <xref target="StandardClaims"/> can be returned,
             as can additional Claims not specified there.
           </t>
+          -->
+          <t>
+            プライバシー上の理由により, OpenID Provider はいくつかの要求された Claim の値を返さなくてもよい (MAY).
+          </t>
+          <!--
           <t>
             For privacy reasons, OpenID Providers MAY elect to not return
             values for some requested Claims.
           </t>
+          -->
+          <t>
+            Claim が返されない場合, Claim Name は JSON オブジェクトから除かれるべきであり (SHOULD), 値を null や空文字列にした状態で該当の Claim を含めるべきではない (SHOULD NOT).
+          </t>
+          <!--
           <t>
             If a Claim is not returned, that Claim Name SHOULD be
             omitted from the JSON object representing the Claims; it
             SHOULD NOT be present with a null or empty string value.
           </t>
+          -->
+          <t>
+            UserInfo Response には, 必ず <spanx style="verb">sub</spanx> (subject) Claim を含むこと (MUST).
+          </t>
+          <!--
           <t>
             The <spanx style="verb">sub</spanx> (subject) Claim
             MUST always be returned in the UserInfo Response.
           </t>
+          -->
+          <t>
+            注) トークン置換攻撃 (<xref target="TokenSubstitution"/> 参照) を考慮すると, UserInfo Response が必ずしも ID Token の <spanx style="verb">sub</spanx> Claim が示す End-User のものであるとは保証できない.
+            そのため UserInfo Response に含まれる <spanx style="verb">sub</spanx> Claim が ID Token のそれと一致することを検証しなければならない (MUST).
+            もし2つが一致しない場合, UserInfo Response を利用してはならない (MUST NOT).
+          </t>
+          <!--
           <t>
             NOTE:  Due to the possibility of token substitution attacks
             (see <xref target="TokenSubstitution"/>),
@@ -5177,6 +5561,13 @@
             <spanx style="verb">sub</spanx> Claim in the ID Token;
             if they do not match, the UserInfo Response values MUST NOT be used.
           </t>
+          -->
+          <t>
+            登録 <xref target="OpenID.Registration"/> 時に別の形式が指定された場合を除き, UserInfo Request を受信すると UserInfo Endpoint は <xref target="JSONSerialization"/> のように, UserInfor Response の JSON Serialization を HTTP レスポンスボディで返さなければならない (MUST).
+            UserInfo Endpoint は Content-Type ヘッダーを用いてフォーマットを示すこと (MUST).
+            レスポンスボディがテキスト JSON オブジェクトである場合, HTTP レスポンスの Content-Type は <spanx style="verb">application/json</spanx> でなければならず (MUST), レスポンスボディは UTF-8 エンコードとすること (SHOULD).
+          </t>
+          <!--
           <t>
             Upon receipt of the UserInfo Request, the UserInfo Endpoint MUST
             return the JSON Serialization of the UserInfo Response as in
@@ -5191,6 +5582,14 @@
             JSON object;
             the response body SHOULD be encoded using UTF-8.
           </t>
+          -->
+          <t>
+            UserInfo Response が署名や暗号化をされている場合,
+            Claim は JWT で返され, Content-Type は <spanx style="verb">application/jwt</spanx> でなければならない (MUST).
+            レスポンスは署名無しに暗号化をしてもよい (MAY).
+            署名と暗号化の両方が要求された場合, レスポンスは <xref target="JWT"/> で定義されているように, 結果はネストされた JWT となり, 署名した後に暗号化しなければならない (MUST).
+          </t>
+          <!--
           <t>
             If the UserInfo Response is
             signed and/or encrypted, then the Claims are returned in a JWT and the
@@ -5200,6 +5599,14 @@
             the response MUST be signed then encrypted,
             with the result being a Nested JWT, as defined in <xref target="JWT"/>.
           </t>
+          -->
+          <t>
+            署名する場合, UserInfo Response は
+            メンバーとして <spanx style="verb">iss</spanx> (issuer) Claim と <spanx style="verb">aud</spanx> (audience) Claim を含むべきである (SHOULD).
+            <spanx style="verb">iss</spanx> は OP の Issuer Identifier URL であるべきである (SHOULD).
+            <spanx style="verb">aud</spanx> は RP の Client ID の値とするか, 値を含むべきである (SHOULD).
+          </t>
+          <!--
           <t>
             If signed, the UserInfo Response
             SHOULD contain the Claims
@@ -5208,10 +5615,16 @@
             The <spanx style="verb">iss</spanx> value SHOULD be the OP's Issuer Identifier URL.
             The <spanx style="verb">aud</spanx> value SHOULD be or include the RP's Client ID value.
           </t>
+          -->
 
           <figure>
+            <preamble>
+              以下に UserInfo Response の一例を示す:
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example
             of a UserInfo Response:</preamble>
+            -->
 
             <artwork><![CDATA[
   HTTP/1.1 200 OK
@@ -5233,16 +5646,27 @@
         <section anchor="UserInfoError" title="UserInfo Error Response">
 
           <t>
+            もし何らかのエラーが起こった場合, UserInfo Endpoint は <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> Section 3 に示す Error Response を返す.
+            (RFC 6750 に関係のないエラーは, 適切な HTTP ステータスコードを用いて User Agent に返すこと)
+          </t>
+          <!--
+          <t>
             When an error condition occurs, the UserInfo Endpoint returns
             an Error Response as defined in Section 3 of
             <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>.
             (HTTP errors unrelated to RFC 6750 are returned to the User Agent using the
             appropriate HTTP status code.)
           </t>
+          -->
 
           <figure>
+            <preamble>
+              以下に UserInfo Error Response の一例を示す:
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example
             of a UserInfo Error Response:</preamble>
+            -->
 
             <artwork><![CDATA[
   HTTP/1.1 401 Unauthorized
@@ -5255,9 +5679,30 @@
         <section anchor="UserInfoResponseValidation" title="UserInfo Response Validation">
 
           <t>
+            Client は UserInfo Response を以下の手順で検証しなければならない (MUST).
+          </t>
+          <!--
+          <t>
             The Client MUST validate the UserInfo Response as follows:
           </t>
+          -->
 
+          <t>
+            <list style="numbers">
+              <t>
+                レスポンスを返した OP が意図した通りの OP であることを, <xref target="RFC6125">RFC 6125</xref> に従い TLS サーバー証明書チェックを通じて検証する.
+              </t>
+
+              <t>
+                Client が Registration 時に <spanx style="verb">userinfo_encrypted_response_alg</spanx> パラメータを提供した場合, Registration 時に指定した鍵を使用して UserInfo Response を復号する.
+              </t>
+
+              <t>
+                レスポンスが署名されている場合, Clientは <xref target="JWS">JWS</xref> に従って署名を検証すべきである (SHOULD).
+              </t>
+            </list>
+          </t>
+          <!--
           <t>
             <list style="numbers">
               <t>Verify that the OP that responded was the intended OP
@@ -5274,12 +5719,19 @@
               target="JWS">JWS</xref>.</t>
             </list>
           </t>
+          -->
         </section>
 
       </section>
 
       <section anchor="ScopeClaims" title="Requesting Claims using Scope Values">
 
+        <t>
+          OpenID Connect Client は <xref target="RFC6749">OAuth 2.0</xref> Section 3.3 に従い, Access Token に要求されるアクセス権限を <spanx style="verb">scope</spanx> 値を通じて指定する.
+          Access Tokens に紐づく scope は, そのトークンを使って OAuth 2.0 で保護されたエンドポイントにアクセスした際にどのようなリソースが得られるかを規定する.
+          Protected Resource エンドポイントは, Access Token 要求時に指定された scope 値やその他のパラメータに基づき, 異なる動作をしたり, 異なる情報を返却したりしてもよい (MAY).
+        </t>
+        <!--
         <t>
           OpenID Connect Clients use <spanx style="verb">scope</spanx> values,
           as defined in Section 3.3 of <xref target="RFC6749">OAuth 2.0</xref>,
@@ -5291,28 +5743,49 @@
           return different information based on the scope values and other parameters
           used when requesting the presented Access Token.
         </t>
+        -->
+        <t>
+          OpenID Connect では, scope は Claim Value として取得可能な情報セットを指定する為に利用できる.
+          本仕様では OpenID Connect で用いられる scope についてのみ述べる.
+        </t>
+        <!--
         <t>
           For OpenID Connect, scopes
           can be used to request that specific sets of information
           be made available as Claim Values.
         </t>
+        -->
+        <t>
+          Authorization Server は, 以下の scope によって要求される Claim を Voluntary Claim として扱う.
+        </t>
+        <!--
         <t>
           Claims requested by the following scopes are treated by Authorization Servers
           as Voluntary Claims.
         </t>
+        -->
 
+        <t>
+          OpenID Connect は, Claim を要求する際に用いられる以下の <spanx style="verb">scope</spanx> 値を定義する:
+        </t>
+        <!--
         <t>
           OpenID Connect defines the following <spanx style="verb">scope</spanx> values
           that are used to request Claims:
         </t>
+        -->
         <t>
           <list style="hanging">
 
             <t hangText="profile">
               <vspace/>
+              OPTIONAL.
+              この scope 値は, 以下に示す End-User のデフォルトプロフィール Claim へのアクセス要求に用いる.
+              <!--
               OPTIONAL. This scope value
               requests access to the End-User's default profile Claims,
               which are:
+              -->
 
               <spanx style="verb">name</spanx>,
               <spanx style="verb">family_name</spanx>,
@@ -5332,30 +5805,57 @@
 
             <t hangText="email">
               <vspace/>
+              OPTIONAL.
+              <spanx style="verb">email</spanx> および <spanx style="verb">email_verified</spanx> Claim へのアクセス要求に用いる.
+              <!--
               OPTIONAL. This scope value requests access to
               the <spanx style="verb">email</spanx> and
               <spanx style="verb">email_verified</spanx> Claims.
+              -->
             </t>
 
             <t hangText="address">
               <vspace/>
+              OPTIONAL.
+              <spanx style="verb">address</spanx> Claim へのアクセス要求に用いる.
+              <!--
               OPTIONAL. This scope value requests access to
               the <spanx style="verb">address</spanx> Claim.
+              -->
             </t>
 
             <t hangText="phone">
               <vspace/>
+              OPTIONAL.
+              <spanx style="verb">phone_number</spanx> および <spanx style="verb">phone_number_verified</spanx> Claim へのアクセス要求に用いる.
+              <!--
               OPTIONAL. This scope value requests access to
               the <spanx style="verb">phone_number</spanx> and
               <spanx style="verb">phone_number_verified</spanx> Claims.
+              -->
             </t>
 
           </list>
         </t>
 
+        <t>
+          複数の scope 値は, スペース区切りの大文字小文字を区別した ASCII scope 値のリストによって指定することができる (MAY).
+        </t>
+        <!--
         <t>Multiple scope values MAY be used by creating a space delimited, case
         sensitive list of ASCII scope values.</t>
+        -->
 
+        <t>
+          処理の結果として Access Token が発行される <spanx style="verb">response_type</spanx> を使用したとき,
+          <spanx style="verb">profile</spanx>,
+          <spanx style="verb">email</spanx>,
+          <spanx style="verb">address</spanx>, および
+          <spanx style="verb">phone</spanx> scope 値により要求される Claim は, <xref target="UserInfoResponse"/> にある通り UserInfo Endpoint から返される.
+          しかし,
+          (<spanx style="verb">response_type</spanx> 値が <spanx style="verb">id_token</spanx> であるケースのように) Access Token が発行されない場合, 結果 Claim はID Token 内で返却される.
+        </t>
+        <!--
         <t>
           The Claims requested by the
           <spanx style="verb">profile</spanx>,
@@ -5371,7 +5871,13 @@
           value <spanx style="verb">id_token</spanx>),
           the resulting Claims are returned in the ID Token.
         </t>
+        -->
 
+        <t>
+          End-User が OpenID Provider に対して RP に要求された情報の一部もしくは全ての提供を拒否することもある.
+          End-User に要求する情報を最小化するために, RP は UserInfo Endpoint で提供される情報の一部のみをリクエストすることもできる.
+        </t>
+        <!--
         <t>In some cases, the End-User will be given the option to
         have the OpenID Provider decline to provide some or all
         information requested by RPs.
@@ -5379,13 +5885,19 @@
         to disclose, an RP can elect to
         only request a subset of the information available from the
         UserInfo Endpoint.</t>
+        -->
 
         <t>
           <figure>
             <preamble>
+              以下に符号化されていない <spanx style="verb">scope</spanx> リクエスト例を示す.
+            </preamble>
+            <!--
+            <preamble>
               The following is a non-normative example of an unencoded
               <spanx style="verb">scope</spanx> request:
             </preamble>
+            -->
 
             <artwork><![CDATA[
   scope=openid profile email phone
@@ -5397,20 +5909,37 @@
       <section anchor="ClaimsParameter" title='Requesting Claims using the "claims" Request Parameter'>
 
         <t>
+          OpenID Connect では, 個々の Claim の要求や,
+          要求された Claim に適用されるパラメータの指定を可能とするために,
+          以下の Authorization Request パラメータを定義する:
+          <!--
           OpenID Connect defines the following Authorization Request parameter
           to enable requesting individual Claims
           and specifying parameters that apply to the requested Claims:
+          -->
 
           <list style="hanging">
 
             <t hangText="claims">
               <vspace/>
               OPTIONAL.
+              当パラメータは, 特定の Claim の返却を要求するのに用いられる.
+              値は要求する Claim をリスト化した JSON オブジェクトである.
+              <!--
+              OPTIONAL.
               This parameter is used to request that specific Claims be returned.
               The value is a JSON object listing the requested Claims.
+              -->
             </t>
           </list>
         </t>
+        <t>
+          <spanx style="verb">claims</spanx> Authentication Request パラメータは,
+          特定の Claim を UserInfo Endpoint から, かつ/または ID Token 内で, 返却することを要求する.
+          これは要求する Claim のリストを含む JSON オブジェクトとして表される.
+          要求する Claim のプロパティが指定されていてもよい (MAY).
+        </t>
+        <!--
         <t>
           The <spanx style="verb">claims</spanx> Authentication Request
           parameter requests that specific Claims
@@ -5419,6 +5948,14 @@
           from these locations.
           Properties of the Claims being requested MAY also be specified.
         </t>
+        -->
+        <t>
+          <spanx style="verb">claims</spanx> パラメータのサポートは任意である (OPTIONAL).
+          当パラメータをサポートしない OP に対して RP が当パラメータを使用したとき,
+          OP は 適切と思われるヒューリスティックな方法を用いて, RP と End-User にとって有益と思われる Claim のセットを返すべきである (SHOULD).
+          Discovery で得られる <spanx style="verb">claims_parameter_supported</spanx> は, OP が当パラメータをサポートしているかどうかを示す.
+        </t>
+        <!--
         <t>
           Support for the <spanx style="verb">claims</spanx> parameter is OPTIONAL.
           Should an OP not support this parameter and an RP uses it,
@@ -5428,6 +5965,15 @@
           The <spanx style="verb">claims_parameter_supported</spanx>
           Discovery result indicates whether the OP supports this parameter.
         </t>
+        -->
+        <t>
+          <spanx style="verb">claims</spanx> パラメータ値は, OAuth 2.0 要求の中で, UTF-8 でエンコードされた JSON として表される
+          (最終的には OAuth パラメータとして受け渡されるときに form-urlencoded される).
+          Request Object 値として使用される際は,
+          <xref target="RequestObject"/> により,
+          JSON が <spanx style="verb">claims</spanx> メンバーの値として使用される.
+        </t>
+        <!--
         <t>
           The <spanx style="verb">claims</spanx> parameter value is represented
           in an OAuth 2.0 request as UTF-8 encoded JSON
@@ -5436,12 +5982,24 @@
           the JSON is used as the value of the
           <spanx style="verb">claims</spanx> member.
         </t>
+        -->
         <t>
+          Claim 要求 JSON オブジェクトのトップレベルメンバーは以下の通り:
+          <!--
           The top-level members of the Claims request JSON object are:
+          -->
 
           <list style="hanging">
             <t hangText="userinfo">
               <vspace/>
+              OPTIONAL.
+              UserInfo Endpoint へ返却を要求する個々の Claim のリストを示す.
+              当メンバーが存在した場合,
+              <spanx style="verb">scope</spanx> 値で要求された Claim に加え,
+              当メンバーでリストされた Claim も返却される.
+              当メンバーが存在しなかった場合,
+              <spanx style="verb">scope</spanx> 値で要求された Claim のみが返却される.
+              <!--
               OPTIONAL.
               Requests that the listed individual Claims be returned
               from the UserInfo Endpoint.
@@ -5450,16 +6008,38 @@
               <spanx style="verb">scope</spanx> values.
               If not present, the Claims being requested from the UserInfo Endpoint
               are only those requested using  <spanx style="verb">scope</spanx> values.
+              -->
             </t>
             <t>
+              <spanx style="verb">userinfo</spanx> メンバーを指定する際は,
+              UserInfo Endpoint を使用するために,
+              <spanx style="verb">response_type</spanx> に対し,
+              Access Token を Client に発行するタイプの値を指定しなければならない (MUST).
+              <!--
               When the <spanx style="verb">userinfo</spanx> member is used,
               the request MUST also use a <spanx style="verb">response_type</spanx>
               value that results in an Access Token being issued to the Client
               for use at the UserInfo Endpoint.
+              -->
             </t>
 
             <t hangText="id_token">
               <vspace/>
+              OPTIONAL.
+              ID Token 内に格納して返却を要求する個々の Claim のリストを示す.
+              当メンバーが存在した場合,
+              デフォルトの Claim に加え,
+              当メンバーでリストされた Claim も返却される.
+              当メンバーが存在しなかった場合,
+              デフォルトの Claim のみが返却される.
+              デフォルトの Claim 等の ID Token の定義については <xref target="IDToken"/>を,
+              フロー毎の ID Token 要件については Section
+              <xref target="CodeIDToken" format="counter"/>,
+              <xref target="ImplicitIDToken" format="counter"/>,
+              <xref target="HybridIDToken" format="counter"/>,
+              <xref target="HybridIDToken2" format="counter"/>
+              を参照すること.
+              <!--
               OPTIONAL.
               Requests that the listed individual Claims be returned
               in the ID Token.
@@ -5472,17 +6052,25 @@
               <xref target="ImplicitIDToken" format="counter"/>,
               <xref target="HybridIDToken" format="counter"/>,
               and <xref target="HybridIDToken2" format="counter"/>.
+              -->
             </t>
 
           </list>
 
+          上記以外のメンバーが存在してもよい (MAY).
+          認識できないメンバーが使用された場合は無視しなければならない (MUST).
+          <!--
           Other members MAY be present.
           Any members used that are not understood MUST be ignored.
+          -->
         </t>
 
         <t>
           <figure>
+            <preamble>Claim 要求の例を以下に示す:</preamble>
+            <!--
             <preamble>An example Claims request is as follows:</preamble>
+            -->
 
             <artwork><![CDATA[
   {
@@ -5503,6 +6091,10 @@
   }
 ]]></artwork>
           </figure>
+          <xref target="StandardClaims"/> で定義されている標準セットには含まれていない Claim である (example) <spanx style="verb">http://example.info/claims/groups</spanx> Claim が要求されていることに注目すること.
+          <spanx style="verb">claims</spanx> パラメータの使用は, 標準セットに含まれていない Claim を要求する唯一の方法である.
+          また, <spanx style="verb">scope</spanx> 値では指定することが出来ない標準の Claim 同士の特定の組み合わせを要求する唯一の方法でもある.
+          <!--
           Note that a Claim that is not in the standard set defined in
           <xref target="StandardClaims"/>, the (example)
           <spanx style="verb">http://example.info/claims/groups</spanx> Claim,
@@ -5511,22 +6103,32 @@
           way to request Claims outside the standard set.
           It is also the only way to request specific combinations of the
           standard Claims that cannot be specified using scope values.
+          -->
         </t>
 
         <section anchor="IndividualClaimsRequests" title="Individual Claims Requests">
           <t>
+            <spanx style="verb">claims</spanx> request の <spanx style="verb">userinfo</spanx> メンバーと <spanx style="verb">id_token</spanx> メンバーは, 要求される個別の Claim の名前をメンバー名とする JSON オブジェクトである.
+            メンバーの値は以下のいずれかの値でなければならない (MUST).
+            <!--
             The <spanx style="verb">userinfo</spanx> and
             <spanx style="verb">id_token</spanx> members of the
             <spanx style="verb">claims</spanx> request both are JSON objects
             with the names of the individual Claims being requested as the member names.
             The member values MUST be one of the following:
+            -->
 
             <list style="hanging">
               <t hangText="null">
                 <vspace/>
+                この Claim はデフォルトの形式で要求されていることを示す.
+                具体的に言うと, Voluntary Claim である.
+                例えば, Claim request:
+                <!--
                 Indicates that this Claim is being requested in the default manner.
                 In particular, this is a Voluntary Claim.
                 For instance, the Claim request:
+                -->
 
                 <figure>
                   <artwork><![CDATA[
@@ -5534,22 +6136,35 @@
 ]]></artwork>
                 </figure>
 
+                は <spanx style="verb">given_name</spanx> Claim をデフォルトの形式で要求する.
+                <!--
                 requests the <spanx style="verb">given_name</spanx> Claim
                 in the default manner.
+                -->
               </t>
               <t hangText="JSON Object">
                 <vspace/>
+                要求されている Claim の追加情報を提供するために使用する.
+                本仕様は下記のメンバーを定義する:
+                <!--
                 Used to provide additional information about the Claim being
                 requested. This specification defines the following members:
+                -->
 
                 <list style="hanging">
                   <t hangText="essential">
                     <vspace/>
                     OPTIONAL.
+                    要求されている Claim が Essential Claim であるかどうかを示す.
+                    値が <spanx style="verb">true</spanx> である場合, Claim が Essential Claim であることを示す.
+                    例えば, Claim request:
+                    <!--
+                    OPTIONAL.
                     Indicates whether the Claim being requested is an Essential Claim.
                     If the value is <spanx style="verb">true</spanx>,
                     this indicates that the Claim is an Essential Claim.
                     For instance, the Claim request:
+                    -->
 
                     <figure>
                       <artwork><![CDATA[
@@ -5557,14 +6172,28 @@
 ]]></artwork>
                     </figure>
 
+                    は <spanx style="verb">auth_time</spanx> Claim の値を返すために Essential であることを指定するために使われる.
+                    <!--
                     can be used to specify that it is Essential to return an
                     <spanx style="verb">auth_time</spanx> Claim Value.
+                    -->
                   </t>
+                  <t>
+                    <spanx style="verb">false</spanx> である場合, Voluntary Claim であることを示す.
+                    デフォルトは <spanx style="verb">false</spanx> である.
+                  </t>
+                  <!--
                   <t>
                     If the value is <spanx style="verb">false</spanx>,
                     it indicates that it is a Voluntary Claim.
                     The default is <spanx style="verb">false</spanx>.
                   </t>
+                  -->
+                  <t>
+                    Essential Claim として Claim を要求することで, RP は End-User に対して, End-User が要求する処理に際した円滑な認可処理にこれらの Claim の開示が必要であることを示すことができる.
+                    End-User が認可しなかったりそもそも情報が存在しないなどの理由で Claim が利用できない場合であっても, 特定の Claim の記述で特別に指定されない限り, Claim が Essential か Voluntary であるかどうかに関わらず Authorization Server はエラーを生成してはならない (MUST NOT) ことに注意.
+                  </t>
+                  <!--
                   <t>
                     By requesting Claims as Essential Claims,
                     the RP indicates to the End-User
@@ -5576,12 +6205,18 @@
                     Claims are not returned, whether they are Essential or Voluntary,
                     unless otherwise specified in the description of the specific claim.
                   </t>
+                  -->
 
                   <t hangText="value">
                     <vspace/>
                     OPTIONAL.
+                    特定の値とともに返される Claim を要求する.
+                    例えば Claim request:
+                    <!--
+                    OPTIONAL.
                     Requests that the Claim be returned with a particular value.
                     For instance the Claim request:
+                    -->
 
                     <figure>
                       <artwork><![CDATA[
@@ -5589,9 +6224,17 @@
 ]]></artwork>
                     </figure>
 
+                    は要求が Subject Identifier <spanx style="verb">248289761001</spanx> を持つ End-User に適用されることを指定するために使われる.
+                    <!--
                     can be used to specify that the request apply to the End-User
                     with Subject Identifier <spanx style="verb">248289761001</spanx>.
+                    -->
                   </t>
+                  <t>
+                    <spanx style="verb">value</spanx> メンバーの値は要求されている Claim に対して有効な値でなければならない (MUST).
+                    各 Claim の定義においては, 当該 Claim を要求する際の <spanx style="verb">value</spanx> 修飾子の利用方法や, そもそも利用すべきかどうかを定めることもできる.
+                  </t>
+                  <!--
                   <t>
                     The value of the <spanx style="verb">value</spanx> member
                     MUST be a valid value for the Claim being requested.
@@ -5599,12 +6242,18 @@
                     how and whether the <spanx style="verb">value</spanx>
                     qualifier is to be used when requesting that Claim.
                   </t>
+                  -->
                   <t hangText="values">
                     <vspace/>
+                    OPTIONAL.
+                    優先順になっている値の集合の内のいずれかで返される Claim を要求する.
+                    例えば, Claim request:
+                    <!--
                     OPTIONAL.
                     Requests that the Claim be returned with one of a set of values,
                     with the values appearing in order of preference.
                     For instance the Claim request:
+                    -->
 
                     <figure>
                       <artwork><![CDATA[
@@ -5614,11 +6263,19 @@
 ]]></artwork>
                     </figure>
 
+                    は <spanx style="verb">urn:mace:incommon:iap:silver</spanx> か <spanx style="verb">urn:mace:incommon:iap:bronze</spanx> のいずれかの <spanx style="verb">acr</spanx> Claim が Essential であることを指定する.
+                    <!--
                     specifies that it is Essential that the <spanx style="verb">acr</spanx>
                     Claim be returned with either the value
                     <spanx style="verb">urn:mace:incommon:iap:silver</spanx> or
                     <spanx style="verb">urn:mace:incommon:iap:bronze</spanx>.
+                    -->
                   </t>
+                  <t>
+                    <spanx style="verb">values</spanx> メンバー配列の値は要求されている Claim に対して有効な値でなければならない (MUST).
+                    各 Claim の定義においては, 当該 Claim を要求する際の <spanx style="verb">values</spanx> 修飾子の利用方法や, そもそも利用すべきかどうかを定めることもできる.
+                  </t>
+                  <!--
                   <t>
                     The values in the <spanx style="verb">values</spanx> member array
                     MUST be valid values for the Claim being requested.
@@ -5626,15 +6283,23 @@
                     how and whether the <spanx style="verb">values</spanx>
                     qualifier is to be used when requesting that Claim.
                   </t>
+                  -->
                 </list>
 
+                要求される Claim の追加情報を提供するために他のメンバーを定義してもよい (MAY).
+                解釈不可能なメンバーは全て無視すること (MUST).
+                <!--
                 Other members MAY be defined to provide additional
                 information about the requested Claims.
                 Any members used that are not understood MUST be ignored.
+                -->
               </t>
             </list>
           </t>
           <t>
+            <spanx style="verb">claims</spanx> リクエストパラメータがサポートされている場合, Claim を要求する scope の値は, <xref target="ScopeClaims"/> で述べられているように, 効果的に簡略化された個別の Claims の集合を要求するための方法となることに注意.
+            例えば, <spanx style="verb">openid email</spanx> scope 値と Access Token を返す <spanx style="verb">response_type</spanx> を使用することは <spanx style="verb">openid</spanx> scope 値と個別の Claims に対する下記のリクエストを使用することと同じである.
+            <!--
             Note that when the <spanx style="verb">claims</spanx> request parameter
             is supported, the scope values that request Claims, as defined in
             <xref target="ScopeClaims"/>, are effectively shorthand methods for
@@ -5643,11 +6308,17 @@
             and a <spanx style="verb">response_type</spanx> that returns an Access Token
             is equivalent to using the scope value <spanx style="verb">openid</spanx>
             and the following request for individual Claims.
+            -->
 
             <figure>
               <preamble>
+                下記のリクエストは <spanx style="verb">email</spanx> scope 値を使用した場合と同じ結果となる:
+              </preamble>
+              <!--
+              <preamble>
                 Equivalent of using the <spanx style="verb">email</spanx> scope value:
               </preamble>
+              -->
 
               <artwork><![CDATA[
   {
@@ -5664,6 +6335,12 @@
           <section anchor="acrSemantics" title='Requesting the "acr" Claim'>
 
             <t>
+              <spanx style="verb">acr</spanx> Claim が特定の Authentication Context Class Reference 値と <spanx style="verb">claims</spanx> パラメータをサポートする実装を要求する <spanx style="verb">values</spanx> パラメータとともに ID Token の Essential Claim として要求される場合, Authorization Server は要求された値のいずれかに一致する <spanx style="verb">acr</spanx> Claim を返さなければいけない (MUST).
+              Authorization Server は要求を満たす追加の要素を再認証するために End-User にたずねてもよい (MAY).
+              この Claim が Essential Claim であり要求を満たすことが出来ない場合, Authorization Server は認証の試行に失敗したものとして扱わなければいけない (MUST).
+            </t>
+            <!--
+            <t>
               If the <spanx style="verb">acr</spanx> Claim is requested
               as an Essential Claim for the ID Token
               with a <spanx style="verb">values</spanx> parameter requesting
@@ -5677,6 +6354,13 @@
               requirement cannot be met, then the Authorization Server MUST
               treat that outcome as a failed authentication attempt.
             </t>
+            -->
+            <t>
+              RP は <spanx style="verb">acr_values</spanx> request パラメータを使用して, もしくは個別の <spanx style="verb">acr</spanx> Claim リクエストで "essential": true を含まないことにより Voluntary Claim として <spanx style="verb">acr</spanx> Claim を要求してもよい (MAY).
+              Claim が Essential でなく, 要求された値が提供できない場合, Authorization Server は <spanx style="verb">acr</spanx> Claim の値としてセッションの現在の <spanx style="verb">acr</spanx> を返すべきである (SHOULD).
+              Claim が Essential でない場合, Authorization Server はレスポンスにおいてこの Claim を提供する必要はない.
+            </t>
+            <!--
             <t>
               Note that the RP MAY request the <spanx style="verb">acr</spanx>
               Claim as a Voluntary Claim
@@ -5690,6 +6374,11 @@
               If the Claim is not Essential, the Authorization Server is not required to
               provide this Claim in its response.
             </t>
+            -->
+            <t>
+              Clientが <spanx style="verb">acr_values</spanx> リクエストパラメータと ID Token のために要求する特定の値をリストにした個別の <spanx style="verb">acr</spanx> Claim リクエストの両方を用いて <spanx style="verb">acr</spanx> Claim を要求する場合, その結果の振る舞いは規定されていない.
+            </t>
+            <!--
             <t>
               If the client requests the <spanx style="verb">acr</spanx> Claim using
               both the <spanx style="verb">acr_values</spanx> request parameter and
@@ -5697,11 +6386,19 @@
               listing specific requested values,
               the resulting behavior is unspecified.
             </t>
+            -->
           </section>
 
         </section>
 
         <section anchor="IndividualClaimsLanguages" title="Languages and Scripts for Individual Claims">
+          <t>
+            <xref target="ClaimsLanguagesAndScripts"/> で述べられているように, Human-readable な Claim Value およびそれらへの参照は, 複数言語および複数文字種で表現することができる (MAY).
+            個別の Claim の要求を行う際に, 特定の Claim に対して <xref target="ClaimsLanguagesAndScripts"/> で指定された Claim 名の構文を用いて Claim 要求に <spanx style="verb">#</spanx> で区切られた <xref target="RFC5646">BCP47</xref> 言語タグ付きの Claim 名を含めることで, 当該 Claim に対して言語や文字種を指定して要求することができる (MAY).
+            例えば, 日本語のカタカナでの姓名は Claim　名 <spanx style="verb">family_name#ja-Kana-JP</spanx> を用いて要求することができ, 日本語の漢字表記の姓名は Claim　名 <spanx style="verb">family_name#ja-Hani-JP</spanx> を用いて要求することができる.
+            ドイツ語の Web サイトは Claim　名 <spanx style="verb">website#de</spanx> で要求することができる.
+          </t>
+          <!--
           <t>
             As described in <xref target="ClaimsLanguagesAndScripts"/>,
             human-readable Claim Values and Claim Values that reference human-readable values
@@ -5721,54 +6418,91 @@
             A German-language Web site can be requested with the Claim Name
             <spanx style="verb">website#de</spanx>.
           </t>
+          -->
+          <t>
+            OP が保持していない言語および文字種での Human-readable な Claim の要求を受け取った場合, 返される Claim のいずれかのバージョンは Claim 名に要求された言語および文字種を使わず言語タグを使用するべきである (SHOULD).
+          </t>
+          <!--
           <t>
             If an OP receives a request for human-readable Claims in a language and script
             that it doesn't have, any versions of those Claims returned that don't use
             the requested language and script SHOULD use a language tag in the Claim Name.
           </t>
+          -->
         </section>
 
       </section>
 
       <section anchor="ClaimTypes" title="Claim Types">
         <t>
+          本仕様では以下の3つの Claim Value 表現形式を定義する.
+        </t>
+        <!--
+        <t>
           Three representations of Claim Values are defined by this specification:
         </t>
+        -->
         <t>
           <list style="hanging">
             <t hangText="Normal Claims">
               <vspace/>
+              OpenID Provider によって直接アサートされた Cliam.
+              <!--
               Claims that are directly asserted by
               the OpenID Provider.
+              -->
             </t>
 
             <t hangText="Aggregated Claims">
               <vspace/>
+              OpenID Provider 以外の Claims Provider によってアサートされた Claim であるが, OpenID Provider から返却される Claim.
+              <!--
               Claims that are asserted by a
               Claims Provider other than the OpenID Provider but are returned
               by OpenID Provider.
+              -->
             </t>
 
             <t hangText="Distributed Claims">
               <vspace/>
+              OpenID Provider 以外の Claims Provider によってアサートされた Claim であり, OpenID Provider からはその参照だけが返却される Claim.
+              <!--
               Claims that are asserted by a
               Claims Provider other than the OpenID Provider but are returned
               as references by the OpenID Provider.
+              -->
             </t>
           </list>
         </t>
         <t>
+          Normal Claims はサポートしなければならない (MUST).
+          Aggregated Claims と Distributed Claims のサポートは任意である (OPTIONAL).
+        </t>
+        <!--
+        <t>
           Normal Claims MUST be supported.
           Support for Aggregated Claims and Distributed Claims is OPTIONAL.
         </t>
+        -->
 
         <section anchor="NormalClaims" title="Normal Claims">
 
+          <t>
+            Normal Claims は JSON オブジェクトの中にメンバーとして表記される.
+            Claim 名はそのメンバー名で, Claim Value はそのメンバーの値である.
+          </t>
+          <!--
           <t>Normal Claims are represented as members in a JSON object. The
           Claim Name is the member name and the Claim Value is the member
           value.</t>
+          -->
 
+          <t>
+            以下は Normal Claims を含んでいるレスポンスの一例である:
+          </t>
+          <!--
           <t>The following is a non-normative response containing Normal Claims:</t>
+          -->
 
           <figure>
             <artwork><![CDATA[
@@ -5785,24 +6519,39 @@
         </section>
 
         <section anchor="AggregatedDistributedClaims" title="Aggregated and Distributed Claims">
+          <t>
+            Aggregated と Distributed Claims は, Claims を含む JSON オブジェクト中で, <spanx style="verb">_claim_names</spanx> および <spanx style="verb">_claim_sources</spanx> という特殊なメンバーを用いて表記される.
+          </t>
+          <!--
           <t>Aggregated and distributed Claims are represented by
           using special <spanx style="verb">_claim_names</spanx> and
           <spanx style="verb">_claim_sources</spanx> members
           of the JSON object containing the Claims.</t>
+          -->
 
           <t>
             <list style="hanging">
               <t hangText="_claim_names">
                 <vspace/>
+                Aggregated Claims および Distributed Claims として返される Claim Name をメンバーとして含む JSON オブジェクトである.
+                そのメンバーの値は, 実際の Claim Value が取り出せる
+                <spanx style="verb">_claim_sources</spanx> メンバーの中にあるメンバー名への参照である.
+                <!--
                 JSON object whose member
                 names are the Claim Names for the Aggregated and Distributed
                 Claims. The member values are references to the member names
                 in the <spanx style="verb">_claim_sources</spanx> member from which
                 the actual Claim Values can be retrieved.
+                -->
               </t>
 
               <t hangText="_claim_sources">
                 <vspace/>
+                <spanx style="verb">_claim_names</spanx> メンバー値によって
+                参照されるメンバー名を持つ JSON オブジェクトである.
+                メンバー値は Aggregated Claims のセットもしくは Distributed Claims の参照場所を含む.
+                Aggregated Claims か Distributed Claims かに応じて, メンバー値は以下のフォーマットの1つを持つことができる:
+                <!--
                 JSON object whose
                 member names are referenced by the member values of the
                 <spanx style="verb">_claim_names</spanx> member. The member values
@@ -5810,11 +6559,17 @@
                 Distributed Claims. The member values can have one of the
                 following formats depending on whether it is providing
                 Aggregated or Distributed Claims:
+                -->
 
                 <list style="hanging">
 
                   <t hangText="Aggregated Claims">
                     <vspace/>
+                    <spanx style="verb">JWT</spanx> を値として持つ <spanx style="verb">JWT</spanx> メンバーを含んだ JSON オブジェクトでなければならない (MUST).
+                    当該 JWT は <spanx style="verb">_claim_sources</spanx> メンバーへの参照となった <spanx style="verb">_claim_names</spanx> オブジェクトに含まれる, 全 Claim を含まなければならない (MUST).
+                    他のメンバーが存在してもよい (MAY).
+                    理解できないメンバーは無視しなければならない (MUST).
+                    <!--
                     JSON object that MUST
                     contain the <spanx style="verb">JWT</spanx> member whose value is a <xref
                     target="JWT">JWT</xref> that MUST contain all the Claims
@@ -5822,15 +6577,26 @@
                     corresponding <spanx style="verb">_claim_sources</spanx> member.
                     Other members MAY be present.
                     Any members used that are not understood MUST be ignored.
+                    -->
 
                     <list style="hanging">
                       <t hangText="JWT">
                         <vspace/>
                         REQUIRED.
+                        Claim Value を含んでいる JWT.
+                        <!--
+                        REQUIRED.
                         JWT containing Claim Values.
+                        -->
                       </t>
                     </list>
                   </t>
+                  <t>
+                    この JWT は, <spanx style="verb">sub</spanx> 値が Claims Provider に置ける End-User の識別子でない限り, <spanx style="verb">sub</spanx> (subject) Claim を含むべきでない (SHOULD NOT).
+                    (また OpenID Provider あるいは他の Party が利用するために sub 値を提供すべきでもない)
+                    一般的にこれは <spanx style="verb">sub</spanx> Claim が提供されるべきではないということを意味している.
+                  </t>
+                  <!--
                   <t>
                     The JWT SHOULD NOT contain a <spanx style="verb">sub</spanx> (subject)
                     Claim unless its value is an identifier for the End-User at
@@ -5838,23 +6604,38 @@
                     this typically means that a <spanx style="verb">sub</spanx> Claim
                     SHOULD NOT be provided.
                   </t>
+                  -->
 
                   <t hangText="Distributed Claims">
                     <vspace/>
+                    以下のメンバーと値を含む JSON オブジェクトである:
+                    <!--
                     JSON object that
                     contains the following members and values:
+                    -->
 
                     <list style="hanging">
                       <t hangText="endpoint">
                         <vspace/>
                         REQUIRED.
+                        関連した Claim を取り出すことができる OAuth 2.0 リソースエンドポイント.
+                        エンドポイント URL は JWT として Claim を返却しなければならない (MUST).
+                        <!--
+                        REQUIRED.
                         OAuth 2.0 resource endpoint from which the associated
                         Claim can be retrieved. The endpoint URL MUST return
                         the Claim as a JWT.
+                        -->
                       </t>
 
                       <t hangText="access_token">
                         <vspace/>
+                        OPTIONAL.
+                        <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> プロトコルに従ってエンドポイント URL から Claim を取得する際に利用する Access Token.
+                        Access Token は Authorization Request ヘッダーフィールドを用いて送信しなければならず (MUST), Claims Provider はこの方法をサポートしなければならない (MUST).
+                        Access Token が使用可能でない場合, RP は out-of-band な方法で Access Token を取得したり, 事前に Claims Provider との間で合意した Access Token を使用する必要があることもある (MAY).
+                        Claims Provider は End-User を再認証したり RP を再認可することもある (MAY).
+                        <!--
                         OPTIONAL.
                         Access Token
                         enabling retrieval of the Claims from the endpoint URL
@@ -5867,9 +6648,16 @@
                         that was pre-negotiated between the Claims Provider and
                         RP, or the Claims Provider MAY reauthenticate the
                         End-User and/or reauthorize the RP.
+                        -->
                       </t>
                     </list>
                   </t>
+                  <t>
+                    この JWT は, <spanx style="verb">sub</spanx> 値が Claims Provider に置ける End-User の識別子でない限り, <spanx style="verb">sub</spanx> (subject) Claim を含むべきでない (SHOULD NOT).
+                    (また OpenID Provider あるいは他の Party が利用するために sub 値を提供すべきでもない)
+                    一般的にこれは <spanx style="verb">sub</spanx> Claim が提供されるべきではないということを意味している.
+                  </t>
+                  <!--
                   <t>
                     A <spanx style="verb">sub</spanx> (subject) Claim SHOULD NOT
                     be returned from the Claims Provider
@@ -5878,30 +6666,48 @@
                     this typically means that a <spanx style="verb">sub</spanx> Claim
                     SHOULD NOT be provided.
                   </t>
+                  -->
                 </list>
               </t>
             </list>
           </t>
+          <t>
+            一般的に, どのような時に Aggregated Claims と Distributed Claims の利用が適切かは, OP 次第である.
+            場合によっては, どの Claim Type をいつ使うべきかについて, RP と OP の間で out-of-band な方法で合意されることもある.
+          </t>
+          <!--
           <t>
             In general, it is up to the OP when it is appropriate to use
             Aggregated Claims and Distributed Claims.
             In some cases, information about when to use what Claim Types
             might be negotiated out of band between RPs and OPs.
           </t>
+          -->
 
           <section anchor="AggregatedExample" title="Example of Aggregated Claims">
 
+            <t>
+              以下の例では, Claims Provider A からの Claim と OpenID Provider によって保有される他の Claims が同時に返却されている.
+              また Claims Provider A からの Claim は, Aggregated Claims となっている.
+            </t>
+            <!--
             <t>
               In this non-normative example, Claims from Claims Provider A
               are combined with other Claims held by the OpenID provider, with the
               Claims from Claims Provider A being returned as Aggregated Claims.
             </t>
+            -->
             <t>
               <figure>
+                <preamble>
+                  以下の Claim は Cliams Provider A によって発行された Jane Doe についての Claims である:
+                </preamble>
+                <!--
                 <preamble>
                   In this example, these Claims about Jane Doe have been issued by
                   Claims Provider A:
                 </preamble>
+                -->
                 <artwork><![CDATA[
   {
    "address": {
@@ -5917,17 +6723,29 @@
             </t>
 
             <t>
+              Claims Provider A は JSON Cliams に署名し, Signed JWT でそれらを表現する:
+              jwt_header.jwt_part2.jwt_part3.
+              この JWT は OpenID Provider によって使用される.
+            </t>
+            <!--
+            <t>
               Claims Provider A signs the JSON Claims, representing them in a signed JWT:
               jwt_header.jwt_part2.jwt_part3.
               It is this JWT that is used by the OpenID Provider.
             </t>
+            -->
             <t>
               <figure>
+                <preamble>
+                  この例では, Claims Provider A からの Jane Doe の Aggregated Claims を含んだ JWT が他の Normal Claims と組み合わせられ, 以下の Claims セットとして返却される:
+                </preamble>
+                <!--
                 <preamble>
                   In this example, this JWT containing Jane Doe's Aggregated Claims
                   from Claims Provider A is combined with other Normal Claims,
                   and returned as the following set of Claims:
                 </preamble>
+                -->
                 <artwork><![CDATA[
   {
    "name": "Jane Doe",
@@ -5953,17 +6771,28 @@
           <section anchor="DistributedExample" title="Example of Distributed Claims">
 
             <t>
+              以下の例では, OpenID Provider は Claims Provider B と C が保有する Claim を Normal Claims と合わせて返却する.
+              B と C が保有する Claim は Distributed Claims として参照を含めた形で提供される.
+            </t>
+            <!--
+            <t>
               In this non-normative example, the OpenID Provider combines
               Normal Claims that it holds with references to Claims held by
               two different Claims Providers, B and C, incorporating references
               to some of the Claims held by B and C as Distributed Claims.
             </t>
+            -->
             <t>
               <figure>
+                <preamble>
+                  以下の Claim は Cliams Provider B (Jane Doe's bank) が保持する Jane Doe についての Claims である:
+                </preamble>
+                <!--
                 <preamble>
                   In this example, these Claims about Jane Doe are held by
                   Claims Provider B (Jane Doe's bank):
                 </preamble>
+                -->
                 <artwork><![CDATA[
   {
    "shipping_address": {
@@ -5982,9 +6811,14 @@
             <t>
               <figure>
                 <preamble>
+                  また以下は, Claims Provider C (a credit agency) が保持する Jane Doe についての Claims である:
+                </preamble>
+                <!--
+                <preamble>
                   Also in this example, this Claim about Jane Doe is held by
                   Claims Provider C (a credit agency):
                 </preamble>
+                -->
                 <artwork><![CDATA[
   {
    "credit_score": 650
@@ -5996,11 +6830,17 @@
             <t>
               <figure>
                 <preamble>
+                  OpenID Provider は, Jane Doe の Claim を返却する際に, Claims Provider B および C に対する参照を添える.
+                  この参照には Distributed Claims を取得するための Access Token と URL を含む.
+                </preamble>
+                <!--
+                <preamble>
                   The OpenID Provider returns Jane Doe's Claims along with references
                   to the Distributed Claims from Claims Provider B and Claims Provider C
                   by sending the Access Tokens and URLs of locations from which the
                   Distributed Claims can be retrieved:
                 </preamble>
+                -->
                 <artwork><![CDATA[
   {
    "name": "Jane Doe",
@@ -6033,6 +6873,11 @@
       <section anchor="ClaimStability" title="Claim Stability and Uniqueness">
 
         <t>
+          <xref target="IDToken"></xref> にあるように, <spanx style="verb">sub</spanx> (subject) Claim は特定の Issuer 内でローカルに一意かつ決して再割り当てされない値でなければならず (MUST), それにより <spanx style="verb">sub</spanx> (subject) と <spanx style="verb">iss</spanx> (issuer) の組み合わせは RP が End-User の安定的な識別子として依存できる唯一の Claim となる.
+          よって特定の End-User に対する唯一の保証されたユニークな識別子は, <spanx style="verb">iss</spanx> Claim と <spanx style="verb">sub</spanx> Claim の組み合わせとなる.
+        </t>
+        <!--
+        <t>
           The <spanx style="verb">sub</spanx> (subject) and
           <spanx style="verb">iss</spanx> (issuer) Claims, used together,
           are the only Claims that an RP
@@ -6044,6 +6889,13 @@
           combination of the <spanx style="verb">iss</spanx> Claim
           and the <spanx style="verb">sub</spanx> Claim.
         </t>
+        -->
+        <t>
+          他の全ての Claims に関しては, 長期的な安定性やユーザー間の一意性に関して, 異なる Issuer をまたいで上記のような保証を行うことはできず, Issuer はローカルの制限やポリシーを適用することが許されている.
+          例えば, Issuer は異なる時点で異なる End-Users 間で <spanx style="verb">email</spanx> Claim 値を再利用するかもしれず (MAY), 特定の End-User の <spanx style="verb">email</spanx> Claim は時間の経過とともに変わりうる (MAY).
+          ゆえに, <spanx style="verb">email</spanx>, <spanx style="verb">phone_number</spanx>, <spanx style="verb">preferred_username</spanx> のような他の Claims は End-User の一意な識別子として使用してはいけない (MUST NOT).
+        </t>
+        <!--
         <t>
           All other Claims carry no such guarantees across different issuers in terms of
           stability over time or uniqueness across users, and Issuers are permitted to
@@ -6057,6 +6909,7 @@
           <spanx style="verb">preferred_username</spanx>
           and MUST NOT be used as unique identifiers for the End-User.
         </t>
+        -->
 
       </section>
 
@@ -6065,12 +6918,20 @@
     <section anchor="JWTRequests" title="Passing Request Parameters as JWTs">
 
       <t>
+        OpenID Connect では, Authorization Request に署名および暗号化を可能にするため, 以下の Authorization Request パラメータを定義する.
+        <!--
         OpenID Connect defines the following Authorization Request parameters
         to enable Authentication Requests to be signed and optionally encrypted:
+        -->
 
         <list style="hanging">
           <t hangText="request">
             <vspace/>
+            OPTIONAL.
+            このパラメータにより, OpenID Connect リクエストを単一の self-contained なパラメータとすることができ, 任意で署名および暗号化を施せるようになる.
+            パラメータ値は Request Object 値である (<xref target="RequestObject"/> 参照).
+            Request Object は, 各 Claim がリクエストパラメータとなる JWT である.
+            <!--
             OPTIONAL.
             This parameter enables
             OpenID Connect requests to be passed in a single,
@@ -6079,9 +6940,15 @@
             as specified in <xref target="RequestObject"/>.
             It represents the request as a JWT whose Claims
             are the request parameters.
+            -->
           </t>
           <t hangText="request_uri">
             <vspace/>
+            OPTIONAL.
+            このパラメータにより, 値そのものではなく参照を送ることが可能になる.
+            <spanx style="verb">request_uri</spanx> 値は <spanx style="verb">https</spanx> スキーマで始まる URL であり, Request Object 値を含むリソースへの参照となる.
+            参照先の Request Object は, リクエストパラメータを含む JWT である.
+            <!--
             OPTIONAL.
             This parameter enables
             OpenID Connect requests to be passed by reference, rather than by value.
@@ -6089,9 +6956,16 @@
             using the <spanx style="verb">https</spanx> scheme
             referencing a resource containing a Request Object value,
             which is a JWT containing the request parameters.
+            -->
           </t>
         </list>
       </t>
+      <t>
+        これらのパラメータを利用したリクエストは JWT として表現され, その値もしくは参照が送信される.
+        リクエストを参照渡しすることで, 長大なリクエストを扱いやすくなる.
+        上記のパラメータのいずれかを利用する場合は, 同一リクエスト中で他方を利用してはならない (MUST NOT).
+      </t>
+      <!--
       <t>
         Requests using these parameters are represented as JWTs, which are respectively
         passed by value or by reference.
@@ -6099,9 +6973,16 @@
         If one of these parameters is used,
         the other MUST NOT be used in the same request.
       </t>
+      -->
 
       <section title="Passing a Request Object by Value" anchor="RequestObject">
 
+        <t>
+          <spanx style="verb">request</spanx> Authorization Request パラメータにより, OpenID Connect リクエストを単一の self-contained なパラメータとすることができ, 任意で署名および暗号化を施せるようになる.
+          このパラメータは, 各 Claim がリクエストパラメータとなる JWT である (<xref target="AuthorizationEndpoint"/> 参照).
+          この JWT は Request Object と呼ばれる.
+        </t>
+        <!--
         <t>
           The <spanx style="verb">request</spanx> Authorization Request parameter
           enables OpenID Connect requests to be passed in a single,
@@ -6110,6 +6991,13 @@
           specified in <xref target="AuthorizationEndpoint"/>.
           This JWT is called a Request Object.
         </t>
+        -->
+        <t>
+          <spanx style="verb">request</spanx> パラメータのサポートはオプションである (OPTIONAL).
+          Discovery 結果の <spanx style="verb">request_parameter_supported</spanx> により, OP がこのパラメータをサポートしていることを知ることができる.
+          OP がこのパラメータをサポートしていないにも関わらず RP がこれを利用する場合, OP は <spanx style="verb">request_not_supported</spanx> エラーを返すこと (MUST).
+        </t>
+        <!--
         <t>
           Support for the <spanx style="verb">request</spanx> parameter is OPTIONAL.
           The <spanx style="verb">request_parameter_supported</spanx>
@@ -6118,6 +7006,13 @@
           the OP MUST return the <spanx style="verb">request_not_supported</spanx>
           error.
         </t>
+        -->
+        <t>
+          <spanx style="verb">request</spanx> を利用する際には, JWT に含まれる OpenID Connect パラメータ値が OAuth 2.0 リクエストシンタックスで送信されるパラメータに取って代わる.
+          しかしながら, Request Object を利用する場合にでも, パラメータを OAuth 2.0 リクエストシンタックスでも送信することができる (MAY).
+          こうすることで, キャッシュ可能で署名済 (および暗号化済) の Request Object 値に静的なリクエストパラメータを含め, リクエストごとに可変パラメータ (<spanx style="verb">state</spanx>, <spanx style="verb">nonce</spanx> 等) を OAuth 2.0 パラメータとして送信することなどが可能になる.
+        </t>
+        <!--
         <t>
           When the <spanx style="verb">request</spanx> parameter is used,
           the OpenID Connect request parameter values contained in the JWT
@@ -6130,6 +7025,13 @@
           can vary with each request, such as <spanx style="verb">state</spanx> and
           <spanx style="verb">nonce</spanx>, are passed as OAuth 2.0 parameters.
         </t>
+        -->
+        <t>
+          リクエスト自体を有効な OAuth 2.0 Authorization Request とするため, <spanx style="verb">response_type</spanx> および <spanx style="verb">client_id</spanx> パラメータは OAuth 2.0 リクエストシンタックスでリクエストに含まねばならない (MUST).
+          これは OAuth 2.0 で必須とされている (REQUIRED).
+          もし Request Object にもこれらと同じパラメータが含まれている場合は, 2つのパラメータは一致しなければならない (MUST).
+        </t>
+        <!--
         <t>
           So that the request is a valid OAuth 2.0 Authorization Request,
           values for the <spanx style="verb">response_type</spanx> and
@@ -6138,6 +7040,12 @@
           The values for these parameters MUST match those in the Request Object,
           if present.
         </t>
+        -->
+        <t>
+          <spanx style="verb">scope</spanx> パラメータが Request Object に含まれる場合でも, <spanx style="verb">scope</spanx> パラメータは OAuth 2.0 リクエストシンタックスで <spanx style="verb">openid</spanx> scope を含んだ形で送信しなければならない (MUST).
+          これにより下位レイヤーの OAuth 2.0 処理系に, 当該リクエストが OpenID Connect リクエストであることを明示することができる.
+        </t>
+        <!--
         <t>
           Even if a <spanx style="verb">scope</spanx> parameter
           is present in the Request Object value,
@@ -6146,6 +7054,15 @@
           <spanx style="verb">openid</spanx> scope value to indicate to the
           underlying OAuth 2.0 logic that this is an OpenID Connect request.
         </t>
+        -->
+        <t>
+          Request Object は, 署名付きでも良いし, 署名無しの平文でも良い.
+          平文の場合, JWS ヘッダーに <spanx style="verb">none</spanx> アルゴリズム (<xref target="JWA" /> 参照) を指定すること.
+          署名付きの場合, Request Object は <spanx style="verb">iss</spanx> (issuer) および <spanx style="verb">aud</spanx> (audience) を含むべきである (SHOULD).
+          RP 以外の主体に署名されているのでない限り, <spanx style="verb">iss</spanx> 値は RP の Client ID とすべきである (SHOULD).
+          <spanx style="verb">aud</spanx> 値には OP の Issuer Identifier URL を含めるべきである (SHOULD).
+        </t>
+        <!--
         <t>
           The Request Object MAY be signed or unsigned (plaintext).
           When it is plaintext, this is indicated by use of the
@@ -6159,24 +7076,43 @@
           The <spanx style="verb">aud</spanx> value SHOULD be or include
           the OP's Issuer Identifier URL.
         </t>
+        -->
+        <t>
+          Request Object は <xref target="JWE">JWE</xref> を用いて暗号化することもできる (MAY).
+          また署名無しで暗号化のみを適用することもできる (MAY).
+          署名と暗号化を同時に利用する場合は, 署名後に暗号化すること (MUST).
+          これは Nested JWT となる (<xref target="JWT"/> 参照).
+        </t>
+        <!--
         <t>
           The Request Object MAY also be encrypted using <xref target="JWE">JWE</xref>
           and MAY be encrypted without also being signed.
           If both signing and encryption are performed, it MUST be signed then encrypted,
           with the result being a Nested JWT, as defined in <xref target="JWT"/>.
         </t>
+        -->
+        <t>
+          <spanx style="verb">request</spanx> および <spanx style="verb">request_uri</spanx> パラメータは, Request Object 中に含んではならない (MUST NOT).
+        </t>
+        <!--
         <t>
           <spanx style="verb">request</spanx> and
           <spanx style="verb">request_uri</spanx> parameters
           MUST NOT be included in Request Objects.
         </t>
+        -->
 
         <t>
           <figure>
             <preamble>
+              以下は base64url エンコードと署名を施す前段階の, Request Object 中の Claim の例である.
+            </preamble>
+            <!--
+            <preamble>
               The following is a non-normative example of the Claims in
               a Request Object before base64url encoding and signing:
             </preamble>
+            -->
 
             <artwork><![CDATA[
   {
@@ -6211,10 +7147,16 @@
           </figure>
           <figure>
             <preamble>
+              <spanx style="verb">RS256</spanx> アルゴリズムで上記 Request Object に署名した結果の Request Object 値は以下のようになる.
+              (改行は掲載上の都合による)
+            </preamble>
+            <!--
+            <preamble>
               Signing it with the <spanx style="verb">RS256</spanx> algorithm
               results in this Request Object value
               (with line wraps within values for display purposes only):
             </preamble>
+            -->
 
             <artwork><![CDATA[
   eyJhbGciOiJSUzI1NiIsImtpZCI6ImsyYmRjIn0.ew0KICJpc3MiOiAiczZCaGRSa3
@@ -6240,11 +7182,18 @@
           </figure>
           <figure>
             <preamble>
+              以下の JWK フォーマットで表現された RSA 公開鍵で, 上記 Request Object の署名検証を行える.
+              以降の Request Object 署名例でも, 同じ鍵を用いる.
+              (改行は掲載上の都合による)
+            </preamble>
+            <!--
+            <preamble>
               The following RSA public key, represented in JWK format, can be used to
               validate the Request Object signature in this
               and subsequent Request Object examples
               (with line wraps within values for display purposes only):
             </preamble>
+            -->
 
             <artwork><![CDATA[
   {
@@ -6310,16 +7259,27 @@
 
         <section anchor="RequestParameter"
                  title='Request using the "request" Request Parameter'>
+          <t>
+            Client は Authorization Request を Authorization Endpoint に送信する.
+          </t>
+          <!--
           <t>The Client sends the Authorization Request to the
           Authorization Endpoint.</t>
+          -->
 
           <t>
             <figure>
+              <preamble>
+                以下は <spanx style='verb'>request</spanx> パラメータを使った Authorization Request の例である.
+                (改行は掲載上の都合による)
+              </preamble>
+              <!--
               <preamble>The following is a non-normative example of an
               Authorization Request using the <spanx style='verb'>request</spanx>
               parameter
               (with line wraps within values for display purposes only):
               </preamble>
+              -->
 
               <artwork><![CDATA[
   https://server.example.com/authorize?
@@ -6357,6 +7317,11 @@
 
       <section anchor="RequestUriParameter" title="Passing a Request Object by Reference">
         <t>
+          <spanx style="verb">request_uri</spanx> Authorization Request パラメータにより, OpenID Connect リクエストを参照渡し可能になる.
+          このパラメータは, Request Object そのものが値として渡されるのではなく, Request Object が指定された URL から取得されるという点以外は, <spanx style="verb">request</spanx> パラメータと同等である.
+        </t>
+        <!--
+        <t>
           The <spanx style="verb">request_uri</spanx> Authorization Request parameter enables
           OpenID Connect requests to be passed by reference, rather than by value.
           This parameter is used identically to the
@@ -6364,6 +7329,12 @@
           the Request Object value is retrieved from the resource at the specified URL,
           rather than passed by value.
         </t>
+        -->
+        <t>
+          Discovery 結果の <spanx style="verb">request_uri_parameter_supported</spanx> により, OP がこのパラメータをサポートしていることを知ることができる.
+          OP がこのパラメータをサポートしていないにも関わらず RP がこれを利用する場合, OP は <spanx style="verb">request_uri_not_supported</spanx> エラーを返すこと (MUST).
+        </t>
+        <!--
         <t>
           The <spanx style="verb">request_uri_parameter_supported</spanx>
           Discovery result indicates whether the OP supports this parameter.
@@ -6371,6 +7342,13 @@
           the OP MUST return the <spanx style="verb">request_uri_not_supported</spanx>
           error.
         </t>
+        -->
+        <t>
+          <spanx style="verb">request_uri</spanx> パラメータを利用する際には, 参照先の JWT に含まれる OpenID Connect パラメータ値が OAuth 2.0 リクエストシンタックスで送信されるパラメータに取って代わる.
+          しかしながら, <spanx style="verb">request_uri</spanx> を利用する場合にでも, パラメータを OAuth 2.0 リクエストシンタックスでも送信することができる (MAY).
+          こうすることで, キャッシュ可能で署名済 (および暗号化済) の Request Object 値に静的なリクエストパラメータを含め, リクエストごとに可変パラメータ (<spanx style="verb">state</spanx> , <spanx style="verb">nonce</spanx> 等) を OAuth 2.0 パラメータとして送信することなどが可能になる.
+        </t>
+        <!--
         <t>
           When the <spanx style="verb">request_uri</spanx> parameter is used,
           the OpenID Connect request parameter values contained in the referenced JWT
@@ -6383,6 +7361,13 @@
           can vary with each request, such as <spanx style="verb">state</spanx> and
           <spanx style="verb">nonce</spanx>, are passed as OAuth 2.0 parameters.
         </t>
+        -->
+        <t>
+          リクエスト自体を有効な OAuth 2.0 Authorization Request とするため, <spanx style="verb">response_type</spanx> および <spanx style="verb">client_id</spanx> パラメータは OAuth 2.0 リクエストシンタックスでリクエストに含まねばならない (MUST).
+          これは OAuth 2.0 で必須とされている (REQUIRED).
+          もし Request Object にもこれらと同じパラメータが含まれている場合は, 2つのパラメータは一致しなければならない (MUST).
+        </t>
+        <!--
         <t>
           So that the request is a valid OAuth 2.0 Authorization Request,
           values for the <spanx style="verb">response_type</spanx> and
@@ -6391,6 +7376,12 @@
           The values for these parameters MUST match those in the Request Object,
           if present.
         </t>
+        -->
+        <t>
+          <spanx style="verb">scope</spanx> パラメータが Request Object に含まれる場合でも, <spanx style="verb">scope</spanx> パラメータは OAuth 2.0 リクエストシンタックスで <spanx style="verb">openid</spanx> scope を含んだ形で送信しなければならない (MUST).
+          これにより下位レイヤーの OAuth 2.0 処理系に, 当該リクエストが OpenID Connect リクエストであることを明示することができる.
+        </t>
+        <!--
         <t>
           Even if a <spanx style="verb">scope</spanx> parameter
           is present in the referenced Request Object,
@@ -6399,6 +7390,13 @@
           <spanx style="verb">openid</spanx> scope value to indicate to the
           underlying OAuth 2.0 logic that this is an OpenID Connect request.
         </t>
+        -->
+        <t>
+          サーバーは Request URI 参照先のコンテンツをキャッシュしても良い (MAY).
+          もし参照先のリソースが可変の場合は, URI フラグメントとしてコンテンツの SHA-256 ハッシュの Base64URL エンコード値を含めるべきである (SHOULD).
+          もし URI フラグメント値が変わった場合は, 古いフラグメント値を含む URI に紐づいたキャッシュ値はもはや有効でない.
+        </t>
+        <!--
         <t>
           Servers MAY cache the contents of the resources referenced by Request URIs.
           If the contents of the referenced resource could ever change,
@@ -6408,6 +7406,12 @@
           that any cached value for that URI with the old fragment value
           is no longer valid.
         </t>
+        -->
+        <t>
+          Client が <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> Section 2.1 で定義される <spanx style="verb">request_uris</spanx> パラメータを用いて <spanx style="verb">request_uri</spanx> を事前登録することも可能である (MAY).
+          OP は, 事前登録済の <spanx style="verb">request_uri</spanx> 値以外の利用を許可しないということを, <spanx style="verb">require_request_uri_registration</spanx> ディスカバリパラメータで示すことができる.
+        </t>
+        <!--
         <t>
           Note that Clients MAY pre-register
           <spanx style="verb">request_uri</spanx> values using the
@@ -6419,9 +7423,21 @@
           be pre-registered with the <spanx style="verb">require_request_uri_registration</spanx>
           discovery parameter.
         </t>
+        -->
+        <t>
+          Request URI は全体で 512 ASCII 文字を超えてはならない (MUST NOT).
+        </t>
+        <!--
         <t>
           The entire Request URI MUST NOT exceed 512 ASCII characters.
         </t>
+        -->
+        <t>
+          URL 参照先のリソースは, Request Object でなければならない (MUST).
+          Request Object が Authorization Server に検証可能な方法で署名されていない限り, <spanx style="verb">request_uri</spanx> のスキーマは <spanx style="verb">https</spanx> でなければならない (MUST).
+          <spanx style="verb">request_uri</spanx> 値は Authorization Server が到達可能でなければならず (MUST), Client にも到達可能であるべきである (SHOULD).
+        </t>
+        <!--
         <t>
           The contents of the resource referenced by the URL MUST be a Request Object.
           The scheme used in the
@@ -6431,13 +7447,20 @@
           The <spanx style="verb">request_uri</spanx> value MUST be reachable by the
           Authorization Server, and SHOULD be reachable by the Client.
         </t>
+        -->
 
         <t>
           <figure>
+            <preamble>
+              以下は <spanx style="verb">request_uri</spanx> 参照先の Request Object の例である.
+              (改行は掲載上の都合による)
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example of
             the contents of a Request Object resource that can be
             referenced by a <spanx style="verb">request_uri</spanx>
             (with line wraps within values for display purposes only):</preamble>
+            -->
 
             <artwork><![CDATA[
   eyJhbGciOiJSUzI1NiIsImtpZCI6ImsyYmRjIn0.ew0KICJpc3MiOiAiczZCaGRSa3
@@ -6466,10 +7489,23 @@
         <section anchor="CreateRequestUri"
                  title="URL Referencing the Request Object">
           <t>
+            Client は Request Object をローカルもしくはリモートの Server にアクセス可能な URL に配置する.
+            この URI が Request URI (<spanx style="verb">request_uri</spanx>) である.
+          </t>
+          <!--
+          <t>
             The Client stores the Request Object resource either
             locally or remotely at a URL the Server can access.
             This URL is the Request URI, <spanx style="verb">request_uri</spanx>.
           </t>
+          -->
+          <t>
+            Request Object が Claim リクエストを含む場合, その Request Object は Authorization Server 以外の何者にも知られてはならない (MUST NOT).
+            例えば, <spanx style="verb">request_uri</spanx> はそのライフタイムに応じて適切なエントロピーを持っていなければならない (MUST).
+            再び利用することの無いのが明らかな場合や適切なタイムアウト後には, そのコンテンツを削除することが推奨される (RECOMMENDED).
+            ただしなんらかのアクセスコントロールが実施されている場合はその限りではない.
+          </t>
+          <!--
           <t>
             If the Request Object includes requested values for Claims,
             it MUST NOT be revealed to anybody but the Authorization Server.
@@ -6480,10 +7516,17 @@
             or after a reasonable timeout
             unless access control measures are taken.
           </t>
+          -->
           <figure>
+            <preamble>
+              以下は Request URI 値の例である.
+              (改行は掲載上の都合による)
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example
             of a Request URI value
             (with line wraps within values for display purposes only):</preamble>
+            -->
 
             <artwork><![CDATA[
   https://client.example.org/request.jwt#
@@ -6495,13 +7538,24 @@
 
         <section anchor="UseRequestUri"
                  title='Request using the "request_uri" Request Parameter'>
+          <t>
+            Client は Authorization Request を Authorization Endpoint に送信する.
+          </t>
+          <!--
           <t>The Client sends the Authorization Request to the
           Authorization Endpoint.</t>
+          -->
 
           <figure>
+            <preamble>
+              以下は <spanx style="verb">request_uri</spanx> パラメータを使った Authorization Request の例である.
+              (改行は掲載上の都合による)
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example
             of an Authorization Request using the <spanx style="verb">request_uri</spanx> parameter
             (with line wraps within values for display purposes only):</preamble>
+            -->
 
             <artwork><![CDATA[
   https://server.example.com/authorize?
@@ -6516,19 +7570,37 @@
         </section>
 
         <section anchor="GetRequestUri" title="Authorization Server Fetches Request Object">
+          <t>
+            Request を受けると, Authorization Server は参照先の Request Object を取得するため, <spanx style="verb">request_uri</spanx> に HTTP <spanx style="verb">GET</spanx> リクエストを送らなければならない (MUST).
+            ただし Request Object がキャッシュ済の場合を除く.
+            Request Object を取得すると, Authorization Server は Authorization Request を取得するため Request Object をパースする.
+          </t>
+          <!--
           <t>Upon receipt of the Request, the Authorization Server MUST
           send an HTTP <spanx style="verb">GET</spanx> request to the <spanx style="verb">request_uri</spanx>
           to retrieve the referenced Request Object, unless it is already cached, and parse it
           to recreate the Authorization Request parameters.</t>
+          -->
 
+          <t>
+            RP はリクエストごとに異なるパラメータを用いる場合は, リクエストごとにユニークな URI を用いるべきである (SHOULD).
+            もしくは Authorization Server が <spanx style="verb">request_uri</spanx> 参照先のコンテンツをキャッシュするのを防ぐこと.
+          </t>
+          <!--
           <t>Note that the RP SHOULD use a unique URI for each
           request utilizing distinct parameters, or otherwise
           prevent the Authorization Server from caching the <spanx style="verb">request_uri</spanx>.
           </t>
+          -->
 
           <figure>
+            <preamble>
+              以下は Request Object フェッチ例である.
+            </preamble>
+            <!--
             <preamble>The following is a non-normative example of this fetch
             process:</preamble>
+            -->
 
             <artwork><![CDATA[
   GET /request.jwt HTTP/1.1
@@ -6539,20 +7611,42 @@
 
         <section anchor="RequestUriRationale" title="&quot;request_uri&quot; Rationale">
           <t>
+            <spanx style="verb">request_uri</spanx> を利用する理由はいくつか挙げられる.
+          </t>
+          <!--
+          <t>
             There are several reasons that one might choose to use the
             <spanx style="verb">request_uri</spanx> parameter:
           </t>
+          -->
           <t>
             <list style="numbers">
+              <t>
+                リクエストパラメータセットが長大になり, ブラウザの URI 長制限を超える.
+                リクエストパラメータを参照渡しすることで, この問題を回避できる.
+              </t>
+              <!--
               <t>
                 The set of request parameters can become large, and can exceed browser
                 URI size limitations.  Passing the request parameters by reference
                 can solve this problem.
               </t>
+              -->
+              <t>
+                リクエスト全体を値として渡すより, <spanx style="verb">request_uri</spanx> を渡す方がリクエストレイテンシを抑えることができる.
+              </t>
+              <!--
               <t>
                 Passing a <spanx style="verb">request_uri</spanx> value, rather than
                 a complete request by value, can reduce request latency.
               </t>
+              -->
+              <t>
+                RP が送ってくる Claim は, 基本的に不変である.
+                <spanx style="verb">request_uri</spanx> は, 事前に不変のリクエストパラメータセットを用意しておき, 時には事前に署名や暗号化を施しておくことを可能にする.
+                (<spanx style="verb">request_uri</spanx> 値は, 特定の不変なリクエストパラメータに対する "artifact" となる)
+              </t>
+              <!--
               <t>
                 Most requests for Claims from an RP are constant.
                 The <spanx style="verb">request_uri</spanx> is a way of creating
@@ -6561,17 +7655,30 @@
                 (The <spanx style="verb">request_uri</spanx> value becomes an "artifact"
                 representing a particular fixed set of request parameters.)
               </t>
+              -->
+              <t>
+                Registration 時に不変なリクエストパラメータを事前登録しておくことで, OP は Registration 時にリクエストパラメータを事前に検証済にした状態でキャッシュすることができる.
+                これにより, OP はリクエストを受け取った際にコンテンツを取得しにいく必要がなくなる.
+              </t>
+              <!--
               <t>
                 Pre-registering a fixed set of request parameters at Registration time
                 enables OPs to cache and pre-validate the request parameters at
                 Registration time, meaning they need not be retrieved at request time.
               </t>
+              -->
+              <t>
+                Registration 時に不変なリクエストパラメータを事前登録しておくことで, OP は顧客保護などの視点から送られてくるであろうリクエストの事前審査を行うことができる.
+                事前審査を行う主体は, OP 自身なこともあれば, サードパーティであることもあろう.
+              </t>
+              <!--
               <t>
                 Pre-registering a fixed set of request parameters at
                 Registration time enables OPs to vet the contents of
                 the request from consumer protection and other points
                 of views, either itself or by utilizing a third party.
               </t>
+              -->
             </list>
           </t>
         </section>
@@ -6579,6 +7686,11 @@
 
       <section anchor="JWTRequestValidation" title="Validating JWT-Based Requests">
 
+        <t>
+          <spanx style="verb">request</spanx> ないしは <spanx style="verb">request_uri</spanx> Authorization Request パラメータを利用する場合, Authentication Request の検証には <xref target="AuthRequestValidation" format="counter"/>, <xref target="ImplicitValidation" format="counter"/> および <xref target="HybridValidation" format="counter"/> に加えて更なるステップが必要となる.
+          このステップとは, Request Object を含む JWT の検証と, Request Object 自体の検証である.
+        </t>
+        <!--
         <t>
           When the <spanx style="verb">request</spanx> or
           <spanx style="verb">request_uri</spanx> Authorization Request parameters
@@ -6589,11 +7701,15 @@
           <xref target="HybridValidation" format="counter"/>.
           These steps are to validate the JWT containing the Request Object
           and to validate the Request Object itself.
-
         </t>
+        -->
 
         <section anchor="EncryptedRequestObject" title="Encrypted Request Object">
 
+          <t>
+            もし Authorization Server が Discovery ドキュメント <xref target="OpenID.Discovery"/> 中の <spanx style="verb">request_object_encryption_alg_values_supported</spanx> と <spanx style="verb">request_object_encryption_enc_values_supported</spanx> で JWE 暗号化アルゴリズムを公表している場合, またはその他の手段により暗号かアルゴリズムを明らかにしている場合, Client はそれらのアルゴリズムを利用して JWT を暗号化する.
+          </t>
+          <!--
           <t>
             If the Authorization Server has advertised JWE encryption algorithms
             in the <spanx style="verb">request_object_encryption_alg_values_supported</spanx> and
@@ -6602,7 +7718,14 @@
             or has supplied encryption algorithms by other means,
             these are used by the Client to encrypt the JWT.
           </t>
+          -->
 
+          <t>
+            Authorization Server は <xref target="JWE">JSON Web Encryption</xref> の仕様に従って JWT を復号しなければならない (MUST).
+            Request Object は署名されているかもしれず, 署名無しの平文かもしれない (MAY).
+            前者の場合, 署名検証は <xref target="SignedRequestObject"/> に従うこと (MUST).
+          </t>
+          <!--
           <t>
             The Authorization Server MUST decrypt the JWT in accordance with
             the <xref target="JWE">JSON Web Encryption</xref> specification.
@@ -6610,14 +7733,25 @@
             In the former case, signature validation MUST be performed
             as defined in <xref target="SignedRequestObject"/>.
           </t>
+          -->
 
+          <t>
+            復号に失敗した場合, Authorization Server はエラーを返さねばならない (MUST).
+          </t>
+          <!--
           <t>
             The Authorization Server MUST return an error if decryption fails.
           </t>
+          -->
         </section>
 
         <section anchor="SignedRequestObject" title="Signed Request Object">
 
+          <t>
+            署名検証を行うには, JWS ヘッダーの <spanx style="verb">alg</spanx> パラメータが Client Registration 時の <spanx style="verb">request_object_signing_alg</spanx>, もしくはその他の手段により事前登録された値と一致しなければならない (MUST).
+            署名は <spanx style="verb">client_id</spanx> とアルゴリズムに対して適切な鍵を用いて行わなければならない (MUST).
+          </t>
+          <!--
           <t>
             To perform Signature Validation,
             the <spanx style="verb">alg</spanx> Header Parameter in the JOSE Header MUST match the value
@@ -6628,14 +7762,26 @@
             for that <spanx style="verb">client_id</spanx>
             and algorithm.
           </t>
+          -->
 
+          <t>
+            署名検証に失敗した場合, Authorization Server はエラーを返さねばならない (MUST).
+          </t>
+          <!--
           <t>
             The Authorization Server MUST return an error if signature validation fails.
           </t>
+          -->
         </section>
 
         <section anchor="RequestParameterValidation" title="Request Parameter Assembly and Validation">
 
+          <t>
+            Authorization Server は, Request Object 値と OAuth 2.0 Authorization Request パラメータから (<spanx style="verb">request</spanx> と <spanx style="verb">request_uri</spanx> を除いて) Authorization Request パラメータを集約しなければならない (MUST).
+            Request Object と OAuth Authorization Request パラメータに同じパラメータが含まれる場合, Request Object に含まれるパラメータを用いること.
+            その後 Authorization Server は, 集約された Authorization Request パラメータを用いて, <xref target="AuthRequestValidation" format="counter"/>, <xref target="ImplicitValidation" format="counter"/> および <xref target="HybridValidation" format="counter"/> に従って, 利用されているフローに応じて通常通りリクエストを検証する.
+          </t>
+          <!--
           <t>
             The Authorization Server MUST assemble
             the set of Authorization Request parameters to be used
@@ -6653,6 +7799,7 @@
             <xref target="ImplicitValidation" format="counter"/>, or
             <xref target="HybridValidation" format="counter"/>.
           </t>
+          -->
 
         </section>
       </section>
@@ -6662,11 +7809,22 @@
     <section anchor="SelfIssued" title="Self-Issued OpenID Provider">
 
       <t>
+        OpenID Connect は Self-Issued OpenID Provider (私有の self-hosted な OpenID Provider であり, 自己署名つきの ID Token を発行するもの) をサポートしている.
+        Self-Issued OP は <spanx style="verb">https://self-issued.me</spanx> という特別な Issuer 識別子を使用する.
+      </t>
+      <!--
+      <t>
         OpenID Connect supports Self-Issued OpenID Providers -
         personal, self-hosted OPs that issue self-signed ID Tokens.
         Self-Issued OPs use the special Issuer Identifier
         <spanx style="verb">https://self-issued.me</spanx>.
       </t>
+      -->
+      <t>
+        Self-Issued OP とのメッセージのやりとりは, 通常の OP の場合とほとんど同じである.
+        ここでは Self-Issued のために追加されるパラメータ, およびパラメータ値を定義する.
+      </t>
+      <!--
       <t>
         The messages used to communicate with Self-Issued OPs are
         mostly the same as those used to communicate with other OPs.
@@ -6674,13 +7832,21 @@
         for the values of some parameters in the Self-Issued case
         are defined in this section.
       </t>
+      -->
 
       <section anchor="SelfIssuedDiscovery" title="Self-Issued OpenID Provider Discovery">
+        <t>
+          Discovery Process で入力された識別子が self-issued.me ドメインを含んでいた場合,
+          Dynamic Discovery は実行されない.
+          その代わりに以下の静的な設定値が使用される.
+        </t>
+        <!--
         <t>
           If the input identifier for the discovery process
           contains the domain self-issued.me, dynamic discovery is not performed.
           Instead, then the following static configuration values are used:
         </t>
+        -->
         <t>
           <figure>
             <artwork><![CDATA[
@@ -6704,6 +7870,15 @@
           </figure>
         </t>
         <t>
+          注記: OpenID ファウンデーションは
+          <spanx style="verb">https://self-issued.me/</spanx>
+          という OpenID Provider サイトを提供することを計画している.
+          その場合は WebFinger サービスも提供され, ディスカバリを実行すると上記の静的なディスカバリ情報を返すため, RP は Self-Issued OP のディスカバリのために特別な処理を行う必要はない.
+          このサイトは実験的に提供される予定である.
+          プロダクション環境を実装する際は, OpenID ファウンデーションが当該サイトをプロダクション用途を想定して提供するまでその環境に依存すべきではない.
+        </t>
+        <!--
+        <t>
           NOTE:  The OpenID Foundation plans to host the OpenID Provider site
           <spanx style="verb">https://self-issued.me/</spanx>,
           including its WebFinger service, so that performing discovery on it
@@ -6714,20 +7889,30 @@
           without a subsequent commitment by the OpenID Foundation
           to host the site in a manner intended for production use.
         </t>
+        -->
       </section>
 
       <section anchor="SelfIssuedRegistration" title="Self-Issued OpenID Provider Registration">
+        <t>
+          Self-Issued OP を使う際は登録は必要ない.
+          Client は登録しなくても OP に登録したかのように振る舞い, 以下の Client Registration Response を得る.
+        </t>
+        <!--
         <t>
           When using a Self-Issued OP, registration is not required.
           The Client can proceed without registration as if it had
           registered with the OP and obtained the following
           Client Registration Response:
         </t>
+        -->
         <t>
           <list style="hanging">
             <t hangText="client_id">
               <vspace/>
+              Client の <spanx style="verb">redirect_uri</spanx> 値.
+              <!--
               <spanx style="verb">redirect_uri</spanx> value of the Client.
+              -->
             </t>
             <t hangText="client_secret_expires_at">
               <vspace/>
@@ -6735,6 +7920,14 @@
             </t>
           </list>
         </t>
+        <t>
+          注記: OpenID ファウンデーションは
+          <spanx style="verb">https://self-issued.me/registration/1.0/</spanx>
+          という (ステートレスな) エンドポイントを提供することを計画しており, そのエンドポイントは上記レスポンスを返すため, RP は Self-Issued OP の登録のために特別な処理を行う必要はない.
+          このサイトは実験的に提供される予定である.
+          プロダクション環境を実装する際は, OpenID ファウンデーションが当該サイトをプロダクション用途を想定して提供するまでその環境に依存すべきではない.
+        </t>
+        <!--
         <t>
           NOTE:  The OpenID Foundation plans to host the (stateless) endpoint
           <spanx style="verb">https://self-issued.me/registration/1.0/</spanx>
@@ -6745,19 +7938,28 @@
           without a subsequent commitment by the OpenID Foundation
           to host the site in a manner intended for production use.
         </t>
+        -->
 
         <section anchor="RegistrationParameter"
                  title='Providing Information with the "registration" Request Parameter'>
 
           <t>
+            OpenID Connect は Client が Self-Issued OpenID Provider に追加の登録情報を提供することが出来るようにするために以下の認可リクエストパラメータを定義している.
+            <!--
             OpenID Connect defines the following Authorization Request parameter
             to enable Clients to provide additional registration information to
             Self-Issued OpenID Providers:
+            -->
 
             <list style="hanging">
 
               <t hangText="registration">
                 <vspace/>
+                OPTIONAL.
+                このパラメータは通常, Dynamic Client Registration の間に Client が自身の情報を Self-Issued OP に提供する際に利用される.
+                この値は <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> 仕様の Section 2.1 で定義されている Client メタデータの値を含む JSON オブジェクトである.
+                <spanx style="verb">registration</spanx> パラメータは OP が Self-Issued OP ではないときは利用すべきではない (SHOULD NOT).
+                <!--
                 OPTIONAL.
                 This parameter is used by the Client to provide information about itself
                 to a Self-Issued OP that would normally be provided to an OP during
@@ -6768,13 +7970,25 @@
                 specification.
                 The <spanx style="verb">registration</spanx> parameter SHOULD NOT be used
                 when the OP is not a Self-Issued OP.
+                -->
               </t>
             </list>
           </t>
           <t>
+            この情報の中で Self-Issued OP により必須 (REQUIRED) なものはなく, このパラメータの利用は任意 (OPTIONAL) である.
+          </t>
+          <!--
+          <t>
             None of this information is REQUIRED by Self-Issued OPs,
             so the use of this parameter is OPTIONAL.
           </t>
+          -->
+          <t>
+            <spanx style="verb">registration</spanx> パラメータの値は OAuth 2.0 リクエストの中で UTF-8 エンコードされた JSON として表わされる.
+            (OAuth パラメータとして渡される際, form-urlencoded される).
+            Request Object (<xref target="RequestObject"/> 参照) 内で利用される場合, <spanx style="verb">registration</spanx> メンバーの値として JSON オブジェクトを指定する.
+          </t>
+          <!--
           <t>
             The <spanx style="verb">registration</spanx> parameter value is represented
             in an OAuth 2.0 request as a UTF-8 encoded JSON object
@@ -6783,6 +7997,21 @@
             the JSON object is used as the value of the
             <spanx style="verb">registration</spanx> member.
           </t>
+          -->
+          <t>
+            Self-Issued OP へのリクエストの中で典型的に利用する登録パラメータは以下である.
+            <spanx style="verb">policy_uri</spanx>,
+            <spanx style="verb">tos_uri</spanx>, and
+            <spanx style="verb">logo_uri</spanx>.
+            Client が一つ以上の Redirection URI を使用する際, それらを登録するために
+            <spanx style="verb">redirect_uris</spanx>
+            パラメータを利用する.
+            最後にもし Client が暗号化されたレスポンスをリクエストする場合は, 以下のパラメータを利用する.
+            <spanx style="verb">jwks_uri</spanx>,
+            <spanx style="verb">id_token_encrypted_response_alg</spanx>, and
+            <spanx style="verb">id_token_encrypted_response_enc</spanx>.
+          </t>
+          <!--
           <t>
             The Registration parameters that would typically be used in requests
             to Self-Issued OPs are
@@ -6797,26 +8026,44 @@
             <spanx style="verb">id_token_encrypted_response_alg</spanx> and
             <spanx style="verb">id_token_encrypted_response_enc</spanx> parameters.
           </t>
+          -->
         </section>
       </section>
 
       <section anchor="SelfIssuedRequest" title="Self-Issued OpenID Provider Request">
+        <t>
+          Client は Authorization Endpoint へ以下のパラメータを付けて Authentication Request を送信する.
+        </t>
+        <!--
         <t>The Client sends the Authentication Request to the Authorization Endpoint
         with the following parameters:</t>
+        -->
         <t>
           <list style="hanging">
             <t hangText="scope">
               <vspace/>
               REQUIRED.
+              <xref target="AuthorizationEndpoint"/> で定義されている <spanx style="verb">scope</spanx> パラメータの値.
+              <!--
+              REQUIRED.
               <spanx style="verb">scope</spanx> parameter value,
               as specified in <xref target="AuthorizationEndpoint"/>.
+              -->
             </t>
             <t hangText="response_type">
               <vspace/>
+              REQUIRED. 固定の文字列 <spanx style="verb">id_token</spanx>.
+              <!--
               REQUIRED. Constant string value <spanx style="verb">id_token</spanx>.
+              -->
             </t>
             <t hangText="client_id">
               <vspace/>
+              REQUIRED.
+              Client の Client ID, この場合は Client の
+              <spanx style="verb">redirect_uri</spanx> の値を含む.
+              Client の <spanx style="verb">redirect_uri</spanx> URI の値は Client ID として送信されるので, <spanx style="verb">redirect_uri</spanx> パラメータをリクエストの中に含む必要はない (NOT REQUIRED).
+              <!--
               REQUIRED.
               Client ID value for the Client, which in this case contains the
               <spanx style="verb">redirect_uri</spanx> value of the Client.
@@ -6825,9 +8072,15 @@
               as the Client ID,
               a <spanx style="verb">redirect_uri</spanx> parameter
               is NOT REQUIRED to also be included in the request.
+              -->
             </t>
             <t hangText="id_token_hint">
               <vspace/>
+              OPTIONAL.
+              <xref target="AuthorizationEndpoint"/> で定義されている <spanx style="verb">id_token_hint</spanx> パラメータの値.
+              Self-Issued OP に対して暗号化した ID Token を送信する場合, 署名付き ID Token の <spanx style="verb">sub</spanx> (subject) を JWE の <spanx style="verb">kid</spanx> (Key ID) として指定しなければならない (MUST).
+              現状 Self-Issued OP に対して暗号化したコンテンツを送信できるのは, OP の JWK 鍵タイプが <spanx style="verb">RSA</spanx> であり, かつ暗号化アルゴリズムが <spanx style="verb">RSA1_5</spanx> である場合に限る.
+              <!--
               OPTIONAL.
               <spanx style="verb">id_token_hint</spanx> parameter value,
               as specified in <xref target="AuthorizationEndpoint"/>.
@@ -6838,23 +8091,38 @@
               Encrypting content to Self-Issued OPs is currently only supported when
               the OP's JWK key type is <spanx style="verb">RSA</spanx> and the encryption
               algorithm used is <spanx style="verb">RSA1_5</spanx>.
+              -->
             </t>
             <t hangText="claims">
               <vspace/>
               OPTIONAL.
+              <xref target="ClaimsParameter"/> で定義されている <spanx style="verb">claims</spanx> パラメータの値.
+              <!--
+              OPTIONAL.
               <spanx style="verb">claims</spanx> parameter value,
               as specified in <xref target="ClaimsParameter"/>.
+              -->
             </t>
             <t hangText="registration">
               <vspace/>
+              OPTIONAL.
+              このパラメータは, 通常 Dynamic Client Registration (<xref target="RegistrationParameter"/> 参照) を通じて提供される Client 自身に関する情報を, Client が Self-Issued OP に提供する際に利用される.
+              <!--
               OPTIONAL.
               This parameter is used by the Client to provide information about itself
               to a Self-Issued OP that would normally be provided to an OP during
               Dynamic Client Registration,
               as specified in <xref target="RegistrationParameter"/>.
+              -->
             </t>
             <t hangText="request">
               <vspace/>
+              OPTIONAL.
+              <xref target="RequestObject"/> で定義されている Request Object 値.
+              Client は, 暗号化した Request Object を Self-Issued OP に送信することもできる (MAY).
+              その場合, その Client に対して既に発行済の ID Token の <spanx style="verb">sub</spanx> (subject) を JWE の <spanx style="verb">kid</spanx> (Key ID) として指定しなければならない (MUST).
+              現状 Self-Issued OP に対して暗号化したコンテンツを送信できるのは, OP の JWK 鍵タイプが <spanx style="verb">RSA</spanx> であり, かつ暗号化アルゴリズムが <spanx style="verb">RSA1_5</spanx> である場合に限る.
+              <!--
               OPTIONAL.
               Request Object value, as specified in <xref target="RequestObject"/>.
               The Request Object MAY be encrypted to the Self-Issued OP by the Client.
@@ -6864,15 +8132,30 @@
               Encrypting content to Self-Issued OPs is currently only supported when
               the OP's JWK key type is <spanx style="verb">RSA</spanx> and the encryption
               algorithm used is <spanx style="verb">RSA1_5</spanx>.
+              -->
             </t>
           </list>
         </t>
         <t>
+          他のパラメータも送ってもよい (MAY).
+          すべての Claim は ID Token の中で返されることに留意すること.
+        </t>
+        <!--
+        <t>
           Other parameters MAY be sent.
           Note that all Claims are returned in the ID Token.
         </t>
+        -->
+        <t>全体 URL 長は ASCII で 2048 文字を超えてはならない (MUST NOT).</t>
+        <!--
         <t>The entire URL MUST NOT exceed 2048 ASCII characters.</t>
+        -->
         <figure>
+          <preamble>
+            以下は, User Agent が Self-Issued OpenID Provider に対して Authentication Request を生成するためのトリガーとなる, Client による HTTP 302 リダイレクトレスポンスの参考例である.
+            (改行は掲載上の都合による)
+          </preamble>
+          <!--
           <preamble>
             The following is a non-normative example
             HTTP 302 redirect response by the Client, which triggers
@@ -6880,6 +8163,7 @@
             to the Self-Issued OpenID Provider
             (with line wraps within values for display purposes only):
           </preamble>
+          -->
           <artwork><![CDATA[
   HTTP/1.1 302 Found
   Location: openid://?
@@ -6897,13 +8181,22 @@
       <section anchor="SelfIssuedResponse" title="Self-Issued OpenID Provider Response">
 
         <t>
+          OpenID Connect では Self-Issued OpenID Provider Responses で使うために以下の Claim を定義する.
+          <!--
           OpenID Connect defines the following Claim
           for use in Self-Issued OpenID Provider Responses:
+          -->
 
           <list style="hanging">
 
             <t hangText="sub_jwk">
               <vspace/>
+              REQUIRED.
+              <xref target="SelfIssued"/> で定義されるとおり, Self-Issued OpenID Provider から発行された ID Token の署名検証に使われる公開鍵.
+              鍵は <xref target="JWK"/> フォーマットのベア鍵である (X.509 証明書ではない).
+              <spanx style="verb">sub_jwk</spanx> 値は JSON オブジェクトである.
+              OP が Self-Issued でない場合はこの Claim の利用を推奨しない (NOT RECOMMENDED).
+              <!--
               REQUIRED.
               Public key used to check the signature of an ID Token
               issued by a Self-Issued OpenID Provider,
@@ -6913,26 +8206,60 @@
               The <spanx style="verb">sub_jwk</spanx> value is a JSON object.
               Use of the <spanx style="verb">sub_jwk</spanx> Claim
               is NOT RECOMMENDED when the OP is not Self-Issued.
+              -->
             </t>
           </list>
         </t>
 
+        <t>
+          Self-Issued OpenID Provider のレスポンスは, 通常の Implicit Flow のレスポンスに以下の改変をしたものと同じである.
+          Implicit Flow のレスポンスなので, 異なる Response Mode が指定されていない限り, レスポンスパラメータは URL フラグメントコンポーネントの中で返される.
+        </t>
+        <!--
         <t>
           The Self-Issued OpenID Provider response is the same as the normal Implicit Flow
           response with the following refinements.  Since it is an Implicit Flow
           response, the response parameters will be returned in the URL fragment component,
           unless a different Response Mode was specified.
         </t>
+        -->
         <t>
           <list style="numbers">
+            <t>
+              <spanx style="verb">iss</spanx> (issuer) Claim Value が
+              <spanx style="verb">https://self-issued.me</spanx> である.
+            </t>
+            <!--
             <t>
               The <spanx style="verb">iss</spanx> (issuer) Claim Value is
               <spanx style="verb">https://self-issued.me</spanx>.
             </t>
+            -->
+            <t>
+              <spanx style="verb">sub_jwk</spanx> Claim が存在し, その値が ID Token の署名を検証するための公開鍵となっている.
+            </t>
+            <!--
             <t>
               A <spanx style="verb">sub_jwk</spanx> Claim is present, with its value being
               the public key used to check the signature of the ID Token.
             </t>
+            -->
+            <t>
+              <spanx style="verb">sub</spanx> (subject) Claim の値は
+              <spanx style="verb">sub_jwk</spanx> Claim に含まれる鍵の thumbprint を base64url エンコードした値である.
+              この Thumbprint は, JWK のメンバーのうち REQUIRED なもののみをそのメンバー名の辞書順にソートし, 空白や改行なしで結合した UTF-8 表現のオクテットを生成し, その SHA-256 ハッシュを計算することで求める.
+              <spanx style="verb">kty</spanx> の値が
+              <spanx style="verb">RSA</spanx> である時, キーの値は
+              <spanx style="verb">n</spanx> と,
+              <spanx style="verb">e</spanx> が順に結合されたものである.
+              <spanx style="verb">kty</spanx> の値が
+              <spanx style="verb">EC</spanx> である時, キーの値は
+              <spanx style="verb">crv</spanx> と,
+              <spanx style="verb">x</spanx> と,
+              <spanx style="verb">y</spanx> が順に結合されたものである.
+              これは JWK Thumbprint <xref target="JWK.Thumbprint"/> に定義されている.
+            </t>
+            <!--
             <t>
               The <spanx style="verb">sub</spanx> (subject) Claim
               value is the base64url encoded representation of
@@ -6962,10 +8289,17 @@
               Note that this thumbprint calculation is the same as that defined in
               the JWK Thumbprint <xref target="JWK.Thumbprint"/> specification.
             </t>
+            -->
+            <t>
+              UserInfo エンドポイントへアクセスするための Access Token は返されないため,
+              すべての Claim は ID Token の中で返されなければならない (MUST).
+            </t>
+            <!--
             <t>
               No Access Token is returned for accessing a UserInfo Endpoint,
               so all Claims returned MUST be in the ID Token.
             </t>
+            -->
           </list>
         </t>
       </section>
@@ -6973,10 +8307,23 @@
       <section anchor="SelfIssuedValidation" title="Self-Issued ID Token Validation">
 
         <t>
+          返された ID Token の検証を行うため, Client は以下のことを実施しなくてはならない (MUST).
+        </t>
+        <!--
+        <t>
           To validate the ID Token received, the Client MUST do the following:
         </t>
+        -->
         <t>
           <list style="numbers">
+            <t>
+              Client は, <spanx style="verb">iss</spanx> (issuer) Claim の値が <spanx style="verb">https://self-isued.me</spanx> であることを検証しなければならない (MUST).
+              もし <spanx style="verb">iss</spanx> が別の値を含んでいた場合,
+              その ID Token は Self-Issued ではないので,
+              <xref target="IDTokenValidation"/>
+              に沿って検証されなければならない (MUST).
+            </t>
+            <!--
             <t>
               The Client MUST validate that the value of the <spanx style="verb">iss</spanx> (issuer) Claim is <spanx style="verb">https://self-isued.me</spanx>.
               If <spanx style="verb">iss</spanx> contains a different value,
@@ -6984,12 +8331,24 @@
               it MUST be validated according to
               <xref target="IDTokenValidation"/>.
             </t>
+            -->
+            <t>
+              Client は, Client がAuthentication Request で送信した <spanx style="verb">redirect_uri</spanx> の値が, <spanx style="verb">aud</spanx> Claim にオーディエンスとして含まれていることを検証しなければならない (MUST).
+            </t>
+            <!--
             <t>
               The Client MUST validate that the
               <spanx style="verb">aud</spanx> (audience) Claim
               contains the value of the <spanx style="verb">redirect_uri</spanx>
               that the Client sent in the Authentication Request as an audience.
             </t>
+            -->
+            <t>
+              Client は, JOSE Header の <spanx style="verb">alg</spanx> Header Parameter に指定されたアルゴリズムを使い <xref target="JWS">JWS</xref> に沿って ID Token の署名を検証しなければならない (MUST).
+              その際, <spanx style="verb">sub_jwk</spanx> Claim の中の鍵を使用する;
+              鍵は JWK フォーマットの鍵である (X.509 証明書ではない).
+            </t>
+            <!--
             <t>
               The Client MUST validate the signature of the ID Token according to
               <xref target="JWS">JWS</xref> using the algorithm specified in the
@@ -6998,11 +8357,23 @@
               the key is a bare key in JWK format
               (not an X.509 certificate value).
             </t>
+            -->
+            <t>
+              <spanx style="verb">alg</spanx> の値はデフォルトとしては <spanx style="verb">RS256</spanx> であるべきである (SHOULD).
+              この値は <spanx style="verb">ES256</spanx> であってもよい (MAY).
+            </t>
+            <!--
             <t>
               The <spanx style="verb">alg</spanx> value SHOULD be the default of
               <spanx style="verb">RS256</spanx>.
               It MAY also be <spanx style="verb">ES256</spanx>.
             </t>
+            -->
+            <t>
+              Client は <spanx style="verb">sub</spanx> Claim が <spanx style="verb">sub_jwk</spanx> Claim に含まれる鍵の Thumbprint の base64url エンコード値であることを検証しなければならない (MUST).
+              <xref target="SelfIssuedResponse"/> 参照.
+            </t>
+            <!--
             <t>
               The Client MUST validate that the <spanx style="verb">sub</spanx> Claim
               value is the base64url encoded representation of
@@ -7010,17 +8381,39 @@
               the key in the <spanx style="verb">sub_jwk</spanx> Claim,
               as specified in <xref target="SelfIssuedResponse"/>.
             </t>
+            -->
+            <t>
+              現在時刻が <spanx style="verb">exp</spanx> Claim より前でなければならない (MUST).
+              (時計のズレを考慮した多少の猶予は許容される)
+            </t>
+            <!--
             <t>
               The current time MUST be before the time represented by the
               <spanx style="verb">exp</spanx> Claim
               (possibly allowing for some small leeway to account for clock skew).
             </t>
+            -->
+            <t>
+              <spanx style="verb">iat</spanx> Claim が現在時刻からあまりにかけ離れている場合は, そのトークンを拒絶してもよい.
+              これにより nonce の保存期間を制限することができる.
+              適切な閾値は, Client ごとにことなる.
+            </t>
+            <!--
             <t>
               The <spanx style="verb">iat</spanx> Claim can be used to reject tokens that
               were issued too far away from the current time, limiting the amount of
               time that nonces need to be stored to prevent attacks.
               The acceptable range is Client specific.
             </t>
+            -->
+            <t>
+              nonce が Authentication Request で送られた場合,
+              <spanx style="verb">nonce</spanx> Claim が存在し,
+              その値は Authentication Request で送られたものと同じ値であることを検証されなくてはならない (MUST).
+              Client はリプレイアタックを防ぐため <spanx style="verb">nonce</spanx> の値を検証すべきである (SHOULD).
+              リプレイアタックを検知するための詳細は方法は Client ごとに固有である.
+            </t>
+            <!--
             <t>
               If a nonce value was sent in the Authentication Request,
               a <spanx style="verb">nonce</spanx> Claim MUST be present
@@ -7030,17 +8423,22 @@
               for replay attacks.
               The precise method for detecting replay attacks is Client specific.
             </t>
+            -->
           </list>
         </t>
         <figure>
+          <preamble>以下は Self-Issued ID Token を base64url デコードした参考例である.
+          (改行は掲載上の都合による)</preamble>
+          <!--
           <preamble>The following is a non-normative example of a base64url decoded
           Self-Issued ID Token
           (with line wraps within values for display purposes only):</preamble>
+          -->
 
           <artwork><![CDATA[
   {
    "iss": "https://self-issued.me",
-   "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+   "sub": "wBy8QvHbPzUnL0x63h13QqvUYcOur1X0cbQpPVRqX5k",
    "aud": "https://client.example.org/cb",
    "nonce": "n-0S6_WzA2Mj",
    "exp": 1311281970,
