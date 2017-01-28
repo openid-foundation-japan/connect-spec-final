@@ -8462,26 +8462,53 @@
 
     <section anchor="SubjectIDTypes" title="Subject Identifier Types">
       <t>
+        Subject Identifier は,
+        Client によって利用されることを意図している,
+        Issuer 内で一意な再割り当てされない End-User の識別子である.
+        当仕様では, 2つの Subject Identifier タイプを定義している:
+        <!--
         A Subject Identifier is a locally unique and never
         reassigned identifier within the Issuer for the End-User,
         which is intended to be consumed by the Client.
         Two Subject Identifier types are defined by this specification:
+        -->
 
         <list style="hanging">
           <t hangText="public">
             <vspace/>
+            全ての Client に対し同一の <spanx style="verb">sub</spanx> (subject) 値を提供する.
+            これはプロバイダのディスカバリドキュメント内の
+            <spanx style="verb">subject_types_supported</spanx> 要素が
+            存在しない場合のデフォルトである.
+            <!--
             This provides the same <spanx style="verb">sub</spanx> (subject) value to all Clients.
             It is the default if the provider has no <spanx style="verb">subject_types_supported</spanx>
             element in its discovery document.
+            -->
           </t>
           <t hangText="pairwise">
             <vspace/>
+            各々の Client に対し異なる <spanx style="verb">sub</spanx> 値を提供する.
+            そのためClient は, 許可なくして End-User の行動を集約して関連づけることが不可能となる.
+            <!--
             This provides a different <spanx style="verb">sub</spanx>
             value to each Client, so as not to enable Clients to correlate
             the End-User's activities without permission.
+            -->
           </t>
         </list>
       </t>
+      <t>
+        OpenID Provider の Discovery ドキュメントには,
+        サポートしている Subject Identifier のタイプのリストが
+        <spanx style="verb">subject_types_supported</spanx>
+        要素に記載されているべきである (SHOULD).
+        一つ以上のタイプがリストされている場合,
+        Client は Registration 時に
+        <spanx style="verb">subject_type</spanx> パラメータを用いて,
+        任意のタイプを選択してもよい (MAY).
+      </t>
+      <!--
       <t>
         The OpenID Provider's Discovery document SHOULD list
         its supported Subject Identifier types in the
@@ -8490,9 +8517,18 @@
         provide its preferred identifier type using the
         <spanx style="verb">subject_type</spanx> parameter during Registration.
       </t>
+      -->
 
       <section anchor="PairwiseAlg" title="Pairwise Identifier Algorithm">
 
+        <t>
+          pairwise Subject Identifier を使用する際,
+          OpenID Provider は, 各々の Sector Identifier 毎に一意な
+          <spanx style="verb">sub</spanx> (subject) 値を計算しなければならない (MUST).
+          Subject Identifier 値は, OpenID Provider 以外の Party にとって,
+          可逆であってはならない (MUST NOT).
+        </t>
+        <!--
         <t>
           When pairwise Subject Identifiers are used,
           the OpenID Provider MUST calculate a unique
@@ -8500,7 +8536,20 @@
           Sector Identifier.  The Subject Identifier value MUST NOT be reversible
           by any party other than the OpenID Provider.
         </t>
+        -->
 
+        <t>
+          pairwise <spanx style="verb">sub</spanx> 値を使用し,
+          かつ <xref target="OpenID.Registration">Dynamic Client Registration</xref>
+          をサポートする Provider は,
+          <spanx style="verb">sector_identifier_uri</spanx> パラメータを使用すべきである (SHOULD).
+          これは, 共通の管理下にあるウェブサイト群に対し,
+          個々のドメイン名とは独立して pairwise <spanx style="verb">sub</spanx> 値の
+          一貫性を保持する手段を提供する.
+          また, Client に対し,
+          全ユーザを再登録させることなしに <spanx style="verb">redirect_uri</spanx> を変更する手段も提供する.
+        </t>
+        <!--
         <t>
           Providers that use pairwise <spanx style="verb">sub</spanx> values
           and support
@@ -8513,7 +8562,17 @@
           <spanx style="verb">redirect_uri</spanx> domains without having to
           reregister all of their users.
         </t>
+        -->
 
+        <t>
+          Client が <xref target="OpenID.Registration">Dynamic Client Registration</xref> で
+          <spanx style="verb">sector_identifier_uri</spanx> の値を提供しなかった場合,
+          pairwise identifier の計算に用いる Sector Identifier は,
+          登録された <spanx style="verb">redirect_uri</spanx> のホスト部である.
+          登録された <spanx style="verb">redirect_uris</spanx> に複数のホスト名が存在した場合,
+          Client は <spanx style="verb">sector_identifier_uri</spanx> を登録しなければならない (MUST).
+        </t>
+        <!--
         <t>If the Client has not provided a value for
         <spanx style="verb">sector_identifier_uri</spanx> in
         <xref target="OpenID.Registration">Dynamic Client Registration</xref>,
@@ -8523,7 +8582,17 @@
         If there are multiple hostnames in the registered
         <spanx style="verb">redirect_uris</spanx>, the Client MUST register a
         <spanx style="verb">sector_identifier_uri</spanx>.</t>
+        -->
 
+        <t>
+          <spanx style="verb">sector_identifier_uri</spanx> が提供された場合,
+          URL のホスト部が pairwise identifier の計算に用いる Sector Identifier として使用される.
+          <spanx style="verb">sector_identifier_uri</spanx> の値は,
+          <spanx style="verb">redirect_uri</spanx> 値の配列を含んだ JSON ファイルを示す <spanx style="verb">https</spanx> スキームの URL でなければならない (MUST).
+          登録された <spanx style="verb">redirect_uris</spanx> の値は,
+          配列の要素に含まれていなければならない (MUST).
+        </t>
+        <!--
         <t>When a <spanx style="verb">sector_identifier_uri</spanx>
         is provided, the host component of that URL is used as
         the Sector Identifier for the pairwise identifier calculation.
@@ -8534,12 +8603,31 @@
         The values of the registered <spanx style="verb">redirect_uris</spanx>
         MUST be included in the elements of the array.
         </t>
+        -->
 
         <t>
+          OpenID Provider による pairwise Subject identifier の計算には,
+          以下の特性を持つ任意のアルゴリズムを用いることが出来る:
+          <!--
           Any algorithm with the following properties
           can be used by OpenID Providers to
           calculate pairwise Subject Identifiers:
+          -->
 
+          <list style="symbols">
+            <t>
+              Subject Identifier 値が, OpenID Provider 以外の Party にとって,
+              可逆であってはならない (MUST NOT).
+            </t>
+            <t>
+              異なる Sector Identifier 値は,
+              異なる Subject Identifier 値にならなければならない (MUST).
+            </t>
+            <t>
+              同じ入力に対して必ず同じ結果となる決定的アルゴリズムでなければならない (MUST).
+            </t>
+          </list>
+          <!--
           <list style="symbols">
             <t>
               The Subject Identifier value MUST NOT be reversible
@@ -8553,12 +8641,24 @@
               The algorithm MUST be deterministic.
             </t>
           </list>
+          -->
         </t>
         <t>
+          3つの手法例を以下に示す:
+          <!--
           Three example methods are:
+          -->
 
           <list style="numbers">
 
+            <t>
+              Sector Identifierを, ローカルアカウントIDおよび Provider によって秘密にされているソルト値と連結する.
+              そして連結した文字列を適切なアルゴリズムによってハッシュ化する.
+              <vspace blankLines="1"/>
+              <spanx style="verb">sub</spanx> = SHA-256 ( sector_identifier || local_account_id || salt ) を計算する.
+              <vspace blankLines="1"/>
+            </t>
+            <!--
             <t>
               The Sector Identifier can be concatenated with a local account ID and a salt
               value that is kept secret by the Provider. The concatenated string is then
@@ -8567,7 +8667,16 @@
               Calculate <spanx style="verb">sub</spanx> = SHA-256 ( sector_identifier || local_account_id || salt ).
               <vspace blankLines="1"/>
             </t>
+            -->
 
+            <t>
+              Sector Identifierを, ローカルアカウントIDおよび Provider によって秘密にされているソルト値と連結する.
+              そして連結した文字列を適切なアルゴリズムによって暗号化する.
+              <vspace blankLines="1"/>
+              <spanx style="verb">sub</spanx> = AES-128 ( sector_identifier || local_account_id || salt ) を計算する.
+              <vspace blankLines="1"/>
+            </t>
+            <!--
             <t>
               The Sector Identifier can be concatenated with a local account ID and a salt
               value that is kept secret by the Provider. The concatenated string is then
@@ -8576,11 +8685,17 @@
               Calculate <spanx style="verb">sub</spanx> = AES-128 ( sector_identifier || local_account_id || salt ).
               <vspace blankLines="1"/>
             </t>
+            -->
 
+            <t>
+              Issuer は, Sector Identifier とローカルアカウントIDのペアに対し, Globally Unique Identifier (GUID) を作成する.
+            </t>
+            <!--
             <t>
               The Issuer creates a Globally Unique Identifier (GUID) for the pair of
               Sector Identifier and local account ID and stores this value.
             </t>
+            -->
 
           </list>
         </t>
@@ -8591,48 +8706,74 @@
     <section anchor="ClientAuthentication" title="Client Authentication">
 
       <t>
+        ここでは, Client が Token Endpoint にアクセスする際に, Authorization Server に対して自身を認証する Client Authentication 方法を定義する.
+        Client Registration で RP (Client) は Client Authentication 方法を登録できる (MAY).
+        もし認証方法が登録されていない場合, デフォルトで <spanx style="verb">client_secret_basic</spanx> を用いる.
+      </t>
+      <!--
+      <t>
         This section defines a set of Client Authentication methods
         that are used by Clients to authenticate to the Authorization Server
         when using the Token Endpoint.
         During Client Registration, the RP (Client) MAY register a Client Authentication method.
         If no method is registered, the default method is <spanx style="verb">client_secret_basic</spanx>.
       </t>
+      -->
+      <t>
+        Client Authentication 方法は以下の通りである.
+      </t>
+      <!--
       <t>These Client Authentication methods are:</t>
+      -->
 
       <t>
         <list style="hanging">
 
           <t hangText="client_secret_basic">
             <vspace/>
+            Authorization Server から <spanx style='verb'>client_secret</spanx> 値を受け取った Client は, <xref target="RFC6749">OAuth 2.0</xref> Section 3.2.1 に従い, HTTP Basic 認証スキーマを利用して Authorization Server に対して自身を認証する.
+            <!--
             Clients that have received a <spanx style='verb'>client_secret</spanx> value
             from the Authorization Server authenticate with the Authorization Server
             in accordance with Section 2.3.1 of <xref
             target="RFC6749">OAuth 2.0</xref> using the HTTP Basic authentication scheme.
+            -->
           </t>
 
           <t hangText="client_secret_post">
             <vspace/>
+            Authorization Server から <spanx style='verb'>client_secret</spanx> 値を受け取った Client は, <xref target="RFC6749">OAuth 2.0</xref> Section 3.2.1 に従い, Client Credential をリクエストボディに含めて Authorization Server に対して自身を認証する.
+            <!--
             Clients that have received a <spanx style='verb'>client_secret</spanx> value
             from the Authorization Server, authenticate with the Authorization Server
             in accordance with Section 2.3.1 of <xref
             target="RFC6749">OAuth 2.0</xref> by including the Client Credentials in the request body.
+            -->
           </t>
 
           <t hangText="client_secret_jwt">
             <vspace/>
+            Authorization Server から <spanx style='verb'>client_secret</spanx> 値を受け取った Client は, HMAC SHA-256 等の HMAC SHA アルゴリズムを利用して JWT を生成する.
+            HMAC (Hash-based Message Authentication Code) は, <spanx style='verb'>client_secret</spanx> の UTF-8 オクテットを共通鍵として利用して計算される.
+            <!--
             Clients that have received a <spanx style='verb'>client_secret</spanx> value
             from the Authorization Server create a JWT using an
             HMAC SHA algorithm, such as HMAC SHA-256.
             The HMAC (Hash-based Message Authentication Code) is calculated using
             the octets of the UTF-8 representation of
             the <spanx style='verb'>client_secret</spanx> as the shared key.
+            -->
           </t>
           <t>
-            The Client authenticates in accordance with <!-- Section 2.2 of --> <xref
+            Client は <xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</xref> および <xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</xref> に従い認証を行う.
+            JWT は以下の必須 (REQUIRED) の Claim Value を含まねばならず (MUST), 任意 (OPTIONAL) な Claim Value を含んでもよい (MAY).
+            <!--
+            The Client authenticates in accordance with < !-- Section 2.2 of -- > <xref
             target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</xref> and
             <xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</xref>.
             The JWT MUST contain the following REQUIRED Claim Values and
             MAY contain the following OPTIONAL Claim Values:
+            -->
           </t>
 
           <t>
@@ -8641,18 +8782,35 @@
                 <vspace/>
                 REQUIRED.
                 Issuer.
+                OAuth Client の <spanx style="verb">client_id</spanx> を含まねばならない (MUST).
+                <!--
+                REQUIRED.
+                Issuer.
                 This MUST contain the <spanx style="verb">client_id</spanx> of the OAuth Client.
+                -->
               </t>
 
               <t hangText="sub">
                 <vspace/>
                 REQUIRED.
                 Subject.
+                OAuth Client の <spanx style="verb">client_id</spanx> を含まねばならない (MUST).
+                <!--
+                REQUIRED.
+                Subject.
                 This MUST contain the <spanx style="verb">client_id</spanx> of the OAuth Client.
+                -->
               </t>
 
               <t hangText="aud">
                 <vspace/>
+                REQUIRED.
+                Audience.
+                <spanx style="verb">aud</spanx> (audience) Claim.
+                Authorization Server をオーディエンスとして指定する.
+                Authorization Server は自身がオーディエンスに含まれることを検証しなければならない (MUST).
+                Audience は Authorization Server の Token Endpoint URL にすべきである (SHOULD).
+                <!--
                 REQUIRED.
                 Audience.
                 The <spanx style="verb">aud</spanx> (audience) Claim.
@@ -8661,10 +8819,18 @@
                 for the token.
                 The Audience SHOULD be the URL of the
                 Authorization Server's Token Endpoint.
+                -->
               </t>
 
               <t hangText="jti">
                 <vspace/>
+                REQUIRED.
+                JWT ID.
+                トークンごとにユニークな識別子.
+                トークンの再利用を防ぐために利用される.
+                これらのトークンは, 再利用条件について関係者での合意を得られていない限り, 2度以上利用しないようにしなければならない (MUST).
+                そのような合意の詳細については本仕様の定めるところではない.
+                <!--
                 REQUIRED.
                 JWT ID.
                 A unique identifier for the token,
@@ -8672,47 +8838,79 @@
                 These tokens MUST only be used once,
                 unless conditions for reuse were negotiated between the parties;
                 any such negotiation is beyond the scope of this specification.
+                -->
               </t>
 
               <t hangText="exp">
                 <vspace/>
                 REQUIRED.
+                ID Token の有効期限.
+                この時刻を超えて当該 ID Token を受理してはならない (MUST NOT).
+                <!--
+                REQUIRED.
                 Expiration time on or after which the ID Token MUST NOT be
                 accepted for processing.
+                -->
               </t>
 
               <t hangText="iat">
                 <vspace/>
                 OPTIONAL.
+                JWT 発行時刻.
+                <!--
+                OPTIONAL.
                 Time at which the JWT was issued.
+                -->
               </t>
             </list>
           </t>
 
           <t>
+            この JWT には, 他の Claim を含めても良い (MAY).
+            理解できない Claim は無視すること (MUST).
+          </t>
+          <!--
+          <t>
             The JWT MAY contain other Claims.
             Any Claims used that are not understood MUST be ignored.
           </t>
+          -->
 
+          <t>
+            認証トークンは <xref target="OAuth.Assertions"/> の <spanx style='verb'>client_assertion</spanx> パラメータとして送信すること (MUST).
+          </t>
+          <!--
           <t>The authentication token MUST be sent as the value of the
           <xref target="OAuth.Assertions"/>
           <spanx style='verb'>client_assertion</spanx> parameter.</t>
+          -->
 
+          <t>
+            <xref target="OAuth.Assertions"/> の <spanx style='verb'>client_assertion_type</spanx> パラメータには, <xref target="OAuth.JWT"/> の通りに "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" とすること.
+          </t>
+          <!--
           <t>The value of the
           <xref target="OAuth.Assertions"/>
           <spanx style='verb'>client_assertion_type</spanx> parameter
           MUST be "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
           per <xref target="OAuth.JWT"/>.</t>
+          -->
 
           <t hangText="private_key_jwt">
             <vspace/>
+            公開鍵を登録済の Client は, そのペアとなる秘密鍵で JWT に署名を行っても良い.
+            Client は <xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</xref> および <xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</xref> に従い認証すること.
+            JWT は以下の必須 (REQUIRED) の Claim Value を含まねばならず (MUST), 任意 (OPTIONAL) な Claim Value を含んでもよい (MAY).
+            <!--
             Clients that have registered a public key sign a JWT using
             that key.
-            The Client authenticates in accordance with <!-- Section 2.2 of --> <xref
+            The Client authenticates in accordance with < !-- Section 2.2 of -- > <xref
             target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</xref> and
             <xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</xref>.
             The JWT MUST contain the following REQUIRED Claim Values and
-          MAY contain the following OPTIONAL Claim Values:</t>
+            MAY contain the following OPTIONAL Claim Values:
+            -->
+          </t>
 
           <t>
             <list style="hanging">
@@ -8720,18 +8918,35 @@
                 <vspace/>
                 REQUIRED.
                 Issuer.
+                OAuth Client の <spanx style="verb">client_id</spanx> を含まねばならない (MUST).
+                <!--
+                REQUIRED.
+                Issuer.
                 This MUST contain the <spanx style="verb">client_id</spanx> of the OAuth Client.
+                -->
               </t>
 
               <t hangText="sub">
                 <vspace/>
                 REQUIRED.
                 Subject.
+                OAuth Client の <spanx style="verb">client_id</spanx> を含まねばならない (MUST).
+                <!--
+                REQUIRED.
+                Subject.
                 This MUST contain the <spanx style="verb">client_id</spanx> of the OAuth Client.
+                -->
               </t>
 
               <t hangText="aud">
                 <vspace/>
+                REQUIRED.
+                Audience.
+                <spanx style="verb">aud</spanx> (audience) Claim.
+                Authorization Serve をオーディエンスとして指定する.
+                Authorization Server は自身がオーディエンスに含まれることを検証しなければならない (MUST).
+                Audience は Authorization Server の Token Endpoint URL にすべきである (SHOULD).
+                <!--
                 REQUIRED.
                 Audience.
                 The <spanx style="verb">aud</spanx> (audience) Claim.
@@ -8740,10 +8955,18 @@
                 for the token.
                 The Audience SHOULD be the URL of the
                 Authorization Server's Token Endpoint.
+                -->
               </t>
 
               <t hangText="jti">
                 <vspace/>
+                REQUIRED.
+                JWT ID.
+                トークンごとにユニークな識別子.
+                トークンの再利用を防ぐために利用される.
+                これらのトークンは, 再利用条件について関係者での合意を得られていない限り, 2度以上利用しないようにしなければならない (MUST).
+                そのような合意の詳細については本仕様の定めるところではない.
+                <!--
                 REQUIRED.
                 JWT ID.
                 A unique identifier for the token,
@@ -8751,44 +8974,76 @@
                 These tokens MUST only be used once,
                 unless conditions for reuse were negotiated between the parties;
                 any such negotiation is beyond the scope of this specification.
+                -->
               </t>
 
               <t hangText="exp">
                 <vspace/>
                 REQUIRED.
+                ID Token の有効期限.
+                この時刻を超えて当該 ID Token を受理してはならない (MUST NOT).
+                <!--
+                REQUIRED.
                 Expiration time on or after which the ID Token MUST NOT be
                 accepted for processing.
+                -->
               </t>
 
               <t hangText="iat">
                 <vspace/>
                 OPTIONAL.
+                JWT 発行時刻.
+                <!--
+                OPTIONAL.
                 Time at which the JWT was issued.
+                -->
               </t>
             </list>
           </t>
 
           <t>
+            この JWT には, 他の Claim を含めても良い (MAY).
+            理解できない Claim は無視すること (MUST).
+          </t>
+          <!--
+          <t>
             The JWT MAY contain other Claims.
             Any Claims used that are not understood MUST be ignored.
           </t>
+          -->
 
+          <t>
+            認証トークンは <xref target="OAuth.Assertions"/> の <spanx style='verb'>client_assertion</spanx> パラメータとして送信すること (MUST).
+          </t>
+          <!--
           <t>The authentication token MUST be sent as the value of the
           <xref target="OAuth.Assertions"/>
           <spanx style='verb'>client_assertion</spanx> parameter.</t>
+          -->
 
+          <t>
+            <xref target="OAuth.Assertions"/> の <spanx style='verb'>client_assertion_type</spanx> パラメータには, <xref target="OAuth.JWT"/> の通りに "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" とすること.
+          </t>
+          <!--
           <t>The value of the
           <xref target="OAuth.Assertions"/>
           <spanx style='verb'>client_assertion_type</spanx> parameter
           MUST be "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
           per <xref target="OAuth.JWT"/>.</t>
+          -->
 
           <t>
             <figure>
               <preamble>
+                以下に例を示す.
+                (改行は掲載上の都合による)
+              </preamble>
+              <!--
+              <preamble>
                 For example
                 (with line wraps within values for display purposes only):
               </preamble>
+              -->
               <artwork><![CDATA[
   POST /token HTTP/1.1
   Host: server.example.com
@@ -8806,9 +9061,13 @@
 
           <t hangText="none">
             <vspace/>
+            Client は Token Endpoint での認証を行わない.
+            これには, Implicit Flow を使う (よって Token Endpoint 自体を利用しない) 場合と, Token Endpoint は利用するが Client Secret を持たない Public Client である場合, およびその他の何らかの認証手段を用いる場合がある.
+            <!--
             The Client does not authenticate itself at the Token Endpoint,
             either because it uses only the Implicit Flow (and so does not use the Token Endpoint)
             or because it is a Public Client with no Client Secret or other authentication mechanism.
+            -->
           </t>
         </list>
       </t>
@@ -8816,6 +9075,12 @@
     </section>
 
     <section anchor="SigEnc" title="Signatures and Encryption">
+      <t>
+        メッセージ送信経路によって, メッセージの完全性は保証されないこともあり, メッセージ送信者の認証も行われないこともある.
+        これらのリスクを軽減するため, ID Token, UserInfo Response, Request Object および Client Authentication JWT は <xref target="JWS">JSON Web Signature (JWS)</xref> によってそのコンテンツに対して署名することができる.
+        メッセージ秘匿性を得るには, <xref target="JWE">JSON Web Encryption (JWE)</xref> を用いてコンテンツを暗号化する.
+      </t>
+      <!--
       <t>
         Depending on the transport through which the messages are sent, the
         integrity of the message might not be guaranteed and the originator of the
@@ -8826,12 +9091,25 @@
         To achieve message confidentiality, these values can also use
         <xref target="JWE">JSON Web Encryption (JWE)</xref> to encrypt their contents.
       </t>
+      -->
+      <t>
+        メッセージに署名と暗号化双方を適用する場合, <xref target="SigningOrder"/> に従い, まず先に署名を行いその後暗号化すること (MUST).
+        結果はネストした JWT になる (<xref target="JWT"/> 参照).
+        JWE の暗号手法は全て完全性チェックを含むことに注意すること.
+      </t>
+      <!--
       <t>
         When the message is both signed and encrypted, it MUST be
         signed first and then encrypted, per <xref target="SigningOrder"/>,
         with the result being a Nested JWT, as specified in <xref target="JWT"/>.
         Note that all JWE encryption methods perform integrity checking.
       </t>
+      -->
+      <t>
+        OP は自身がサポートする署名および暗号化アルゴリズムを Discovery ドキュメント中で示すか, その他の方法でそれらを告知しても良い.
+        RP は自身が要求する署名および暗号化アルゴリズムを Dynamic Registration リクエスト中に指定するか, その他の方法でそれらを告知しても良い.
+      </t>
+      <!--
       <t>
         The OP advertises its supported signing and encryption algorithms
         in its Discovery document,
@@ -8840,6 +9118,12 @@
         in its Dynamic Registration request,
         or may communicate this information by other means.
       </t>
+      -->
+      <t>
+        OP は自身の公開鍵を Discovery ドキュメント中で示すか, その他の方法でそれを告知しても良い.
+        RP は自身の公開鍵を Dynamic Registration リクエスト中に指定するか, その他の方法でそれを告知しても良い.
+      </t>
+      <!--
       <t>
         The OP advertises its public keys
         via its Discovery document,
@@ -8848,17 +9132,28 @@
         via its Dynamic Registration request,
         or may communicate this information by other means.
       </t>
+      -->
 
       <section anchor="Signing" title="Signing">
+        <t>
+          署名者は受信者がサポートするアルゴリズムを元に署名アルゴリズムを選択しなければならない (MUST).
+        </t>
+        <!--
         <t>
           The signing party MUST select a signature algorithm
           based on the algorithms supported by the recipient.
         </t>
+        -->
 
         <t>
           <list style="hanging">
             <t hangText="Asymmetric Signatures">
               <vspace/>
+              RSA および ECDSA 署名を利用する場合, JWS ヘッダーの <spanx style="verb">alg</spanx> パラメータ値には, <xref target="JWA">JSON Web Algorithms</xref> に従い適切な値を指定しなければならない (MUST).
+              署名に使われた秘密鍵は, 署名検証に用いられる公開鍵と関連づいている必要があり, その公開鍵は署名者が JWK Set ドキュメントとして公開すること (MUST).
+              JWK Set ドキュメントに複数の鍵が含まれる場合, JWS ヘッダーに <spanx style="verb">kid</spanx> 値を含まねばならない (MUST).
+              鍵は署名に使えるものでなければならない (MUST).
+              <!--
               When using RSA or ECDSA Signatures,
               the <spanx style="verb">alg</spanx> Header Parameter value
               of the JOSE Header MUST be set to an appropriate algorithm
@@ -8869,9 +9164,15 @@
               If there are multiple keys in the referenced JWK Set document, a
               <spanx style="verb">kid</spanx> value MUST be provided in the JOSE Header.
               The key usage of the respective keys MUST support signing.
+              -->
             </t>
             <t hangText="Symmetric Signatures">
               <vspace/>
+              MAC ベースの署名を利用する場合, JWS ヘッダーの <spanx style="verb">alg</spanx> パラメータ値には, <xref target="JWA">JSON Web Algorithms</xref> に従い MAC アルゴリズムを指定しなければならない (MUST).
+              MAC 鍵は <spanx style="verb">client_secret</spanx> の UTF-8 オクテットとする.
+              <spanx style="verb">client_secret</spanx> のエントロピー要件に関しては <xref target="SymmetricKeyEntropy"/> を参照すること.
+              共通鍵署名は Client Secret を持たない Public Client (Non-Confidential Client) には利用できない (MUST NOT).
+              <!--
               When using MAC-based signatures,
               the <spanx style="verb">alg</spanx> Header Parameter value
               of the JOSE Header MUST be set to a MAC algorithm,
@@ -8883,14 +9184,31 @@
               entropy requirements for <spanx style="verb">client_secret</spanx> values.
               Symmetric signatures MUST NOT be used by public (non-confidential) Clients
               because of their inability to keep secrets.
+              -->
             </t>
           </list>
         </t>
         <t>
+          署名付リクエストについての Security Considerations については <xref target="NeedForSignedRequests"/> を参照すること.
+        </t>
+        <!--
+        <t>
           See <xref target="NeedForSignedRequests"/> for Security Considerations
           about the need for signed requests.
         </t>
+        -->
         <section anchor="RotateSigKeys" title="Rotation of Asymmetric Signing Keys">
+          <t>
+            署名鍵のローテーションを行うには, 以下のアプローチに従うこと.
+            署名者は <spanx style="verb">jwks_uri</spanx> で指定した場所に JWK Set を公開し, 各メッセージの JWS ヘッダーに <spanx style="verb">kid</spanx> を含める.
+            <spanx style="verb">kid</spanx> によって, 検証者はどの鍵を署名検証に用いれば良いか知ることができる.
+            ここで <spanx style="verb">jwks_uri</spanx> で公開された JWK Set に定期的に新たな鍵を追加していくことで, 鍵をロールオーバーすることができる.
+            署名者は任意のタイミングで新しい鍵の利用を開始し, <spanx style="verb">kid</spanx> 値を用いて検証者に鍵が変わったことを知らせることができる.
+            検証者は未知の <spanx style="verb">kid</spanx> を検知した場合は <spanx style="verb">jwks_uri</spanx> にアクセスし, 再び鍵を取得する.
+            <spanx style="verb">jwks_uri</spanx> にある JWK Set ドキュメントは, 利用停止から適切な期間, 利用廃止された鍵を含んだままにすべきである (SHOULD).
+            それにより鍵の移行がスムーズになる.
+          </t>
+          <!--
           <t>Rotation of signing keys can be accomplished with the following approach. The signer publishes
           its keys in a JWK Set at its <spanx style="verb">jwks_uri</spanx> location
           and includes the <spanx style="verb">kid</spanx> of the
@@ -8905,20 +9223,31 @@
           SHOULD retain recently decommissioned signing keys for a reasonable period of time to facilitate a
           smooth transition.
           </t>
+          -->
         </section>
 
       </section>
 
       <section anchor="Encryption" title="Encryption">
         <t>
+          暗号化を行う主体は, 受信者がサポートするアルゴリズムを元に, 暗号化アルゴリズムを選択しなければならない (MUST).
+        </t>
+        <!--
+        <t>
           The encrypting party MUST select an encryption algorithm
           based on the algorithms supported by the recipient.
         </t>
+        -->
         <t>
           <list style="hanging">
 
             <t hangText="Asymmetric Encryption: RSA">
               <vspace/>
+              公開鍵の暗号化に使う公開鍵は, 受信者が公開する JWK Set ドキュメント中に含まれている公開鍵でなくてはならない (MUST).
+              JWK Set ドキュメント中に複数の鍵がある場合は, JWE ヘッダー中に <spanx style="verb">kid</spanx> を含めなければならない (MUST).
+              ランダムな Content Encryption Key によって署名付 JWT を暗号化し, その鍵をサポートされている RSA 暗号化アルゴリズムを用いて暗号化すること.
+              鍵は暗号化に使えるものでなければならない (MUST).
+              <!--
               The public key to which the content was encrypted MUST be
               a public key used for encryption published by the recipient
               in its JWK Set document.
@@ -8928,9 +9257,16 @@
               Content Encryption Key to be used for encrypting
               the signed JWT.
               The key usage of the respective keys MUST include encryption.
+              -->
             </t>
             <t hangText="Asymmetric Encryption: Elliptic Curve">
               <vspace/>
+              JWE ヘッダーの <spanx style="verb">epk</spanx> に指定するには, 短命な Elliptic Curve 公開鍵を生成する.
+              鍵交換に利用するその他の鍵については, 受信者が JWK Set ドキュメント中に公開すること (MUST).
+              JWK Set に複数の鍵が含まれる場合は, JWE ヘッダーに <spanx style="verb">kid</spanx> を指定すること.
+              署名済 JWT の暗号化に用いる Content Encryption Key の鍵交換には, ECDH-ES アルゴリズムを用いる.
+              鍵は暗号化に使えるものでなければならない (MUST).
+              <!--
               Create an ephemeral Elliptic Curve public key for the <spanx style="verb">epk</spanx>
               element of the JOSE Header.
               The other public key used for the key agreement computation MUST be
@@ -8942,9 +9278,17 @@
               Content Encryption Key to be used for encrypting
               the signed JWT.
               The key usage of the respective keys MUST support encryption.
+              -->
             </t>
             <t hangText="Symmetric Encryption">
               <vspace/>
+              共通鍵暗号に用いる共通鍵は, <spanx style="verb">client_secret</spanx> UTF-8 オクテット SHA-2 ハッシュから左側を切り詰めたものとする.
+              256ビット以下の鍵には SHA-256, 257-384ビットの鍵には SHA-384, 385-512ビットの鍵には SHA-512 を用いること.
+              ハッシュ値は, 利用する AES 鍵ラップやその他の暗号化アルゴリズムによって適切な長さになるよう, 左側を切り詰めること.
+              例えば <spanx style="verb">A128KW</spanx> を用いる場合は, SHA-256 ハッシュを切り詰めて128ビットを取り出す.
+              512ビット以上の鍵が必要になった場合は, <spanx style="verb">client_secret</spanx> から鍵を導出する何らかの方法を, 拡張仕様として定義することになろう.
+              共通鍵暗号は Client Secret を持たない Public Client (Non-Confidential Client) には利用できない (MUST NOT).
+              <!--
               The symmetric encryption key is derived from the
               <spanx style="verb">client_secret</spanx> value by
               using a left truncated SHA-2 hash of
@@ -8962,15 +9306,28 @@
               would have to be defined by an extension.
               Symmetric encryption MUST NOT be used by public (non-confidential) Clients
               because of their inability to keep secrets.
+              -->
             </t>
           </list>
         </t>
         <t>
+          暗号化リクエストについての Security Considerations については <xref target="NeedForEncryptedRequests"/> を参照すること.
+        </t>
+        <!--
+        <t>
           See <xref target="NeedForEncryptedRequests"/> for Security Considerations
           about the need for encrypted requests.
         </t>
+        -->
 
         <section anchor="RotateEncKeys" title="Rotation of Asymmetric Encryption Keys">
+          <t>
+            暗号鍵のローテーションは, 署名鍵のローテーションとは異なるプロセスとなる.
+            これは暗号化の場合, 暗号化を行う主体からプロセスが開始され, <spanx style="verb">kid</spanx> の変更を鍵交換のサインとして利用できないからである.
+            暗号化を行う主体は, JWE ヘッダーに <spanx style="verb">kid</spanx> を指定して, どの鍵で復号すべきかを復号を行う主体に知らせることができる.
+            しかしながら暗号化を行う主体は受信者の <spanx style="verb">jwks_uri</spanx> にある JWK Set から, 適切な鍵を選ばねばならない.
+          </t>
+          <!--
           <t>
             Rotating encryption keys necessarily uses a different process than the one for signing keys because
             the encrypting party starts the process and thus cannot rely on
@@ -8981,6 +9338,15 @@
             needs to first select the most appropriate key from those provided in the JWK Set at
             the recipient's <spanx style="verb">jwks_uri</spanx> location.
           </t>
+          -->
+          <t>
+            鍵ローテーションを行うには, 復号を行う主体がまず新しい鍵を <spanx style="verb">jwks_uri</spanx> で公開し, 廃止された鍵を JWK Set から削除する.
+            <spanx style="verb">jwks_uri</spanx> は, <xref target="RFC2616">RFC 2616</xref> に従いレスポンス中の <spanx style="verb">Cache-Control</spanx> ヘッダーに <spanx style="verb">max-age</spanx> を含め, 暗号化を行う主体による JWK Set のキャッシュを適切にコントロールし, 暗号化を行うたびに毎回 JWK Set を取得する必要がないようにすべきである (SHOULD).
+            復号を行う主体は廃止された鍵を <spanx style="verb">jwks_uri</spanx> が参照する JWK Set から削除しつつも, 適切な期間その鍵を内部的に保持しておくべきである (SHOULD).
+            これにより暗号化を行う主体が新しい鍵を取得するまでにある程度の猶予を許し, スムースな移行が可能になる.
+            キャッシュ期間は, <xref target="RotateSigKeys"/> にある新しい署名鍵の発行とのバランスを取り, 適切に調整すること (SHOULD).
+          </t>
+          <!--
           <t>
             To rotate keys, the decrypting party can publish new keys
             at its <spanx style="verb">jwks_uri</spanx> location
@@ -8996,6 +9362,7 @@
             by allowing the encrypting party some time to obtain the new keys. The cache duration SHOULD also
             be coordinated with the issuance of new signing keys, as described in <xref target="RotateSigKeys"/>.
           </t>
+          -->
         </section>
 
       </section>
@@ -9004,19 +9371,33 @@
     <section anchor="OfflineAccess" title="Offline Access">
 
       <t>
+        OpenID Connect では, offline access を要求するため以下の <spanx style="verb">scope</spanx> 値を定義している.
+        <!--
         OpenID Connect defines the following <spanx style="verb">scope</spanx> value
         to request offline access:
+        -->
 
         <list style="hanging">
           <t hangText="offline_access">
             <vspace/>
+            OPTIONAL.
+            OAuth 2.0 Refresh Token の発行を要求する.
+            Request Token は End-User の関与を必要とせずに End-User の UserInfo Endpoint にアクセスするための Access Token を取得するために利用される.
+            <!--
             OPTIONAL. This scope value requests
             that an OAuth 2.0 Refresh Token be issued that can be used to
             obtain an Access Token that grants access to the End-User's
             UserInfo Endpoint even when the End-User is not present (not logged in).
+            -->
           </t>
         </list>
       </t>
+      <t>
+        offline access を要求する際には, リクエストするリソースに対する offline access の許可に必要な何らかの他の条件を満たさない限り, <spanx style="verb">prompt</spanx> パラメータに <spanx style="verb">consent</spanx> を指定しなければならない (MUST).
+        OP は Refresh Token を発行する際は必ず明示的な同意を得なければならない (MUST).
+        ユーザーの事前同意は offline access の許可には常に十分とはならない.
+      </t>
+      <!--
       <t>
         When offline access is requested, a <spanx style="verb">prompt</spanx>
         parameter value of <spanx style="verb">consent</spanx> MUST be used
@@ -9026,11 +9407,21 @@
         that enables offline access to the requested resources.
         A previously saved user consent is not always sufficient to grant offline access.
       </t>
+      -->
       <t>
+        <spanx style="verb">offline_access</spanx> scope を受け取った Authorization Server は, 以下に従う.
+        <!--
         Upon receipt of a scope parameter containing the
         <spanx style="verb">offline_access</spanx> value, the Authorization Server:
+        -->
 
         <list style="symbols">
+          <t>
+            prompt パラメータが <spanx style="verb">consent</spanx> を含むことを確認する.
+            offline access 要求処理における何らかの他の条件を満たす場合はその限りではない.
+            上記の条件のどちらをも満たさない場合, <spanx style="verb">offline_access</spanx> リクエストを無視しなければならない (MUST).
+          </t>
+          <!--
           <t>
             MUST ensure that the prompt parameter contains
             <spanx style="verb">consent</spanx>
@@ -9039,31 +9430,57 @@
             unless one or both of these conditions are fulfilled, then
             it MUST ignore the <spanx style="verb">offline_access</spanx> request,
           </t>
+          -->
+          <t>
+            Client が Authorization Code を返すような <spanx style="verb">response_type</spanx> を指定しない場合, その <spanx style="verb">offline_access</spanx> を無視しなければならない (MUST).
+          </t>
+          <!--
           <t>
             MUST ignore the <spanx style="verb">offline_access</spanx> request
             unless the Client is using a <spanx style="verb">response_type</spanx>
             value that would result in an Authorization Code being returned,
           </t>
+          -->
+          <t>
+            Client の登録した <spanx style="verb">application_type</spanx> が <spanx style="verb">web</spanx> の場合は, 明示的に同意を得なければならない (MUST).
+          </t>
+          <!--
           <t>
             MUST explicitly receive or have consent for all Clients when
             the registered <spanx style="verb">application_type</spanx>
             is <spanx style="verb">web</spanx>,
           </t>
+          -->
+          <t>
+            Client の登録した <spanx style="verb">application_type</spanx> が <spanx style="verb">native</spanx> の場合でも, 明示的な同意を得るべきである (SHOULD).
+          </t>
+          <!--
           <t>
             SHOULD explicitly receive or have consent for all Clients when
             the registered <spanx style="verb">application_type</spanx>
             is <spanx style="verb">native</spanx>.
           </t>
+          -->
         </list>
 
+        Refresh Token の利用は, <spanx style="verb">offline_access</spanx> がもたらすユースケースのみに限らない.
+        Authorization Server は異なるコンテキストにおいて Refresh Token を発行しても良い (MAY).
+        なおそのようなコンテキストについては, 本仕様の定めるところではない.
+        <!--
         The use of Refresh Tokens is not exclusive to the
         <spanx style="verb">offline_access</spanx> use case.
         The Authorization Server MAY grant Refresh Tokens
         in other contexts that are beyond the scope of this specification.
+        -->
       </t>
     </section>
 
     <section anchor="RefreshTokens" title="Using Refresh Tokens">
+      <t>
+        Refresh Token を利用するには, <xref target="RFC6749">OAuth 2.0</xref> Section 6 に従い, Token Endpoint に <spanx style="verb">grant_type</spanx> を <spanx style="verb">refresh_token</spanx> としたリクエストを送る.
+        ここでは OpenID Connect Authorization Server が Refresh Token を受け取った際の挙動について定義する.
+      </t>
+      <!--
       <t>
         A request to the Token Endpoint can also use a Refresh Token
         by using the <spanx style="verb">grant_type</spanx> value
@@ -9073,8 +9490,15 @@
         This section defines the behaviors for OpenID Connect
         Authorization Servers when Refresh Tokens are used.
       </t>
+      -->
 
       <section anchor="RefreshingAccessToken" title="Refresh Request">
+        <t>
+          Access Token 再発行のため, Client は自身の <spanx style="verb">client_id</spanx> に紐づいて登録された認証方法で, Token Endpoint に対して自身を認証しなければならない (MUST).
+          詳細は <xref target="ClientAuthentication"/> 参照.
+          Client は <xref target="FormSerialization"/> で述べた Form Serialization を用いて, Token Endpoint に HTTP <spanx style="verb">POST</spanx> リクエストを送る.
+        </t>
+        <!--
         <t>
           To refresh an Access Token, the Client MUST
           authenticate to the Token Endpoint using the authentication method registered
@@ -9084,13 +9508,20 @@
           to the Token Endpoint using
           Form Serialization, per <xref target="FormSerialization"/>.
         </t>
+        -->
 
         <figure>
+          <preamble>
+            以下は Refresh Request の例である.
+            (改行は掲載上の都合による)
+          </preamble>
+          <!--
           <preamble>
             The following is a non-normative example of a
             Refresh Request
             (with line wraps within values for display purposes only):
           </preamble>
+          -->
 
           <artwork><![CDATA[
   POST /token HTTP/1.1
@@ -9106,63 +9537,118 @@
         </figure>
 
         <t>
+          Authorization Server は Refresh Token を検証し, それが Client に対して発行されたものであることを確認し, Client 認証がその Client の Client Authentication 方法によって成功したことを確認しなければならない (MUST).
+        </t>
+        <!--
+        <t>
           The Authorization Server MUST validate the Refresh Token,
           MUST verify that it was issued to the Client,
           and must verify that the Client successfully authenticated
           it has a Client Authentication method.
         </t>
+        -->
       </section>
 
       <section anchor="RefreshTokenResponse" title="Successful Refresh Response">
+        <t>
+          Refresh Token の検証が成功すると, レスポンスボディに <xref target="TokenResponse"/> で述べた Token Response を含める.
+          ただしこのレスポンスは <spanx style="verb">id_token</spanx> を含まない場合もある.
+        </t>
+        <!--
         <t>
           Upon successful validation of the Refresh Token,
           the response body is the Token Response of <xref target="TokenResponse"/>
           except that it might not contain an <spanx style="verb">id_token</spanx>.
         </t>
+        -->
 
         <t>
+          トークン再発行の際に ID Token を発行する場合は, 以下に従う.
+          <!--
           If an ID Token is returned as a result of a token refresh request,
           the following requirements apply:
+          -->
           <list style="symbols">
+            <t>
+              <spanx style="verb">iss</spanx> Claim Value は, 最初の認可発生時に発行された ID Token と同じ値にすること (MUST).
+            </t>
+            <!--
             <t>
               its <spanx style="verb">iss</spanx> Claim Value MUST be the same as
               in the ID Token issued when the original authentication occurred,
             </t>
+            -->
+            <t>
+              <spanx style="verb">sub</spanx> Claim Value も同様に, 最初の認可発生時に発行された ID Token と同じ値にすること (MUST).
+            </t>
+            <!--
             <t>
               its <spanx style="verb">sub</spanx> Claim Value MUST be the same as
               in the ID Token issued when the original authentication occurred,
             </t>
+            -->
+            <t>
+              <spanx style="verb">iat</spanx> Claim は新しい ID Token の発行時刻にすること (MUST).
+            </t>
+            <!--
             <t>
               its <spanx style="verb">iat</spanx> Claim MUST represent
               the time that the new ID Token is issued,
             </t>
+            -->
+            <t>
+              <spanx style="verb">aud</spanx> Claim Value は, 最初の認可発生時に発行された ID Token と同じ値にすること (MUST).
+            </t>
+            <!--
             <t>
               its <spanx style="verb">aud</spanx> Claim Value MUST be the same as
               in the ID Token issued when the original authentication occurred,
             </t>
+            -->
+            <t>
+              ID Token に <spanx style="verb">auth_time</spanx> Claim を含める場合は, 新しい ID Token の発行時刻ではなく, 最初の認証を行った時刻とすること (MUST).
+            </t>
+            <!--
             <t>
               if the ID Token contains an <spanx style="verb">auth_time</spanx> Claim,
               its value MUST represent the time of the original authentication - not
               the time that the new ID token is issued,
             </t>
+            -->
+            <t>
+              <spanx style="verb">azp</spanx> Claim Value は, 最初の認可発生時に発行された ID Token と同じ値にすること (MUST).
+              <spanx style="verb">azp</spanx> が最初に発行された ID Token に含まれない場合は, 新しい ID Token にもそれを含めてはならない (MUST NOT).
+            </t>
+            <!--
             <t>
               its <spanx style="verb">azp</spanx> Claim Value MUST be the same as
               in the ID Token issued when the original authentication occurred;
               if no <spanx style="verb">azp</spanx> Claim was present in the original
               ID Token, one MUST NOT be present in the new ID Token, and
             </t>
+            -->
+            <t>
+              それ以外に関しては, 最初の認証時に発行された ID Token と同じルールを適用する.
+            </t>
+            <!--
             <t>
               otherwise, the same rules apply as apply when issuing an ID Token
               at the time of the original authentication.
             </t>
+            -->
           </list>
         </t>
 
         <figure>
           <preamble>
+            以下は Refresh Response の例である.
+          </preamble>
+          <!--
+          <preamble>
             The following is a non-normative example of a
             Refresh Response:
           </preamble>
+          -->
 
           <artwork><![CDATA[
   HTTP/1.1 200 OK
@@ -9181,30 +9667,48 @@
       </section>
 
       <section anchor="RefreshErrorResponse" title="Refresh Error Response">
+        <t>
+          Refresh Request が不正もしくは認証できなかった場合, Authorization Server は <xref target="RFC6749">OAuth 2.0</xref> Section 5.2 に従い Token Error Response を返す.
+        </t>
+        <!--
         <t>If the Refresh Request is invalid or unauthorized, the
         Authorization Server returns the
         Token Error Response as defined in Section 5.2 of <xref
         target="RFC6749">OAuth 2.0</xref>.</t>
+        -->
       </section>
 
     </section>
 
     <section anchor="Serializations" title="Serializations">
       <t>
+        メッセージは以下のいずれかの方法でシリアライズされる.
+        <!--
         Messages are serialized using one of the following methods:
+        -->
         <list style="numbers">
           <t>Query String Serialization</t>
           <t>Form Serialization</t>
           <t>JSON Serialization</t>
         </list>
 
+        ここではこれらのシリアライゼーション方法のシンタックスについて記述する.
+        それらがいつ利用可能, もしくは利用する必要があるかを記述するのは, 他セクションに委ねる.
+        すべてのシリアライゼーションがすべてのメッセージに利用可能ではないことに注意すること.
+        <!--
         This section describes the syntax of these serialization methods;
         other sections describe when they can and must be used.
         Note that not all methods can be used for all messages.
+        -->
       </t>
 
       <section anchor="QuerySerialization" title="Query String Serialization">
 
+        <t>
+          Query String Serialization を使ってパラメータをシリアライズするためには, Client は <xref target="W3C.REC-html401-19991224"></xref> で定義された <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットを使いパラメータと値を URL のクエリコンポーネントへ追加することで文字列を構成する.
+          Query String Serialization は一般的に HTTP <spanx style="verb">GET</spanx> リクエストで使用される.
+        </t>
+        <!--
         <t>In order to serialize the parameters using the Query String
         Serialization, the Client constructs the string by adding the
         parameters and values to the query component of a URL using the <spanx
@@ -9215,12 +9719,19 @@
         The same serialization method is also used when adding
         parameters to the fragment component of a URL.
         </t>
+        -->
 
         <figure>
+          <preamble>
+            以下はシリアライズの参考例である.
+            (改行は掲載上の都合による)
+          </preamble>
+          <!--
           <preamble>
             The following is a non-normative example of this serialization
             (with line wraps within values for display purposes only):
           </preamble>
+          -->
 
           <artwork><![CDATA[
   GET /authorize?
@@ -9235,17 +9746,29 @@
 
       <section anchor="FormSerialization" title="Form Serialization">
 
+        <t>
+          パラメータやその値は, HTTP リクエストのエンティティボディに <xref target="W3C.REC-html401-19991224"></xref> に定義されているように <spanx style="verb">application/x-www-form-urlencoded</spanx> フォーマットでパラメータ名とその値を追加することで Form Serialize される.
+          Form Serialization は一般的には HTTP <spanx style="verb">POST</spanx> リクエストで利用される.
+        </t>
+        <!--
         <t>Parameters and their values are Form Serialized by adding the
         parameter names and values to the entity body of the HTTP request using
         the <spanx style="verb">application/x-www-form-urlencoded</spanx> format
         as defined by <xref target="W3C.REC-html401-19991224"></xref>.
         Form Serialization is typically used in HTTP <spanx style="verb">POST</spanx> requests.</t>
+        -->
 
         <figure>
+          <preamble>
+            以下はシリアライズの参考例である.
+            (改行は掲載上の都合による)
+          </preamble>
+          <!--
           <preamble>
             The following is a non-normative example of this serialization
             (with line wraps within values for display purposes only):
           </preamble>
+          -->
 
           <artwork><![CDATA[
   POST /authorize HTTP/1.1
@@ -9262,6 +9785,14 @@
 
       <section anchor="JSONSerialization" title="JSON Serialization">
         <t>
+          パラメータは各パラメータを JSON オブジェクトの最上位メンバーに追加する形で, JSON オブジェクトにシリアライズされる.
+          パラメータ名と文字列値は JSON 文字列として表現される.
+          数値は JSON 数値, Boolean 値は JSON 真偽値となる.
+          他で特別に指示されない限り, 省略されているパラメータおよび値が指定されていないパラメータは省略し, JSON <spanx style="verb">null</spanx> としないようにすべきである (SHOULD).
+          各パラメータは JSON オブジェクトおよび JSON 配列をその値とすることができる (MAY).
+        </t>
+        <!--
+        <t>
           The parameters are serialized into a JSON object structure by adding each
           parameter at the highest structure level. Parameter names and string
           values are represented as JSON strings.
@@ -9272,11 +9803,17 @@
           a JSON <spanx style="verb">null</spanx> value, unless otherwise specified.
           A parameter MAY have a JSON object or a JSON array as its value.
         </t>
+        -->
 
         <figure>
           <preamble>
+            以下はシリアライズの参考例である.
+          </preamble>
+          <!--
+          <preamble>
             The following is a non-normative example of this serialization:
           </preamble>
+          -->
 
           <artwork><![CDATA[
   {
@@ -9294,6 +9831,12 @@
     <section anchor="StringOps" title="String Operations">
 
       <t>
+        いくつかの OpenID Connect メッセージを処理する際にはメッセージの中の値を既知の値を比較することが求められる.
+        例えば, UserInfo エンドポイントから返された Claim Name は <spanx style="verb">sub</spanx> などの特定の Claim Name と比較される.
+        よって Unicode 文字列比較処理はセキュリティ上重要な意味を持つ.
+      </t>
+      <!--
+      <t>
         Processing some OpenID Connect messages requires comparing
         values in the messages to known values. For example, the Claim
         Names returned by the UserInfo Endpoint might be compared to
@@ -9301,10 +9844,26 @@
         style="verb">sub</spanx>.  Comparing Unicode strings,
         however, has significant security implications.
       </t>
+      -->
       <t>
+        したがって, JSON 文字列を他の Unicode 文字列と比較する際は下記の通り実施しなければならない (MUST).
+        <!--
         Therefore, comparisons between JSON strings and other Unicode
         strings MUST be performed as specified below:
+        -->
 
+        <list style="numbers">
+          <t>
+            JSON に適用されたすべてのエスケープ処理を取り除き Unicode コードポイントの配列を生成する.
+          </t>
+          <t>
+            Unicode Normalization <xref target="USA15"/> を JSON 文字列, もしくは比較対象文字列に対していかなる時点であっても適用してはならない (MUST NOT).
+          </t>
+          <t>
+            二つの文字列の比較は, Unicode コードポイント同士の等値比較として実施されなければならない (MUST).
+          </t>
+        </list>
+        <!--
         <list style="numbers">
 
           <t>
@@ -9322,16 +9881,30 @@
           </t>
 
         </list>
+        -->
       </t>
+      <t>
+        いくつかの箇所において, 本仕様はスペースで区切られた文字列のリストを使用している.
+        そのようないかなる場合においても, この目的では単一の ASCII のスペース文字 (0x20) を区切り文字として使用しなければならない (MUST).
+      </t>
+      <!--
       <t>
         In several places, this specification uses space delimited
         lists of strings.  In all such cases, a single ASCII space
         character (0x20) MUST be used as the delimiter.
       </t>
+      -->
 
     </section>
 
     <section anchor="ImplementationConsiderations" title="Implementation Considerations">
+      <t>
+        本仕様では, Relying Party と OpenID Provider の両者により利用される機能について定義している.
+        OpenID Provider によっては, RP との事前登録不要で動的に利用可能なものもあれば, 固有で out-of-band な設定を必須とするものもあるだろう.
+        このため, OP 向けの実装必須の機能を以下の２グループに分類しておく.
+        1つ目は全ての OP 向け, 2つ目は "Dynamic" な OpenID Providers 向けである.
+      </t>
+      <!--
       <t>
         This specification defines features used by both Relying Parties and
         OpenID Providers.
@@ -9343,20 +9916,30 @@
         are listed below in two groups:
         the first for all OPs and the second for "Dynamic" OpenID Providers.
       </t>
+      -->
 
       <section anchor="ServerMTI"
                title="Mandatory to Implement Features for All OpenID Providers">
+        <t>
+          全ての OpenID Provider は本仕様にて定義される下記機能を実装しなければならない (MUST).
+          このリストは別の場所で "REQUIRED" もしくは "MUST" として既に記載されている機能セットを拡張するものあり, それ単体で広範囲に渡る OP 向けの実装要件となるものではない.
+        </t>
+        <!--
         <t>
           All OpenID Providers MUST implement the following features defined in this specification.
           This list augments the set of features that are already listed elsewhere
           as being "REQUIRED" or are described with a "MUST",
           and so is not, by itself, a comprehensive set of implementation requirements for OPs.
         </t>
+        -->
         <t>
           <list style="hanging">
 
             <t hangText="Signing ID Tokens with RSA SHA-256">
               <vspace/>
+              OP は RSA SHA-256 (<spanx style="verb">alg</spanx>=<spanx style="verb">RS256</spanx>) による ID Token への署名をサポートしなければならない (MUST).
+              ただし OP が ID Token を (Authorization Code フローの場合のように) Token Endpoint のみから返却し, ID Token 署名アルゴリズムとして <spanx style="verb">none</spanx> を要求した状態でのみ Client 登録を許可する場合は, その限りでは無い.
+              <!--
               OPs MUST support signing ID Tokens with the RSA SHA-256 algorithm
               (an <spanx style="verb">alg</spanx> value of
               <spanx style="verb">RS256</spanx>),
@@ -9364,23 +9947,35 @@
               (as is the case for the Authorization Code Flow)
               and only allows Clients to register specifying
               <spanx style="verb">none</spanx> as the requested ID Token signing algorithm.
+              -->
             </t>
             <t hangText="Prompt Parameter">
               <vspace/>
+              OP は <xref target="AuthorizationEndpoint"/> で定義されている <spanx style="verb">prompt</spanx> パラメータをサポートしなければならない (MUST).
+              これには <spanx style="verb">none</spanx> や <spanx style="verb">login</spanx> などが規定するユーザインタラクションの実装を含む.
+              <!--
               OPs MUST support the <spanx style="verb">prompt</spanx> parameter,
               as defined in <xref target="AuthorizationEndpoint"/>, including the specified
               user interface behaviors such as <spanx style="verb">none</spanx>
               and <spanx style="verb">login</spanx>.
+               -->
             </t>
             <t hangText="Display Parameter">
               <vspace/>
+              OP は <xref target="AuthorizationEndpoint"/> で定義されている <spanx style="verb">display</spanx> パラメータをサポートしなければならない (MUST).
+              (このパラメータで要求される最低限度のサポートは, 単にこれを使うことでエラーにならないことであることに注意)
+              <!--
               OPs MUST support the <spanx style="verb">display</spanx> parameter,
               as defined in <xref target="AuthorizationEndpoint"/>.
               (Note that the minimum level of support required for this parameter is
               simply that its use must not result in an error.)
+              -->
             </t>
             <t hangText="Preferred Locales">
               <vspace/>
+              OP は <xref target="AuthorizationEndpoint"/> で定義されている <spanx style="verb">ui_locales</spanx> と <spanx style="verb">claims_locales</spanx> パラメータによってユーザインターフェースと Claim 用の推奨の言語や文字種のリクエストをサポートしなければならない (MUST).
+              (これらのパラメータで要求される最低限度のサポートは, 単にこれをつかうことでエラーにならないことであることに注意)
+              <!--
               OPs MUST support requests for preferred languages and scripts
               for the user interface and for Claims via the
               <spanx style="verb">ui_locales</spanx> and
@@ -9388,27 +9983,39 @@
               as defined in <xref target="AuthorizationEndpoint"/>.
               (Note that the minimum level of support required for these parameters is
               simply to have their use not result in errors.)
+            -->
             </t>
             <t hangText="Authentication Time">
               <vspace/>
+              OP は <xref target="IDToken"/> で定義されているように, 要求があれば <spanx style="verb">auth_time</spanx> Claim によってエンドユーザが認証を行った時刻返却しなければならない(MUST).
+              <!--
               OPs MUST support returning the time at which the End-User authenticated
               via the <spanx style="verb">auth_time</spanx> Claim, when requested,
               as defined in <xref target="IDToken"/>.
+              -->
             </t>
             <t hangText="Maximum Authentication Age">
               <vspace/>
+              OP は <xref target="AuthorizationEndpoint"/> で定義されているように, <spanx style="verb">max_age</spanx> パラメータによる最大認証期間 (maximum authentication age) の強制をサポートしなければならない (MUST).
+              <!--
               OPs MUST support enforcing a maximum authentication age
               via the <spanx style="verb">max_age</spanx> parameter,
               as defined in <xref target="AuthorizationEndpoint"/>.
+              -->
             </t>
             <t hangText="Authentication Context Class Reference">
               <vspace/>
+              OP は <xref target="AuthorizationEndpoint"/> で定義されているように, <spanx style="verb">acr_values</spanx> パラメータを用いて特定の認証コンテキストクラスリファレンスの値のリクエストをサポートしなければならない (MUST).
+              (このパラメータで要求される最低限度のサポートは, 単にこれを使うことでエラーにならないことであることに注意)
+              <!--
               OPs MUST support requests for specific
               Authentication Context Class Reference values
-              via the <spanx style="verb">acr_values</spanx> parameter,
+              via the <spanx style="verb">acr_valu
+              es</spanx> parameter,
               as defined in <xref target="AuthorizationEndpoint"/>.
               (Note that the minimum level of support required for this parameter is
               simply to have its use not result in an error.)
+              -->
             </t>
 
           </list>
