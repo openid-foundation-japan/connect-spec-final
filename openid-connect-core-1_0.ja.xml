@@ -10025,52 +10025,75 @@
       <section anchor="DynamicMTI"
                title="Mandatory to Implement Features for Dynamic OpenID Providers">
         <t>
+          上記の機能に加えて, 事前設定をしていない RP と動的に連携を行うことをサポートしている OpenID Provider は, 本仕様や関連仕様にて定義されている下記の機能も実装しなくてはならない (MUST).
+          <!--
           In addition to the features listed above,
           OpenID Providers supporting dynamic establishment of relationships with RPs
           that they do not have a pre-configured relationship with
           MUST also implement the following features defined in this and related specifications.
+          -->
         </t>
         <t>
           <list style="hanging">
 
             <t hangText="Response Types">
               <vspace/>
+              OpenID Provider は Response Type <spanx style="verb">id_token</spanx>, また Self-Issued OP ではない OP は <spanx style="verb">code</spanx> と <spanx style="verb">id_token&nbsp;token</spanx> もサポートしなければならない (MUST).
+              <!--
               These OpenID Providers MUST support the
               <spanx style="verb">id_token</spanx> Response Type and
               all that are not Self-Issued OPs MUST also support the
               <spanx style="verb">code</spanx> and
               <spanx style="verb">id_token&nbsp;token</spanx> Response Types.
+              -->
             </t>
 
             <t hangText="Discovery">
               <vspace/>
+              OP は <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> で定義されているように Discovery 機能をサポートしなければならない (MUST).
+              <!--
               These OPs MUST support Discovery,
               as defined in
               <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>.
+              -->
             </t>
             <t hangText="Dynamic Registration">
               <vspace/>
+              OP は <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> で定義されているように, Dynamic Client Registration をサポートしなければならない (MUST).
+              <!--
               These OPs MUST support Dynamic Client Registration,
               as defined in
               <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>.
+              -->
             </t>
             <t hangText="UserInfo Endpoint">
               <vspace/>
+              Access Token を発行する全て動的な OP は <xref target="UserInfo"/> で定義されているように, UserInfo Endpoint をサポートしなければならない (MUST).
+              (Self-Issued OP は Access Token を発行しない)
+              <!--
               All dynamic OPs that issue Access Tokens MUST support the UserInfo Endpoint,
               as defined in <xref target="UserInfo"/>.
               (Self-Issued OPs do not issue Access Tokens.)
+              -->
             </t>
             <t hangText="Public Keys Published as Bare Keys">
               <vspace/>
+              OP は自身の公開鍵を素の JWK 鍵として公開しなければならない (MUST).
+              (当該鍵は JWK 形式に加えて別途 X.509 形式で公開してもよい (MAY))
+              <!--
               These OPs MUST publish their public keys as bare JWK keys
               (which MAY also be accompanied by X.509 representations of those keys).
+              -->
             </t>
             <t hangText="Request URI">
               <vspace/>
+              OP は <xref target="AuthorizationEndpoint"/> で定義されているように, <spanx style="verb">request_uri</spanx> パラメータで提供された Request URI から取得する Request Object 値を使ってリクエストを送信できるようにしなければならない (MUST).
+              <!--
               These OPs MUST support requests made using a Request Object value
               that is retrieved from a Request URI that is provided
               with the <spanx style="verb">request_uri</spanx> parameter,
               as defined in <xref target="AuthorizationEndpoint"/>.
+              -->
             </t>
 
           </list>
@@ -10079,11 +10102,21 @@
 
       <section anchor="DiscoReg" title="Discovery and Registration">
 
+        <t>
+          OpenID Connect 導入にあたっては, 事前に設定された OpenID Provider および Relying Party のセットが利用可能なこともある.
+          そのような場合には, Identity やサービス, Dynamic Client Registration についての情報に関する Dynamic Discovery をサポートする必要は無いかもしれない.
+        </t>
+        <!--
         <t>Some OpenID Connect installations can use a pre-configured set of
         OpenID Providers and/or Relying Parties. In those cases, it might not be
         necessary to support dynamic discovery of information about identities
         or services or dynamic registration of Clients.</t>
+        -->
 
+        <t>
+          しかし, 事前登録のない Relying Party と OpenID Provider 間の予期しないやりとりをサポートすることを選択したならば, <xref target="OpenID.Discovery">OpenID Discovery 1.0</xref> と <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> の仕様で定義されているファシリティを実装するべきである (SHOULD).
+        </t>
+        <!--
         <t>However, if installations choose to support unanticipated
         interactions between Relying Parties and OpenID Providers that do not
         have pre-configured relationships, they SHOULD accomplish this by
@@ -10091,9 +10124,16 @@
         target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> and <xref
         target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>
         specifications.</t>
+        -->
       </section>
 
       <section anchor="RPMTI" title="Mandatory to Implement Features for Relying Parties">
+        <t>
+          一般的に, OpenID Provider と通信する際にどの機能を利用するかは, Relying Party に次第である.
+          しかし, いくつかの選択肢に関しては, OAuth Client の性質によって決定づけられるものもある.
+          secret を秘匿に保てる Confidential Client であれば Authoriation Code Flow が適切であるし, User Agent Based Application や静的登録された Native Application のような Public Client には, Implicit Flow が適切であろう.
+        </t>
+        <!--
         <t>
           In general, it is up to Relying Parties which features they use
           when interacting with OpenID Providers.
@@ -10104,6 +10144,13 @@
           User Agent Based Application or a statically registered Native Application,
           in which case the Implicit Flow may be appropriate.
         </t>
+        -->
+        <t>
+          OpenID Connect の機能を利用する際に, それらが "REQUIRED" や "MUST" として記載されていれば RP に利用されるときに実装必須の機能となる.
+          同様に "OPTIONAL" と記載されている機能は, 特定のアプリケーションコンテキストで価値をもたらさないのであれば, 利用したりサポートする必要はない.
+          最後に, Discovery をサポートする OpenID Provider とやりとりをするときは, OP の Discovery ドキュメントを利用して, RP がどの OP の機能を利用できるかを動的に決定することもできる.
+        </t>
+        <!--
         <t>
           When using OpenID Connect features, those listed as being
           "REQUIRED" or are described with a "MUST" are
@@ -10114,14 +10161,25 @@
           Finally, when interacting with OpenID Providers that support Discovery,
           the OP's Discovery document can be used to dynamically determine
           which OP features are available for use by the RP.
-      </t>
-      <t>
+        </t>
+        -->
+        <t>
         </t>
       </section>
 
       <section anchor="ImplementationNotes" title="Implementation Notes">
 
         <section anchor="CodeNotes" title="Authorization Code Implementation Notes">
+          <t>
+            Authorization Code フローあるいは Hybrid フロー を用いる場合,
+            Authorization Code を用いた Token Request への応答として,
+            ID Token が Token Endpoint から返却される.
+            ある実装では, Authorization Code 値の中に,
+            返却する ID Token の状態を符号化して持たせることを選択するかもしれない.
+            別の実装では, 状態を格納しているデータベースに対するインデックスとして,
+            Authorization Code 値を使用するかもしれない.
+          </t>
+          <!--
           <t>
             When using the Authorization Code or Hybrid flows,
             an ID Token is returned from the Token Endpoint
@@ -10131,9 +10189,24 @@
             Others may use the Authorization Code value
             as an index into a database storing this state.
           </t>
+          -->
         </section>
 
         <section anchor="NonceNotes" title="Nonce Implementation Notes">
+          <t>
+            <spanx style="verb">nonce</spanx> パラメータ値は,
+            セッション毎の状態を含むとともに, 攻撃者によって推測されないようにする必要がある.
+            Web Server Client がこの要件を満足する手法の一つは,
+            HttpOnly 属性付きのセッションクッキーとして暗号論的乱数値を格納し,
+            その値の暗号学的ハッシュを <spanx style="verb">nonce</spanx> パラメータとして使用することである.
+            このケースでは, 第三者による ID Token リプレイを検出するために,
+            返却される ID Token 内の <spanx style="verb">nonce</spanx> と
+            セッションクッキーのハッシュを比較する.
+            JavaScript Client に対して適用可能な関連手法として,
+            HTML5 ローカルストレージに暗号論的乱数値を格納し,
+            その値の暗号学的ハッシュを用いる方法がある.
+          </t>
+          <!--
           <t>
             The <spanx style="verb">nonce</spanx> parameter value needs to include
             per-session state and be unguessable to attackers.
@@ -10146,10 +10219,20 @@
             A related method applicable to JavaScript Clients is to store the cryptographically random value
             in HTML5 local storage and use a cryptographic hash of this value.
           </t>
+          -->
         </section>
 
         <section anchor="FragmentNotes"
                  title="Redirect URI Fragment Handling Implementation Notes">
+          <t>
+            レスポンスパラメータを Redirection URI のフラグメント値として返却する場合,
+            Client は User Agent に対し, そのフラグメント内の符号化された値をパースさせ,
+            Client の処理ロジックにその値を受け渡す必要がある.
+            暗号 API に直接アクセスする User Agent は,
+            例えば全ての Client コードを JavaScript で記述するなど,
+            処理に必要なロジック等を全て自己の中で完結させることが出来る.
+          </t>
+          <!--
           <t>
             When response parameters are returned in the Redirection URI fragment value,
             the Client needs to have the User Agent parse the fragment encoded values
@@ -10157,20 +10240,41 @@
             User Agents that have direct access to cryptographic APIs may be able to be
             self-contained, for instance, with all Client code being written in JavaScript.
           </t>
+          -->
+          <t>
+            しかし, Client を完全に User Agent 内だけで実行しない場合,
+            検証のために Web Server Client にデータを送信することで目的を実現する方法もある.
+          </t>
+          <!--
           <t>
             However, if the Client does not run entirely in the User Agent,
             one way to achieve this
             is to post them to a Web Server Client for validation.
           </t>
+          -->
 
+          <t>
+            Client が自身の <spanx style="verb">redirect_uri</spanx> 上でホストすることが考えられる
+            JavaScript ファイルの例を以下に示す.
+            これは Authorization Server からのリダイレクトによってロードされる.
+            フラグメント部はパースされた後, 受信した情報の検証と利用を行う URL に対し,
+            <spanx style="verb">POST</spanx> で送信される.
+          </t>
+          <!--
           <t>The following is an example of a JavaScript file that a Client might host at its
           <spanx style="verb">redirect_uri</spanx>.  This is loaded by the redirect from
           the Authorization Server.  The fragment component is parsed and then sent by <spanx style="verb">POST</spanx> to a URI
           that will validate and use the information received.</t>
+          -->
 
           <figure>
+            <preamble>
+              Redirect URI 応答の一例を以下に示す:
+            </preamble>
+            <!--
             <preamble>Following is a non-normative example of a
             Redirect URI response:</preamble>
+            -->
             <artwork><![CDATA[
   GET /cb HTTP/1.1
   Host: client.example.org
@@ -10223,9 +10327,13 @@
         <section anchor="PreFinalIETFSpecs" title="Pre-Final IETF Specifications">
 
           <t>
+            実装者は, この仕様がまだ最終仕様でない複数の IETF 仕様を利用していることに注意すべきである.
+            それらの仕様は以下のとおり:
+            <!--
             Implementers should be aware that
             this specification uses several IETF specifications that are
             not yet final specifications.  Those specifications are:
+            -->
             <list style="symbols">
               <t><xref target="JWT">JSON Web Token (JWT) draft -25</xref></t>
               <t><xref target="JWS">JSON Web Signature (JWS) draft -31</xref></t>
@@ -10237,6 +10345,12 @@
             </list>
           </t>
           <t>
+            これらの仕様に重要な変更を防ぐためにあらゆる努力を行うとしても, それらは発生するかもしれない.
+            OpenID Connect の実装は上記の特別に参照された各ドラフトバージョンを Final バージョンに優先して利用しつづけるべきである.
+            将来的に OpenID Connect の Profile や仕様がこれらの参照を更新した場合には, その限りではない.
+          </t>
+          <!--
+          <t>
             While every effort will be made to prevent breaking
             changes to these specifications, should they occur,
             OpenID Connect implementations should continue to use the
@@ -10245,10 +10359,17 @@
             OpenID Connect profile or specification that
             updates some or all of these references.
           </t>
+          -->
         </section>
 
         <section anchor="GoogleIss" title='Google "iss" Value'>
 
+          <t>
+            この文書を執筆している時点では, Google の OpenID Connect の実装は, ID Token の <spanx style="verb">iss</spanx> (issuer) Claim 値として必須となっている <spanx style="verb">https://</spanx> スキームプレフィックスを省略していることに注意すべきである.
+            Google と連携を希望する Relying Party は, この実装が更新されるまでは, これに対処するためのコードを持っている必要がある.
+            このような問題を回避するためのコードは, Google が Issuer 値にプレフィックスを追加した場合でも, 壊れないような形式で書かれるべきである.
+          </t>
+          <!--
           <t>
             Implementers may want to be aware that,
             as of the time of this writing,
@@ -10263,55 +10384,90 @@
             that will not break at such point Google adds the
             missing prefix to their issuer values.
           </t>
+          -->
         </section>
       </section>
 
       <section anchor="RelatedSpecs" title="Related Specifications and Implementer's Guides">
 
         <t>
+          関連する OPTIONAL 仕様は, 追加機能を提供するために本仕様と組み合わせて利用されるかもしれない (MAY).
+          <!--
           These related OPTIONAL specifications MAY be used in
           combination with this specification to provide additional functionality:
+          -->
 
           <list style="symbols">
 
             <t>
               <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> -
+              Relying Party が OpenID Provider についての情報を動的に発見する方法を定義する.
+              <!--
+              <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref> -
               Defines how Relying Parties dynamically discover information about OpenID Providers
+              -->
             </t>
             <t>
               <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> -
+              Relying Party が OpenID Provider に動的に登録する方法を定義する.
+              <!--
+              <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref> -
               Defines how Relying Parties dynamically register with OpenID Providers
+               -->
             </t>
             <t>
               <xref target="OpenID.Session">OpenID Connect Session Management 1.0</xref> -
+              ログアウト機能を含む, OpenID Connect のセッション管理の方法を定義する.
+              <!--
+              <xref target="OpenID.Session">OpenID Connect Session Management 1.0</xref> -
               Defines how to manage OpenID Connect sessions, including logout functionality
+              -->
             </t>
             <t>
+              <xref target="OAuth.Post">OAuth 2.0 Form Post Response Mode</xref> -
+              HTTP <spanx style="verb">POST</spanx> を使用するユーザエージェントによって, 自動送信された HTML フォーム値を使用して, OAuth2.0 の Authorization Response パラメータ (OpenID Connect Autentication Response パラメータを含む) を返却する方法を定義する.
+              <!--
               <xref target="OAuth.Post">OAuth 2.0 Form Post Response Mode</xref> -
               Defines how to return OAuth 2.0 Authorization Response parameters
               (including OpenID Connect Authentication Response parameters)
               using HTML form values that are auto-submitted by the User Agent
               using HTTP <spanx style="verb">POST</spanx>
+              -->
             </t>
 
           </list>
         </t>
         <t>
+          これらの実装者ガイドは, 基本的な Web ベースの Relaying Party の実装者のための自己完結型の参考となることを意図している.
+          <!--
           These implementer's guides are intended to serve as self-contained references
           for implementers of basic Web-based Relying Parties:
+          -->
 
           <list style="symbols">
+            <t>
+              <xref target="OpenID.Basic">OpenID Connect Basic Client Implementer's Guide 1.0</xref> -
+              この実装者ガイドは, OAuth Authorization Code Flow を使用するベーシックな Web ベースの Relying Party で利用することを目的とした, この仕様のサブセットを含んでいる.
+            </t>
+            <!--
             <t><xref target="OpenID.Basic">OpenID Connect Basic Client Implementer's Guide 1.0</xref> -
             Implementer's guide containing a subset of this specification
             that is intended for use by basic
             Web-based Relying Parties using the
             OAuth Authorization Code Flow</t>
+            -->
 
+            <t>
+              <xref target="OpenID.Implicit">OpenID Connect Implicit Client Implementer's Guide 1.0</xref> -
+              この実装者ガイドは, OAuth Implicit Flow を使用するベーシックな Web ベースの Relying Party で利用することを目的とした, この仕様のサブセットを含んでいる.
+            </t>
+            <!--
             <t><xref target="OpenID.Implicit">OpenID Connect Implicit Client Implementer's Guide 1.0</xref> -
             Implementer's guide containing a subset of this specification
             that is intended for use by basic
             Web-based Relying Parties using the
             OAuth Implicit Flow</t>
+            -->
 
           </list>
         </t>
@@ -10320,6 +10476,13 @@
     </section>
 
     <section anchor="Security" title="Security Considerations">
+      <t>
+        本仕様は, <xref target="RFC6749">OAuth 2.0</xref> の Section 10, <xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> の Section 5 に定義されている security considerations を参照する.
+        さらに, <xref target="RFC6819">OAuth 2.0 Threat Model and Security Considerations</xref> は, この仕様にもよくあてはまる OAuth 2.0 をベースとした脅威と制御の広範囲なリストを提供する.
+        <xref target="ISO29115">ISO/IEC 29115</xref> もまた, 実装者が考慮する必要がある脅威と制御を提供する.
+        実装者には, これらの引用の詳細を読み, それらに記載されている対抗策を適用することを勧める.
+      </t>
+      <!--
       <t>
         This specification references the security considerations defined in
         Section 10 of <xref target="RFC6749">OAuth 2.0</xref>, and
@@ -10334,15 +10497,31 @@
         Implementers are highly advised to
         read these references in detail and apply the countermeasures described therein.
       </t>
+      -->
 
+      <t>
+        加えて, 以下の攻撃ベクトルと救済策のリストもまた, 考慮される.
+      </t>
+      <!--
       <t>
         In addition, the following list of attack vectors and remedies are
         also considered.
       </t>
+      -->
 
       <section anchor="RequestDisclosure" title="Request Disclosure">
+        <t>
+          適切な処置が講じられないとき, リクエストは攻撃者に漏洩され, セキュリティとプライバシーの脅威をもたらすかもしれない.
+        </t>
+        <!--
         <t>If appropriate measures are not taken, a request might be disclosed to
         an attacker, posing security and privacy threats.</t>
+        -->
+        <t>
+          <xref target="RFC6819" /> の Section 5.1.1 にあることに加え, この仕様は <spanx style="verb">request</spanx> パラメータ (<spanx style="verb">request</spanx> の内容は適切な鍵と暗号により暗号化された JWT) もしくは <spanx style="verb">request_uri</spanx> パラメータを利用することによりエンドツーエンドでリクエストの機密性を提供する方法を提供する.
+          これは, 間接的なリクエストの場合に改ざんされた User Agent からも保護する.
+        </t>
+        <!--
         <t>In addition to what is stated in Section 5.1.1 of <xref target="RFC6819" />,
         this standard provides a way to provide the confidentiality of the request
         end to end through the
@@ -10351,20 +10530,37 @@
         is an encrypted JWT with the appropriate key and cipher.
         This protects even against a compromised User Agent
         in the case of indirect request.</t>
+        -->
       </section>
 
       <section anchor="ServerMasquerading" title="Server Masquerading">
+        <t>
+          悪意のある Server は, 様々な方法を用いて正規の Server に成りすますかもしれない.
+          そのような攻撃を検知するため, Client は Server を認証する必要がある.
+        </t>
+        <!--
         <t>A malicious Server might masquerade as the legitimate server
         using various means. To detect such an attack, the Client needs to authenticate
         the server.</t>
+        -->
+        <t>
+          <xref target="RFC6819" /> の Section 5.1.2 にあることに加え, この仕様は適切な鍵と暗号を用いた Signed JWT と Encrypted JWT の両方で Server を認証する方法を提供する.
+        </t>
+        <!--
         <t>In addition to what is stated in Section 5.1.2 of <xref target="RFC6819" />,
         this standard provides a way to authenticate the Server through either the
         use of Signed or Encrypted JWTs
         with an appropriate key and cipher.</t>
+        -->
       </section>
 
       <section anchor="TokenManufacture"
                title="Token Manufacture/Modification">
+        <t>
+          攻撃者は偽のトークンを生成もしくは既存の解析可能なトークンの内容 (Claim や署名など) を修正し, RP に Client への不適切なアクセスを引き起こすかもしれない.
+          例えば, 攻撃者は解析可能なトークンの有効期限を延長するかもしれない : Client は彼らが閲覧できない情報にアクセスするために解析可能なトークンを修正するかもしれない.
+        </t>
+        <!--
         <t>
           An Attacker might generate a bogus token or modify the token contents
           (such as Claims values or the signature)
@@ -10373,24 +10569,49 @@
           the parseable token to extend the validity period; a Client might modify the
           parseable token to have access to information that they should not be able to view.
         </t>
+        -->
+        <t>
+          この攻撃を軽減するための2つの方法がある:
+        </t>
+        <!--
         <t>There are two ways to mitigate this attack:</t>
+        -->
 
         <t>
           <list style="numbers">
+            <t>
+              トークンはOPによりデジタル署名をつけることができる.
+              Relying Party はそれが正規の OP から発行されたことを確認するためにデジタル署名を検証すべき (SHOULD).
+            </t>
+            <!--
             <t>The token can be digitally signed by the OP. The Relying
             Party SHOULD validate the digital signature to verify that it was
             issued by a legitimate OP.</t>
+            -->
 
+            <t>
+              トークンは TLS のような, 保護されたチャンネル上で送られることができる.
+              TLS の利用についての情報は <xref target="TLSRequirements"/> を参照すること.
+              この仕様では, トークンは常に TLS で保護されたチャンネル上で送られる.
+              しかし, この手段は第3者の攻撃に対する防御のみであり, Client が攻撃者になるケースには適用できない点に注意すること.
+            </t>
+            <!--
             <t>The token can be sent over a protected channel such as TLS.
             See <xref target="TLSRequirements"/> for more information on using TLS.
             In this specification, the token is always sent over a TLS protected channel.
             Note however, that this measure is only a defense against third party attackers
             and is not applicable to the case where the Client is the attacker.</t>
+            -->
           </list>
         </t>
       </section>
 
       <section anchor="AccessTokenDisclosure" title="Access Token Disclosure">
+        <t>
+          <xref target="RFC6749">OAuth 2.0</xref> の Section 1.4 で定義されているように, Access Token は Protected Resources にアクセスするために用いられるクレデンシャルである.
+          Access Token は End-User の認可を表すものであり, 認可されていない対象にさらされることはあってはならない (MUST NOT).
+        </t>
+        <!--
         <t>
           Access Tokens are credentials used to access Protected
           Resources, as defined in Section 1.4 of
@@ -10398,72 +10619,134 @@
           an End-User's authorization and MUST NOT be exposed to
           unauthorized parties.
         </t>
+        -->
       </section>
 
       <section anchor="ResponseDisclosure" title="Server Response Disclosure">
+        <t>
+          サーバーのレスポンスは, 認証データとセンシティブな Client 情報を含む Claim を含む可能性がある.
+          レスポンス内容の暴露は, Client を他の種類の攻撃に対して脆弱にすることができる.
+        </t>
+        <!--
         <t>
           The server response might contain authentication data and Claims
           that include sensitive Client information. Disclosure of the
           response contents can make the Client vulnerable to other types of
           attacks.
         </t>
+        -->
 
         <t>
+          サーバーレスポンスの公開は, 次の2つの方法により軽減されることができる:
+          <!--
           The server response disclosure can be mitigated in the following two
           ways:
+          -->
           <list style="numbers">
+            <t>
+              Response Type に <spanx style="verb">code</spanx> を利用する.
+              レスポンスは TLS で保護されたチャンネル上で送られ, Client は <spanx style="verb">client_id</spanx> と <spanx style="verb">client_secret</spanx> によって認証される.
+            </t>
+            <!--
             <t>Using the <spanx style="verb">code</spanx> Response Type.
             The response is sent over a TLS protected
             channel, where the Client is authenticated by the
             <spanx style="verb">client_id</spanx> and
             <spanx style="verb">client_secret</spanx>.</t>
+            -->
 
+            <t>
+              その他の Response Type については, 適切な鍵と暗号により暗号化された JWT として Client の公開鍵もしくは共有秘密鍵を暗号化されることができる.
+            </t>
+            <!--
             <t>For other Response Types,
             the signed response can be encrypted with the Client's
             public key or a shared secret as an encrypted JWT
             with an appropriate key and cipher.</t>
+            -->
           </list>
         </t>
       </section>
 
       <section anchor="ServerResponseRepudiation" title="Server Response Repudiation">
+        <t>
+          適切なメカニズムが実施されていないならば, レスポンスは Serverにより拒否されるかもしれない.
+          例えば, Server が デジタル署名をレスポンスに施さなかった場合, Server はそれが自身のサービスを通して生成されていないと主張することができる.
+        </t>
+        <!--
         <t>A response might be repudiated by the server if the proper mechanisms are not in place.
         For example, if a Server does not digitally sign a response, the Server can claim that it was not
         generated through the services of the Server.</t>
+        -->
 
+        <t>
+          この脅威を軽減するため, レスポンスは否認防止のための鍵を用いて Server により署名されてもよい (MAY).
+          Client はそれが正規の Server から発行されたものであり, 完全であることを確認するためにデジタル署名を検証すべき (SHOULD).
+        </t>
+        <!--
         <t>To mitigate this threat, the response MAY be digitally signed by
         the Server using a key that supports non-repudiation. The Client SHOULD validate
         the digital signature to verify that it was issued by a legitimate
         Server and its integrity is intact.</t>
+        -->
       </section>
 
       <section anchor="RequestRepudation" title="Request Repudiation">
+        <t>
+          脆弱または悪意のある Client がリクエストを誤った対象に送ることがありえるため, bearer token のみを利用して認証された Client はいかなるトランザクションでも拒否されることができる.
+        </t>
+        <!--
         <t>Since it is possible for a
         compromised or malicious Client to send a request to the wrong party,
         a Client that was authenticated
         using only a bearer token can repudiate any transaction.
         </t>
+        -->
+        <t>
+          この脅威を軽減するため, Server は Client により否認防止のための鍵を用いてデジタル署名されたリクエストを要求してもよい (MAY).
+          Server はそれが正規の Client から発行されたものであり, 完全であることを確認するためにデジタル署名を検証すべき (SHOULD).
+        </t>
+        <!--
         <t>To mitigate this threat, the Server MAY require that the
         request be digitally signed by
         the Client using a key that supports non-repudiation.
         The Server SHOULD validate
         the digital signature to verify that it was issued by a legitimate
         Client and the integrity is intact.</t>
+        -->
       </section>
 
       <section anchor="AccessTokenRedirect" title="Access Token Redirect">
+        <t>
+          攻撃者は, あるリソースのために生成された Access Token を別のリソースへのアクセスするために利用する.
+        </t>
+        <!--
         <t>An Attacker uses the Access Token generated for one resource to
         obtain access to a second resource.
         </t>
+        -->
+        <t>
+          この脅威を軽減するため, Access Token は audience と scope に対して制限をかけるべき (SHOULD).
+          それを実装するひとつの方法として, audience として生成されたリソースの識別子を含むことがある.
+          リソースは, 受け取ったトークンが audience として自身の識別子を含むことを確認する.
+        </t>
+        <!--
         <t>To mitigate this threat, the Access Token SHOULD be audience
         and scope restricted. One way of implementing it is to include
         the identifier of the resource for whom it was generated as audience.
         The resource verifies that
         incoming tokens include its identifier as the audience of the
         token.</t>
+        -->
       </section>
 
       <section anchor="TokenReuse" title="Token Reuse">
+        <t>
+          攻撃者は, 対象の Resource のために既に一度利用された Authorization Code のようなワンタイムなトークンの再利用を試みる.
+          この脅威を軽減するため, トークンはタイムスタンプを含み, 有効期限を短くすべき (SHOULD).
+          Relying Party は, トークンが現時点で有効であることを確実にするため, タイムスタンプと有効期限の値をチェックする.
+        </t>
+        <!--
         <t>An Attacker attempts to use a one-time use token such as
         an Authorization Code that has already
         been used once with the intended Resource.
@@ -10471,13 +10754,24 @@
         and a short validity lifetime.
         The Relying Party then checks the timestamp and lifetime values
         to ensure that the token is currently valid.</t>
+        -->
 
+        <t>
+          あるいは, サーバーはトークンの利用状況を記録し, リクエスト毎にその状態を確認してもよい (MAY).
+        </t>
+        <!--
         <t>Alternatively, the server MAY record the state of the use of
         the token and check the status for each request.</t>
+        -->
       </section>
 
       <section anchor="AuthCodeCapture"
                title=" Eavesdropping or Leaking Authorization Codes (Secondary Authenticator Capture)">
+        <t>
+          User Agent がマルウェアに感染している場合は, <xref target="RFC6819"/> Section 4.4.1.1 にある攻撃パターンに加え, Authorization Code が TLS セッションの終端となる User Agent 上でも盗聴される可能性がある.
+          Client Authentication やレスポンス暗号化を用いると, この盗聴パターンは無効化できる.
+        </t>
+        <!--
         <t>In addition to the attack patterns described in
         Section 4.4.1.1 of <xref target="RFC6819"/>,
         an Authorization Code can be captured in the User Agent where the TLS
@@ -10485,9 +10779,17 @@
         However, capturing it is not useful as long as either
         Client Authentication or an encrypted response is used.
         </t>
+        -->
       </section>
 
       <section anchor="TokenSubstitution" title="Token Substitution">
+        <t>
+          Token Substitution は, 不正なユーザがトークンを置換するタイプの攻撃である.
+          交換されるトークンには Authorization Code も含まれる.
+          アタッカーがあるセッション中からトークンを取り出し, 別のセッション中でそれを利用するなどすることで, この攻撃が可能となる.
+          トークンがブラウザに渡される場合, これは非常に簡単な作業であり, 別名 "cut and paste" 攻撃とも呼ばれる.
+        </t>
+        <!--
         <t>
           Token Substitution is a class of attacks in which a malicious user
           swaps various tokens, including swapping an Authorization Code for
@@ -10497,6 +10799,12 @@
           a different session, which is easy to do when the token is
           available to the browser; this is known as the "cut and paste" attack.
         </t>
+        -->
+        <t>
+          <xref target="RFC6749">OAuth 2.0</xref> Implicit Flow は, このリスクを考慮した設計になってはいない.
+          <xref target="RFC6749">OAuth 2.0</xref> Section 10.16 においては, End-User 認証の為に OAuth 2.0 を利用する場合, Client が ID Token や Access Token が認証目的で利用可能かどうか判断できる追加のセキュリティメカニズムがない場合には Implicit Flow を利用しないよう Client に要求している (MUST NOT).
+        </t>
+        <!--
         <t>
           The Implicit Flow of <xref target="RFC6749">OAuth 2.0</xref>
           is not designed to mitigate this risk.  In Section 10.16,
@@ -10506,6 +10814,18 @@
           additional security mechanisms that enable the Client to
           determine whether the ID Token and Access Token were issued for its use.
         </t>
+        -->
+        <t>
+          OpenID Connect では, ID Token を利用することでこのリスクを回避できる.
+          ID Token は署名付きのセキュリティトークンであり, <spanx style="verb">iss</spanx> (issuer),
+          <spanx style="verb">sub</spanx> (subject),
+          <spanx style="verb">aud</spanx> (audience),
+          <spanx style="verb">azp</spanx> (authorized party),
+          <spanx style="verb">at_hash</spanx> (access token hash), および
+          <spanx style="verb">c_hash</spanx> (code hash) を Claim として提供する.
+          ID Token を利用することで, Client は Token Substitution Attack を検知可能になる.
+        </t>
+        <!--
         <t>
           In OpenID Connect, this is mitigated through mechanisms
           provided through the ID Token.  The ID Token is a signed
@@ -10518,12 +10838,24 @@
           <spanx style="verb">c_hash</spanx> (code hash).  Using the ID Token,
           the Client is capable of detecting the Token Substitution Attack.
         </t>
+        -->
+        <t>
+          ID Token 内の <spanx style="verb">c_hash</spanx> は, Authorization Code 置換を防ぐために利用できる.
+          同様に <spanx style="verb">at_hash</spanx> は Access Token 置換を防ぐために利用できる.
+        </t>
+        <!--
         <t>
           The <spanx style="verb">c_hash</spanx> in the ID Token enables
           Clients to prevent Authorization Code substitution.
           The <spanx style="verb">at_hash</spanx> in the ID Token enables
           Clients to prevent Access Token substitution.
         </t>
+        -->
+        <t>
+          また不正なユーザが, Authorization Endpoint と Client の間, もしくは Token Endpoint と Client の間の通信に介入し, Authorization Code を置換したりメッセージの順序を入れ替えたりすることで, 特権ユーザになりすます可能性もある.
+          この攻撃により, Token Endpoint が攻撃者の提示した認可グラントが, より権限の強い特権ユーザのそれとして受け入れてしまうかもしれない.
+        </t>
+        <!--
         <t>
           Also, a malicious user may attempt to impersonate a more
           privileged user by subverting the communication channel
@@ -10533,6 +10865,12 @@
           that the attacker's authorization grant corresponds to a grant
           sent on behalf of a more privileged user.
         </t>
+        -->
+        <t>
+          本仕様で定義された HTTP バインディングでは, Token Request に対するレスポンスは HTTP メッセージ順に対応するリクエストと紐づけられる.
+          トークンを含んだレスポンスとリクエストが TLS で保護されている限り, パケットの順序入れ替えは検知および防御可能であろう.
+        </t>
+        <!--
         <t>
           For the HTTP binding defined by this specification, the
           responses to Token Requests are bound to the corresponding
@@ -10540,6 +10878,12 @@
           containing the token and requests are protected by TLS, which
           will detect and prevent packet reordering.
         </t>
+        -->
+        <t>
+          Token Endpoint へのリクエストとレスポンスを強固に紐づけることができない何らかの他のプロトコルをバインディングとして本仕様を適用する場合, この問題に対する何らかの追加の対策が必要となる (MUST).
+          <spanx style="verb">c_hash</spanx> Claim を含んだ ID Token をトークンリクエストおよびレスポンスに含むことなどが, 例として挙げられる.
+        </t>
+        <!--
         <t>
           When designing another binding of this specification to a
           protocol incapable of strongly binding Token Endpoint
@@ -10548,21 +10892,38 @@
           be to include an ID Token with a <spanx style="verb">c_hash</spanx>
           Claim in the token request and response.
         </t>
+        -->
       </section>
 
       <section anchor="TimingAttack" title="Timing Attack">
+        <t>
+          タイミングアタックにより, 攻撃者は復号処理や署名検証の成功/失敗にかかる処理時間の違いを通じて, 必定以上に多くの情報を得ることができる.
+          この攻撃は, 暗号文の有効な鍵長を限定する為に利用できる.
+        </t>
+        <!--
         <t>A timing attack enables the attacker to
         obtain an unnecessary large amount of information through the elapsed time
         differences in the code paths taken by successful and unsuccessful decryption operations or
         successful and unsuccessful signature validation of a message.
         It can be used to reduce the effective key length of the
         cipher used.</t>
+        -->
+        <t>
+          実装者はエラーを検知した際すぐに検証プロセスを終了するのではなく, 他のオクテットに対する処理を終えるまで処理を継続し, この攻撃を防ぐべきである (SHOULD).
+        </t>
+        <!--
         <t>Implementations SHOULD NOT terminate the validation process
         at the instant of the finding an error but SHOULD continue
         running until all the octets have been processed to avoid this attack.</t>
+        -->
       </section>
 
       <section anchor="OtherCryptoAttacks" title="Other Crypto Related Attacks">
+        <t>
+          暗号, 署名, 完全性検証の手法に応じて, 暗号関連の様々な攻撃が考えられる.
+          実装者は <xref target="JWT">JWT</xref> の Security Considerations, および JWT が参照する, 各脆弱性を防ぐための仕様群に従うこと.
+        </t>
+        <!--
         <t>There are various crypto related attacks possible depending on the
         method used for encryption and signature / integrity checking.
         Implementers need to consult the Security Considerations
@@ -10571,9 +10932,18 @@
         to avoid the vulnerabilities
         identified in these specifications.
         </t>
+        -->
       </section>
 
       <section anchor="SigningOrder" title="Signing and Encryption Order">
+        <t>
+          暗号文に対する署名は, 多くの法域 (jurisdiction: 法律用語, ある法律が適用される地域のこと) で有効と認められない.
+          従って本仕様では, 完全性と非否認性を確保するため署名を利用する際には, 平文の JSON Claim に対して署名をすることを要求する.
+          署名と暗号化がともに必要となる場合, 署名対象の Claim を含んだ JWS に対して暗号化を行うこと.
+          これにより <xref target="JWT"/> で述べられている Nexted JWT が導出される.
+          なお, 全ての JWE 暗号化アルゴリズムは完全性保護を提供しており, 暗号文に別途署名を行う必要はないことに注意すること.
+        </t>
+        <!--
         <t>
           Signatures over encrypted text are not considered valid
           in many jurisdictions.
@@ -10586,13 +10956,25 @@
           Note that since all JWE encryption algorithms provide integrity protection,
           there is no need to separately sign the encrypted content.
         </t>
+        -->
       </section>
 
       <section anchor="IssuerIdentifier" title="Issuer Identifier">
+        <t>
+          OpenID Connect では, 1つの Host と Port のペアに対して複数の Issuer を配置することができる.
+          従って, ディスカバリーで返される issuer は, ID Token に含まれる <spanx style="verb">iss</spanx> と完全一致しなければならない (MUST).
+        </t>
+        <!--
         <t>OpenID Connect supports multiple Issuers per Host and Port combination.
         The issuer returned by discovery MUST exactly match the value of
         <spanx style="verb">iss</spanx> in the ID Token.</t>
+        -->
 
+        <t>
+          OpenID Connect は Issuer URI のパスコンポーネントを Issuer Identifier の一部として扱う.
+          よって例えば subject が同じ "1234" であったとしても, Issuer Identifier が "https://example.com" なものと "https://example.com/sales" なものとでは, 異なる subject となる.
+        </t>
+        <!--
         <t>
           OpenID Connect treats the path component of any Issuer URI as
           being part of the Issuer Identifier.  For instance, the subject
@@ -10600,23 +10982,45 @@
           equivalent to the subject "1234" with an Issuer Identifier of
           "https://example.com/sales".
         </t>
+        -->
+        <t>
+          ホストごとに単一の Issuer にとどめることを推奨する (RECOMMENDED).
+          しかしながらマルチテナントなホストでは, 単一ホストに対して複数の Issuer が必要になるケースもあるであろう.
+        </t>
+        <!--
         <t>
           It is RECOMMENDED that only a single Issuer per host be used.
           However, if a host supports multiple tenants,
           multiple Issuers for that host may be needed.
         </t>
+        -->
       </section>
 
       <section anchor="ImplicitFlowThreats" title="Implicit Flow Threats">
+        <t>
+          Implicit Flow では, Access Token は Client の <spanx style="verb">redirect_uri</spanx> のフラグメントを介して HTTPS で返される.
+          従って OP と User Agent の間, User Agent と RP の間の通信は, 保護されている.
+          しかしながら User Agent がマルウェアに感染していたり不正な操作者のコントロール下にある場合は, TLS セッションの終端となる User Agent 上で Access Token を読み取られることもありうる.
+        </t>
+        <!--
         <t>In the Implicit Flow, the Access Token is returned in the
         fragment component of the Client's <spanx style="verb">redirect_uri</spanx> through HTTPS, thus it is
         protected between the OP and the User Agent, and between the User Agent and the
         RP. The only place it can be captured is the User Agent where the
         TLS session is terminated, which is possible if the User Agent is
         infected by malware or under the control of a malicious party.</t>
+        -->
       </section>
 
       <section anchor="TLSRequirements" title="TLS Requirements">
+        <t>
+          各実装は TLS をサポートしなければならない (MUST).
+          どのバージョンを実装するかは, 時間の経過や広く利用されている実装, 既知のセキュリティ上の脆弱性などによって, その時々で変化しうる.
+          本仕様執筆時点では, TLS version 1.2 <xref target='RFC5246' /> が最新のバージョンであるが, 実装は限定される.
+          そのため実装時に使うツールキットではすぐには利用できないかもしれない.
+          TLS version 1.0 <xref target='RFC2246' /> は最も広く利用されているバージョンであり, 最も広い相互運用性を提供するであろう.
+        </t>
+        <!--
         <t>
           Implementations MUST support TLS.
           Which version(s) ought to be implemented will vary over
@@ -10631,38 +11035,77 @@
           is the most widely deployed version, and will give the
           broadest interoperability.
         </t>
+        -->
+        <t>
+          情報漏洩や改竄に対しては, TLS を用いた秘匿性保護が必須である (MUST).
+          TLS の秘匿性および完全性保護を提供する暗号スイートを利用すること.
+        </t>
+        <!--
         <t>
           To protect against information disclosure and tampering,
           confidentiality protection MUST be applied using TLS
           with a ciphersuite that provides confidentiality and
           integrity protection.
         </t>
+        -->
+        <t>
+          TLS を利用する際は, 常に TLS サーバ証明書を検証しなければならない (MUST).
+          詳細は <xref target="RFC6125">RFC 6125</xref> を参照のこと.
+        </t>
+        <!--
         <t>
           Whenever TLS is used, a TLS server certificate check
           MUST be performed, per <xref target="RFC6125">RFC 6125</xref>.
         </t>
+        -->
       </section>
       <section anchor="TokenLifetime" title="Lifetimes of Access Tokens and Refresh Tokens">
+        <t>
+          Authorization Server は Access Token を無効化できないかもしれない.
+          従って, Access Token の有効期間は一度の利用に十分な期間, もしくは非常に短い期間に限定するべきである (SHOULD).
+        </t>
+        <!--
         <t>Access Tokens might not be revocable by the Authorization Server.
         Access Token lifetimes SHOULD therefore be kept to single use or
         very short lifetimes.</t>
+        -->
 
+        <t>
+          UserInfo Endpoint や他の Protected Resource に対する継続したアクセスが必要な場合は, Refresh Token を利用できる.
+          Client は Token Endpoint に Refresh Token を送ることで, 新規の有効期間の短い Access Token を取得し, リソースアクセスに利用できる.
+        </t>
+        <!--
         <t>
           If ongoing access to the UserInfo Endpoint or other Protected Resources is required,
           a Refresh Token can be used. The Client can then exchange the Refresh Token at
           the Token Endpoint for a fresh short-lived Access Token that can be used to
           access the resource.
         </t>
+        -->
 
+        <t>
+          Authorization Server は Authorization 中に User に対して長期間の認可を与えようとしていることを明示すべきである (SHOULD).
+          Authorization Server は End-User に対して, 特定の Client に発行された Access Token および Refresh Token を無効化する手段を提供すべきである (SHOULD).
+        </t>
+        <!--
         <t>
           The Authorization Server SHOULD clearly identify long-term grants to the User
           during Authorization.
           The Authorization Server SHOULD provide a mechanism for the End-User to revoke
           Access Tokens and Refresh Tokens granted to a Client.
         </t>
+        -->
       </section>
 
       <section anchor="SymmetricKeyEntropy" title="Symmetric Key Entropy">
+        <t>
+          <xref target="Signing"/> と <xref target="Encryption"/> では, 鍵は <spanx style="verb">client_secret</spanx> 値から導出される.
+          従って共通鍵暗号による署名および暗号化を行うためには, <spanx style="verb">client_secret</spanx> が十分なエントロピーを持った暗号論的に強固な鍵とする必要がある (MUST).
+          また <spanx style="verb">client_secret</spanx> は利用するアルゴリズムが利用する MAC 鍵に必要な最低限のオクテット長を持つ必要がある (MUST).
+          例えば <spanx style="verb">HS256</spanx> を利用する際は, <spanx style="verb">client_secret</spanx> は最低でも32オクテットが必要である (MUST).
+          (なお, 多くのの場合 <spanx style="verb">client_secret</spanx> はアルファベットに限定されるため, 明らかにそれ以上のオクテットが必要となるであろう (SHOULD))
+        </t>
+        <!--
         <t>
           In <xref target="Signing"/> and <xref target="Encryption"/>, keys are derived
           from the <spanx style="verb">client_secret</spanx> value.
@@ -10678,9 +11121,15 @@
           since <spanx style="verb">client_secret</spanx> values are
           likely to use a restricted alphabet).
         </t>
+        -->
       </section>
 
       <section anchor="NeedForSignedRequests" title="Need for Signed Requests">
+        <t>
+          場合によっては, Client はリクエストパラメータの改竄を防止するため, リクエストに署名を行う必要があるかもしれない.
+          例えば <spanx style="verb">max_age</spanx> と <spanx style="verb">acr_values</spanx> などは, 署名付きリクエストを用いた方がより正確に認証処理についての保証として有用になるであろう.
+        </t>
+        <!--
         <t>
           In some situations, Clients might need to use signed requests to ensure that
           the desired request parameters are delivered to the OP without having
@@ -10688,9 +11137,16 @@
           and <spanx style="verb">acr_values</spanx> provide more assurance about
           the nature of the authentication performed when delivered in signed requests.
         </t>
+        -->
       </section>
 
       <section anchor="NeedForEncryptedRequests" title="Need for Encrypted Requests">
+        <t>
+          場合によっては, OpenID Connect リクエストを除き見ることで, End-User に関するセンシティブな情報を漏洩させることもある.
+          例えば Client が特定の Claim を要求したことや特定の認証方法を要求したことを知ることで, End-User に関するセンシティブな情報を漏洩させることもある.
+          OpenID Connect は OpenID Provider へのリクエストを暗号化可能とすることで, センシティブ情報の漏洩を防止可能にする.
+        </t>
+        <!--
         <t>
           In some situations, knowing the contents of an OpenID Connect request can,
           in and of itself, reveal sensitive information about the End-User.
@@ -10700,6 +11156,7 @@
           OpenID Connect enables requests to be encrypted to the OpenID Provider
           to prevent such potentially sensitive information from being revealed.
         </t>
+        -->
       </section>
     </section>
     <section anchor="Privacy" title="Privacy Considerations">
