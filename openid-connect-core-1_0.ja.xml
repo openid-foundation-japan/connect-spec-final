@@ -3037,7 +3037,7 @@
                 -->
 
                 <t>
-                  <spanx style="verb">azp</spanx> (authorized party) Claim があるならば, Client は Clime の値が自身の <spanx style="verb">client_id</spanx> であることを確認すべき (SHOULD).
+                  <spanx style="verb">azp</spanx> (authorized party) Claim があるならば, Client は Claim の値が自身の <spanx style="verb">client_id</spanx> であることを確認すべき (SHOULD).
                 </t>
                 <!--
                 <t>
