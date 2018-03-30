@@ -8768,7 +8768,7 @@
             Client は <xref target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</xref> および <xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</xref> に従い認証を行う.
             JWT は以下の必須 (REQUIRED) の Claim Value を含まねばならず (MUST), 任意 (OPTIONAL) な Claim Value を含んでもよい (MAY).
             <!--
-            The Client authenticates in accordance with < !-- Section 2.2 of -- > <xref
+            The Client authenticates in accordance with <!-- --><!-- Section 2.2 of --><!-- <xref
             target="OAuth.JWT">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</xref> and
             <xref target="OAuth.Assertions">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</xref>.
             The JWT MUST contain the following REQUIRED Claim Values and
